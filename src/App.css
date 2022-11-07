@@ -1,38 +1,183 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+.swiper {
+    width: 100%;
+    height: 100%;
   }
+  
+  .swiper-slide {
+    text-align: center;
+    font-size: 18px;
+    background: #fff;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
+    -webkit-justify-content: center;
+    justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+  }
+  
+  .swiper-slide img {
+    display: block;
+    object-fit: cover;
+  }
+  span.swiper-pagination-bullet.swiper-pagination-bullet-active {
+    background: #1F451A;
+    opacity: 0.3;
+    border: 2px solid #1F451A;
+    width: 1rem;
+    height: 1rem;
+  }
+  
+  /* target all bullets */
+  span.swiper-pagination-bullet {
+    /* margin-top: 15px; */
+    background-color: #fff;
+    opacity: 0.7;
+    border: 1px solid #000000;
+    opacity: 1;
+    width: 1rem;
+    height: 1rem;
+    border-radius: .5rem;
+  }
+  
+  .swiper-container {
+    width: 480px;
+  }
+  .swiper-button-next{
+    margin-right: 10px;
+  }
+  @media screen and (min-width: 640px) {
+    .swiper-container {
+      width: 640px;
+    }
+  }
+  
+  @media screen and (min-width: 768px) {
+    .swiper-container {
+      width: 768px;
+    }
+    .dontShow{
+      display: none;
+    }
+  }
+
+  @media screen and (min-width: 1000px) {
+    .swiper-container {
+      width: 1000px;
+    }
+  }
+
+.slideBg{
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65));
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.contactBg{
+  background-image: url(./assests/Rectangle\ 20\ \(4\).png);  
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.strainBg{
+  background-color: rgba(31, 69, 26, 0.2);
+}
+
+.StockBg{
+  background-image: url(./assests/Rectangle\ 127.png);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.HomeMerchandiseBg{
+    background-image: url(./assests/Rectangle\ 127\ \(1\).png);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.shopBg{
+  background-image: url(./assests/Rectangle\ 127\ \(2\).png);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.welcomeBg{
+  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.65), rgba(0, 0, 0, 0.65)), url(./assests/welcome_bg.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+@media screen and (max-width: 900px) {
+.xsflex{
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  flex-direction: column !important;
+}
+.homeBg{
+  display: none;
+}
+.footerBg{
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.spotBg{
+  height: 80vh;
+}
 }
 
-.App-link {
-  color: #61dafb;
+@media screen and (max-width: 1200px) {
+
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+@media screen and (max-width: 768px) {
+  .shopText{
+   text-align: center;
+  } 
+  .accessorySide{
+    display: none;
   }
-  to {
-    transform: rotate(360deg);
+  .homeBg{
+    display: none;
   }
+  .productDetails{
+    flex-direction: column;
+  }
+  .productDetailsImg{
+    width: 70px !important;
+height: 59.34px !important;
+  }
+  .productDetailsImg1{
+   width: 327px !important;
+   height: 242px !important;
+  }
+  .homeHeader{
+    width: 100%;
+  }
+  /* .accessoryBg{
+    width: 152px;
+    height: 235px;
+  } */
+  .accessoryBg img{
+    width: 175px;
+    height: 118px;
+  }
+}
+
+.productDetailsImg{
+  width: 151px;
+  height: 128px;
+}
+
+.productDetailsImg1{
+  height: 466px;
+width: 622px;
+border-radius: 5px;
+
+}
+
+.cartBg{
+  width: 170px;
+height: 120px;
 }
