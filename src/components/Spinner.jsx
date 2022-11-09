@@ -1,6 +1,6 @@
 import React from 'react';
 import { Circles } from 'react-loader-spinner';
-
+/* eslint-disable */
 function Spinner({ message }) {
   return (
     <div className="flex flex-col justify-center items-center w-full h-full">

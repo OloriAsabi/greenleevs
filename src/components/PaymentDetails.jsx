@@ -1,34 +1,35 @@
-import React, { useState } from 'react'
+/* eslint-disable */
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { HiOutlineArrowNarrowLeft } from 'react-icons/hi';
 import { useNavigate } from 'react-router-dom';
-import paypal from '../assests/PayPal.png'
+import paypal from '../assests/PayPal.png';
 
 const PaymentDetails = () => {
   const [checked, setChecked] = useState(false);
-  const history =  useNavigate()
+  const history = useNavigate();
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors }
-      } = useForm();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm();
 
-      const submitHandler = (data) => {
-        console.log(data);
+  const submitHandler = (data) => {
+    console.log(data);
 
-      }
+  };
 
-      function toggle(value){
-        return !value;
-      }
+  function toggle(value){
+    return !value;
+  }
       
   return (
     <div>
-        <div className='container mx-auto small'>
-            <form onSubmit={handleSubmit(submitHandler)} className="w-full pt-10 space-y-10">
-            <div className='flex flex-col justify-between space-y-10 items-center'>
-              <div className='w-full h-54  bg-white rounded-lg border flex flex-row p-10 gap-10  border-gray-200 shadow-md'>
+      <div className='container mx-auto small'>
+        <form onSubmit={handleSubmit(submitHandler)} className="w-full pt-10 space-y-10">
+          <div className='flex flex-col justify-between space-y-10 items-center'>
+            <div className='w-full h-54  bg-white rounded-lg border flex flex-row p-10 gap-10  border-gray-200 shadow-md'>
               <input
                 checked={checked}
                 onChange={() => setChecked(toggle)}
@@ -46,8 +47,8 @@ const PaymentDetails = () => {
               You will be redirected to the PayPal website after submitting your order
               </div>
               <img src={paypal} alt="paypal" className='border rounded-sm w-auto h-auto border-gray-500 p-3 '/>
-              </div>
-              <div className='w-full h-54  bg-white rounded-lg border flex flex-row p-10 gap-10  border-gray-200 shadow-md'>
+            </div>
+            <div className='w-full h-54  bg-white rounded-lg border flex flex-row p-10 gap-10  border-gray-200 shadow-md'>
               <input
                 checked={checked}
                 onChange={() => setChecked(toggle)}
@@ -65,27 +66,27 @@ const PaymentDetails = () => {
               You will be redirected to the Stripe website after submitting your order
               </div>
               <img src={paypal} alt="paypal" className='border rounded-sm w-auto h-auto border-gray-500 p-3 '/>
-              </div>
             </div>
+          </div>
 
-            <hr/>
-                <div className='flex justify-between mt-5'>
-                <div className='block text-start'>
-                <button className='text-[#1F451A] flex rounded items-center cursor-pointer gap-4 font-normal' onClick={() => history('/carts')}>
+          <hr/>
+          <div className='flex justify-between mt-5'>
+            <div className='block text-start'>
+              <button className='text-[#1F451A] flex rounded items-center cursor-pointer gap-4 font-normal' onClick={() => history('/carts')}>
                 <HiOutlineArrowNarrowLeft fontSize={28}/> Back to cart
-                </button>
-                </div>
-                    <button 
-                    className=' text-center mt-5 bg-[#1F451A] text-white cursor-pointer rounded-md p-4 w-42'
-                   >
+              </button>
+            </div>
+            <button 
+              className=' text-center mt-5 bg-[#1F451A] text-white cursor-pointer rounded-md p-4 w-42'
+            >
                     Make Payment  
-                    {/* {showPayment()} */}
-                    </button>           
-                </div>
-            </form>
+              {/* {showPayment()} */}
+            </button>           
+          </div>
+        </form>
+      </div>
     </div>
-    </div>
-  )
-}
+  );
+};
 
-export default PaymentDetails
+export default PaymentDetails;

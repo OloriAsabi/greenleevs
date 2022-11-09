@@ -1,12 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import './App.css';
-import { Routes, Route, useNavigate  } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { BillingDetails, Footer, Navbar, PaymentDetails } from './components';
-import { Accessories, Carts, CheckOut, Home, Orders, ProductDetails, Settings, Shipping, Shop, SpecialMenu, UserProfile } from './pages';
+import { Accessories, Carts, CheckOut, ComingSoon, Error, Home, Orders, ProductDetails, Settings, Shipping, Shop, SpecialMenu, UserProfile } from './pages';
 
 import { useStateContext } from './contexts/ContextProvider';
 
+
 function App() {
+  /* eslint-disable */
   const scrollRef = useRef(null);
   const { state } = useStateContext();
   const { welcome } = state;
@@ -44,6 +46,8 @@ function App() {
               <Route path='/specialmenu' element={(<SpecialMenu/>)} />
               <Route path="/product/:id" element={<ProductDetails/>} />
               <Route path="/checkout" element={<CheckOut/>} />
+              <Route path="/404" element={<Error/>} />
+              <Route path="/comingsoon" element={<ComingSoon/>} />
 
               <Route path="/billing" element={<BillingDetails/>} />
               <Route path="/payment" element={<PaymentDetails/>} />
