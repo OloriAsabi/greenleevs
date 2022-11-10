@@ -5,7 +5,7 @@ import { FaCubes } from 'react-icons/fa';
 import { GrLocation } from 'react-icons/gr';
 import { IoMdLogIn } from 'react-icons/io';
 import { LogoutUser } from '../apis/api';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 /* eslint-disable */
 
@@ -17,6 +17,17 @@ const UserSideBar = ({setOpenNav}) => {
     
         navigate('/login');
       };
+
+      const menus = [
+        { 
+        id: 'orders', 
+        title: 'Orders', 
+        icon: <FaCubes  fontSize={28}/>,
+       },
+        { id: 'shipping', title: 'Shipping', icon: <GrLocation  fontSize={28}/>},
+        { id: 'settings', title: 'Settings', icon: <AiOutlineSetting  fontSize={28}/>},
+      ];
+
   return (
     <div>
     <FaTimes fontSize={28} className="text-[#2D2D2D] cursor-pointer fixed top-4 right-4 font-light" onClick={() => setOpenNav(false)} /> 
@@ -24,9 +35,8 @@ const UserSideBar = ({setOpenNav}) => {
     <div className='fixed w-full top-20 p-10 '>
     <div className='w-full  space-y-10'>
     <ul className="pt-6 text-xl">
-    <li
-                >
-                  <div
+            <li>
+             <div
                     className={`flex rounded-md p-2 cursor-pointer text-[#2D2D2D] hover:bg-[#1F451A] hover:text-white active:text-[#1F451A] text- text-sm items-center gap-x-4 
                      mt-2`}
                      onClick={() => history('/')}
@@ -38,47 +48,23 @@ const UserSideBar = ({setOpenNav}) => {
           
                   </div>
                 </li>
-                <li
+                {menus.map((menu) => (
+              <li 
+              key={menu.id}
+              onClick={() => setOpenNav(false)} 
+              >
+                <Link 
+                className={`flex rounded-md p-2 cursor-pointer text-[#2D2D2D] hover:bg-[#1F451A] hover:text-white active:text-[#1F451A] text- text-sm items-center gap-x-4 
+                mt-2`}
+                to={menu.id}
                 >
-                  <div
-                    className={`flex rounded-md p-2 cursor-pointer text-[#2D2D2D] hover:bg-[#1F451A] hover:text-white active:text-[#1F451A] text- text-sm items-center gap-x-4 
-                     mt-2`}
-                    //  onClick={() => setOpenOrders(!openOrders)}
-                     >
-                    <div><FaCubes fontSize={28}/></div>
-                    <span className={'origin-left duration-200 text-xl'}>
-                    Orders
-                    </span>
-                  </div>
-                </li>
-                <li
-                >
-                  <div
-                    className={`flex rounded-md p-2 cursor-pointer text-[#2D2D2D] hover:bg-[#1F451A] hover:text-white active:text-[#1F451A] text- text-sm items-center gap-x-4 
-                     mt-2`}
-                    //  onClick={() => setOpenShipping(!openShipping)}
-                     >
-                    <div><GrLocation  fontSize={28}/></div>
-                    <span className={'origin-left duration-200 text-xl'}>
-                    Shipping
-                    </span>
-          
-                  </div>
-                </li>
-                <li
-                >
-                  <div
-                    className={`flex rounded-md p-2 cursor-pointer text-[#2D2D2D] hover:bg-[#1F451A] hover:text-white active:text-[#1F451A] text- text-sm items-center gap-x-4 
-                     mt-2`}
-                    //  onClick={() => setOpenSettings(!openSettings)}
-                     >
-                    <div><AiOutlineSetting  fontSize={28}/></div>
-                    <span className={'origin-left duration-200 text-xl'}>
-                    Settings
-                    </span>
-          
-                  </div>
-                </li>
+                   <div>{menu.icon}</div>
+                    <span className={'origin-left duration-200  text-xl'}>
+                    {menu.title}
+                    </span>          
+                </Link>
+              </li>
+              ))}
               <li 
                 className={`flex rounded-md p-2 cursor-pointer text-red-500 hover:bg-[#1F451A] active:text-[#1F451A] text- text-sm items-center gap-x-4 
             mt-2`}

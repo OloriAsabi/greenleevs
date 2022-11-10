@@ -5,10 +5,8 @@ import { useStateContext } from '../contexts/ContextProvider';
 import logo from '../assests/green (4) 2.png';
 import { LogoutUser } from '../apis/api';
 import { IoMdLogIn } from 'react-icons/io';
-import { getMenus } from '../data/data';
-import Orders from './shared_pages/Orders';
-import Settings from './shared_pages/Settings';
-import Shipping from './shared_pages/Shipping';
+import { BiMenu, BiMenuAltRight } from 'react-icons/bi';
+import { UserSideBar } from '../components';
 
 import visa from '../assests/Vector (1).png';
 import master from '../assests/master.png';
@@ -23,9 +21,7 @@ const UserProfile = () => {
   const { state } = useStateContext();
   const { user } = state;
   const navigate = useNavigate();
-  const [openOrders, setOpenOrders] = useState(true);
-  const [openShipping, setOpenShipping] = useState(true);
-  const [openSettings, setOpenSettings] = useState(true);
+  const [openNav, setOpenNav] = useState(false);
 
   const menus = [
     { 
@@ -42,24 +38,6 @@ const UserProfile = () => {
   //     navigate("/login")
   //   }
   // }, [navigate, user]);
-
-  const showOrders = () => {
-    if (window.location.pathname === '/user') {
-      return <Orders />;
-    }
-  };
-  const showSettings = () => {
-    if (window.location.pathname === '/user') {
-      return <Settings />;
-    }
-  };
-  const showShipping = () => {
-    if (window.location.pathname === '/user') {
-      return <Shipping />;
-    }
-  };
-
-  // const menus = getMenus();
 
   const logout = () => {
     LogoutUser();
@@ -85,47 +63,20 @@ const UserProfile = () => {
               />
             </div>
             <ul className="pt-6">
-                <li
+            {menus.map((menu) => (
+              <li key={menu.id}>
+                <Link 
+                className={`flex rounded-md p-2 cursor-pointer text-[#2D2D2D] hover:bg-[#1F451A] hover:text-white active:text-[#1F451A] text- text-sm items-center gap-x-4 
+                mt-2`}
+                to={menu.id}
                 >
-                  <div
-                    className={`flex rounded-md p-2 cursor-pointer text-[#2D2D2D] hover:bg-[#1F451A] hover:text-white active:text-[#1F451A] text- text-sm items-center gap-x-4 
-                     mt-2`}
-                     onClick={() => setOpenOrders(!openOrders)}
-                     >
-                    <div><FaCubes/></div>
+                   <div>{menu.icon}</div>
                     <span className={'origin-left duration-200'}>
-                    Orders
-                    </span>
-                  </div>
-                </li>
-                <li
-                >
-                  <div
-                    className={`flex rounded-md p-2 cursor-pointer text-[#2D2D2D] hover:bg-[#1F451A] hover:text-white active:text-[#1F451A] text- text-sm items-center gap-x-4 
-                     mt-2`}
-                     onClick={() => setOpenShipping(!openShipping)}
-                     >
-                    <div><GrLocation/></div>
-                    <span className={'origin-left duration-200'}>
-                    Shipping
-                    </span>
-          
-                  </div>
-                </li>
-                <li
-                >
-                  <div
-                    className={`flex rounded-md p-2 cursor-pointer text-[#2D2D2D] hover:bg-[#1F451A] hover:text-white active:text-[#1F451A] text- text-sm items-center gap-x-4 
-                     mt-2`}
-                     onClick={() => setOpenSettings(!openSettings)}
-                     >
-                    <div><AiOutlineSetting/></div>
-                    <span className={'origin-left duration-200'}>
-                    Settings
-                    </span>
-          
-                  </div>
-                </li>
+                    {menu.title}
+                    </span>          
+                </Link>
+              </li>
+              ))}
               <li 
                 className={`flex rounded-md p-2 cursor-pointer text-red-500 hover:bg-[#1F451A] active:text-[#1F451A] text- text-sm items-center gap-x-4 
             mt-2`}
@@ -139,21 +90,25 @@ const UserProfile = () => {
           </div>
 
           <div className='h-full flex-1'>
-              {openOrders ? (
-                showOrders()
-              ): (
-                ""
-              )} 
-              <div className='w-full'>
-                {openShipping ? (
-                  showShipping()
-                ): ( " ")} 
+          <div className='text-end m-5'>
+          <button
+                className='rounded bg-[#c9e7c5] accessorySide md:hidden hover:scale-x-110 p-3 cursor-pointer'
+                onClick={() => setOpenNav(!openNav)}>
+                <BiMenu fontSize={28} className=""/>
+              </button>
+              {!openNav ? (
+                <button
+                  className='rounded bg-[#c9e7c5] dontShow hover:scale-x-110  p-3  cursor-pointer'
+                  onClick={() => setOpenNav(!openNav)}>
+                  <BiMenuAltRight className='' fontSize={28}/>
+                </button>
+              ):(
+                <div className={`top-0 right-0 fixed bg-white w-full h-full p-10' ${openNav ? 'translate-x-0' : 'translate-x-full'} ease-in-out duration-300`}>
+                  <UserSideBar setOpenNav={setOpenNav}/>
+                </div>
+              )}
               </div>
-              <div className='w-full'>
-                {openSettings ? (
-                  showSettings()
-                ) : ( ' ')} 
-              </div>
+            <Outlet/>           
         </div>
       </div>
       <div className='w-screen text-center tracking-widest leading-8 p-20 mt-10 mb-10 shopBg h-full '>

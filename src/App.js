@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import './App.css';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate} from 'react-router-dom';
 import { BillingDetails, Footer, Navbar, PaymentDetails } from './components';
 import { Accessories, Carts, CheckOut, ComingSoon, Error, Home, Orders, ProductDetails, Settings, Shipping, Shop, SpecialMenu, UserProfile } from './pages';
 
@@ -13,7 +13,6 @@ function App() {
   const { state } = useStateContext();
   const { welcome } = state;
   const [welcomeInfo, setWelcomeInfo] = useState();
-
   const navigate = useNavigate();
 
   // useEffect(() => {
@@ -35,10 +34,10 @@ function App() {
               <Route exact path="/" element={(<Home />)} />
               <Route exact path="/home" element={(<Home />)} />
               <Route exact path="/shop" element={(<Shop/>)} />
-              <Route path='/user' element={(<UserProfile />)} >
-              <Route path=':orders' element={(<Orders />)} />
-              <Route path=':shipping' element={(<Shipping />)} />
-              <Route path=':settings' element={(<Settings />)} />
+              <Route path='user' element={(<UserProfile />)} >
+              <Route path='orders' element={(<Orders />)} />
+              <Route path='shipping' element={(<Shipping />)} />
+              <Route path='settings' element={(<Settings />)} />
               </Route>
 
               <Route path='/carts' element={(<Carts />)} />

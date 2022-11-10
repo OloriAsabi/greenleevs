@@ -154,7 +154,7 @@ const Home = () => {
         
         <div className='relative h-full small overflow-x-hidden'>
           <div className='text-[#1F451A] lg:w-1/2 md:w-full flex ml-20 mr-20 pb-20 leading-8 flex-col text-justify space-y-20 tracking-widest '>
-            <h1 className='font-extrabold text-justify text-4xl'>
+            <h1 className='font-extrabold text-4xl'>
             Green leevs provides you with the best home grown plant in the city
             </h1>
             <p className='text-2xl text-justify font-light'>
@@ -294,7 +294,7 @@ const Home = () => {
               {category.map(cat => (
                 <Link to={'/shop/accessories'} key={cat.id}>
                   <div className='flex flex-col justify-betwe items-center'>
-                    <div className='text-2xl p-3 cursor-pointer rounded-md w-72 mb-10 hover:scale-x-110 border border-[#1F451A] capitalize text-[#1F451A] font-normal'>{cat.title}</div>
+                    <div className='text-2xl p-3 cursor-pointer text-center rounded-md w-72 mb-10 hover:scale-x-110 border border-[#1F451A] capitalize text-[#1F451A] font-normal'>{cat.title}</div>
                   </div>
                 </Link>               
               )) }

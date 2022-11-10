@@ -16,8 +16,7 @@ const ComingSoon = () => {
       } = useForm();
     
     //   const { enqueueSnackbar } = useSnackbar();
-    
-    
+      
       const submitHandler = async (data) => {
         console.log('Data', data );
       };
