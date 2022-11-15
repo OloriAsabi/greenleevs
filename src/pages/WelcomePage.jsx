@@ -10,16 +10,23 @@ import blog from '../assests/Rectangle 123.png';
 import blog1 from '../assests/Rectangle 123 (2).png';
 import blog2 from '../assests/Rectangle 123 (1).png';
 
-import moment from 'moment';
-import DatePicker from 'react-datepicker';
-
-
+import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const WelcomePage = () => {
   const { dispatch } = useStateContext();
-  const [startDate, setStartDate] = useState(new Date());
 
   const navigate = useNavigate();
+
+  const validationSchema = Yup.object().shape({
+    age: Yup.date()
+      .required()
+      .test("age", "You must be 18 or older", function(age) {
+        const cutoff = new Date();
+        cutoff.setFullYear(cutoff.getFullYear() - 18);      
+        return age <= cutoff;
+      })
+  });
 
   const {
     register,
@@ -27,35 +34,18 @@ const WelcomePage = () => {
     watch,
     trigger,
     formState: { errors }
-  } = useForm();
+  } = useForm({
+    mode: 'onBlur',
+    resolver: yupResolver(validationSchema)
+  });
 
   const { enqueueSnackbar } = useSnackbar();
-
-  // function underAgeValidate(birthday, validationPeriod) {
-  //   const currentDate = new Date().getTime();
-  //   const age = (currentDate - birthday.getTime()) / (31557600000);
-  //   if (age < validationPeriod) {
-  //     return false;
-  //   }
-  //   return true;
-  // }
-  
-  // const DatepickerField = ({
-  //   name, required, handleChange, datePlaceholder, validationPeriod, validationMessage,
-  // }) => {
-  //   const [valid, setValid] = useState(false);
-  //   const [newDate, setNewDate] = useState(datePlaceholder);
-  // }
-  //   const onChange = (e) => {
-  //     const currentYear = new Date().getFullYear();
-  //     const year = e.target.value.split("-")[0];
-  //     const age = currentYear - year;
-  //     if (age < 18) enqueueSnackbar("Invalid age");
-  // }
  
   const submitHandler = async (data) => {
     console.log('Data', data );
-
+    dispatch({ type: 'WELCOME_INFO', payload: data});
+    localStorage.setItem('welcome', JSON.stringify(data));
+    navigate('/');
   };
 
   return (
@@ -72,38 +62,33 @@ const WelcomePage = () => {
                 <br/>is prohibited, as is buying it for a minor. All sales are subject to the receiver and purchaser's legal age. To read our privacy notification and find out more about how your date of birth is collected, 
                 <br/>click here.</p>
 
-              <div className='text-[#2D2D2D] text-xl font-semibold'>To verify that you are at least 19 years old, please enter your birthdate.</div>
+              <div className='text-[#2D2D2D] text-xl font-semibold'>To verify that you are at least 19 years old, please enter your age.</div>
             </div>
           </div>
 
           <div className='container mx-auto flex flex-col justify-center items-center pt-10 pb-10 text-white space-y-10'>
             <form onSubmit={handleSubmit(submitHandler)}>
               <label
-                htmlFor='dob'
+                htmlFor='age'
                 className={`block pb-3 text-2xl font-bold text-center 2 ${
                   errors.email ? 'text-red-400' : 'text-white '} dark:text-gray-400 col-span-4 sm:col-span-2 `}>
                     Date Of Birth</label>
               <input 
-                name="dob" 
-                id="dob" 
+                name="age" 
+                id="age" 
                 type="date" 
                 placeholder='Please verify your date of birth'
                 required={true}
-                {...register('dob', { 
-                  required: 'valide age is required',
-                  // validate: ( value ) =>
-                  // value < 18 ,
-                  // value === watch("") || "",
-                  // min:{new Date(moment().subtract(150, "years"))},
-                  // max:{new Date(moment().subtract(18, "years"))
+                {...register('age', { 
+                  required: 'valid age is required',                  
                 })}
                 onKeyUp={() => {
-                  trigger('dob');
+                  trigger('age');
                 }}
                 className={`block w-auto ${
-                  errors.dob ? 'text-red-400 border-red-400' : 'text-gray-700 '} px-3 py-1 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
+                  errors.age ? 'text-red-400 border-red-400' : 'text-gray-700 '} px-3 py-1 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
               />
-              {errors.dob && (
+              {errors.age && (
                 <p className="text-red-500 text-sm mt-2">
                     A valid age is required
                 </p>
@@ -115,18 +100,6 @@ const WelcomePage = () => {
                 Verify
               </button>
             </form>
-      
-            {/* <DatePicker 
-          autoComplete='off'
-          isClearable
-          placeholderText="Pick a date"
-          // minimumDate={new Date(moment().subtract(150, "years"))} 
-          // maximumDate={new Date(moment().subtract(18, "years"))}
-          selected={startDate} 
-          onChange={(date) => setStartDate(date)}
-          className="text-black"
-          calendarContainer={MyContainer}
-          /> */}
           </div>
         </div>
       </div>

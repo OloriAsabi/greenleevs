@@ -33,11 +33,11 @@ const UserProfile = () => {
     { id: 'settings', title: 'Settings', icon: <AiOutlineSetting/>},
   ];
   
-  // useEffect(() => {
-  //   if(!user) {
-  //     navigate("/login")
-  //   }
-  // }, [navigate, user]);
+  useEffect(() => {
+    if(!user) {
+      navigate("/login")
+    }
+  }, [navigate, user]);
 
   const logout = () => {
     LogoutUser();

@@ -1,5 +1,9 @@
 import axios from 'axios';
 /* eslint-disable */
+
+const token =  localStorage.getItem("token");
+
+
 export const LoginUser = async (body) => {
   try {
     const data = await axios.post(`${process.env.REACT_APP_BASEURL}/login`, body, {
@@ -31,10 +35,16 @@ export const RegisterUser = async (body) => {
 export const LogoutUser = async () => {
   try {
     const data = await axios.post(`${process.env.REACT_APP_BASEURL}/logout`,
+      // {
+      //   Headers: {
+      //     authorization: localStorage.getItem('token')
+      //   }
+      // }
       {
-        Headers: {
-          authorization: localStorage.getItem('token')
-        }
+        headers: { 
+            "Content-Type": "application/json" ,
+            "Authorization": `Bearer ${token}`
+        },
       });
     return data; 
   } catch (error) {
@@ -45,11 +55,12 @@ export const LogoutUser = async () => {
 export const UpdateUser = async (body) => {
   try {
     const data = await axios.post(`${process.env.REACT_APP_BASEURL}/user`, body,
-      {
-        Headers: {
-          authorization: localStorage.getItem('token')
-        }
-      });
+    {
+      headers: { 
+          "Content-Type": "application/json" ,
+          "Authorization": `Bearer ${token}`
+      },
+    });
     return data; 
   } catch (error) {
     console.log(error);  
@@ -79,3 +90,19 @@ export const UserResetPassword = async (body) => {
     console.log(error);  
   }
 };
+
+export const GetProducts = async () => {
+  try {
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/products`, 
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+          })
+        console.log("Get Products",data);
+         return data; 
+        } catch (error) {
+            console.log(error)  
+        }
+}

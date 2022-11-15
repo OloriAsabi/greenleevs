@@ -29,6 +29,11 @@ function reducer (state, action) {
       ...state, user: 
           action.payload 
     };
+    case 'USER_UPDATE':
+    return { 
+      ...state, user: 
+          action.payload 
+    };
   case 'USER_LOGOUT':
     return {
       ...state,

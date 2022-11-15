@@ -37,7 +37,11 @@ const Register = () => {
       sub: sub,
     };
     try {
-      RegisterUser(bodyData);
+      RegisterUser(bodyData).then(response => {
+        console.log(response);
+        const { message } = response.data
+        enqueueSnackbar('Email in user', { variant: 'error' });
+      });
       dispatch({ type: 'USER_LOGIN', payload: bodyData });
       localStorage.setItem('user', JSON.stringify(bodyData));
     } catch (error) {

@@ -37,7 +37,7 @@ const Settings = () => {
     }
     try {
       UpdateUser(bodyData);
-      dispatch({ type: 'USER_LOGIN', payload: bodyData});
+      dispatch({ type: 'USER_UPATE', payload: bodyData});
       localStorage.setItem('user', JSON.stringify(bodyData));    
       enqueueSnackbar('Profile updated successfully', { variant: 'success' });
     } catch (error) {

@@ -18,6 +18,13 @@ function reducer(state, action) {
         return { ...state, user: action.payload };
         default:
          return state;
+    case 'USER_RESET_PASSWORD':
+      return { ...state, user: action.payload };
+    case 'USER_UPDATE':
+        return { 
+          ...state, user: 
+              action.payload 
+        };
     case 'USER_LOGOUT':
       return {
           ...state,

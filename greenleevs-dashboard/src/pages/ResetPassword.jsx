@@ -41,7 +41,7 @@ const ResetPassword = () => {
         localStorage.setItem('token', token);
         console.log(localStorage.getItem(token));
       });
-      dispatch({ type: 'USER_LOGIN', payload: bodyData});
+      dispatch({ type: 'USER_RESET_PASSWORD', payload: bodyData});
       localStorage.setItem('user', JSON.stringify(bodyData));
       navigate('/');
       enqueueSnackbar('Registered Successful', { variant: 'success' });

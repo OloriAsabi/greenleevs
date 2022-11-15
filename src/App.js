@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
 import './App.css';
 import { Routes, Route, useNavigate} from 'react-router-dom';
 import { BillingDetails, Footer, Navbar, PaymentDetails } from './components';
@@ -12,17 +12,14 @@ function App() {
   const scrollRef = useRef(null);
   const { state } = useStateContext();
   const { welcome } = state;
-  const [welcomeInfo, setWelcomeInfo] = useState();
   const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   if(!welcome) {
-  //     navigate("/welcome")
-  //   }else{
-  //     setWelcomeInfo(welcome)
-  //   }
-  //   scrollRef.current.scrollTo(0, 0)
-  // }, [navigate, welcome]);
+  useEffect(() => {
+    if(!welcome) {
+      navigate("/welcome")
+    }
+    scrollRef.current.scrollTo(0, 0)
+  }, [navigate, welcome]);
 
   return (
     <div className="flex flex-col justify-between h-screen">

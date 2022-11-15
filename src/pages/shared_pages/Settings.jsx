@@ -1,46 +1,69 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-// import { BiMenu, BiMenuAltRight } from 'react-icons/bi';
-// import { UserSideBar } from '../../components';
+import { useStateContext } from '../../contexts/ContextProvider';
+import { useSnackbar } from 'notistack';
+import { getError } from '../../data/error';
+import { UpdateUser } from '../../apis/api';
 
 const Settings = () => {
     /* eslint-disable */
 
-    const [openNav, setOpenNav] = useState(false);
   const history = useNavigate();
   const {
     register,
     handleSubmit,
-    validate,
     trigger,
+    setValue,
+    watch,
     formState: { errors }
   } = useForm();
 
+  const { dispatch, state } = useStateContext();
+  const { user } = state;
+
+  const { enqueueSnackbar } = useSnackbar();
+
+  useEffect(() => {
+    if(!user) {
+    history("/login")
+    }
+    setValue('first_name', user.firstName);
+    setValue('last_name', user.lastName);
+    setValue('email', user.email);
+    setValue('old_password', user.oldPassword);
+    setValue('new_password', user.newPassword)
+  }, [history, user]);
+  
   const submitHandler = (data) => {
     console.log(data);
+    if (data.newPassword !== data.confirmPassword) {
+      enqueueSnackbar("Passwords don't match", { variant: 'error' });
+      return;
+    }
+    const bodyData =  {
+      first_name: data.firstName,
+      last_name: data.lastName,
+      email: data.email,
+      old_password: data.oldPassword,
+      new_password: data.newPassword,
+      password_confirmation: data.confirmPassword
+    }
+    try {
+      UpdateUser(bodyData);
+      dispatch({ type: 'USER_UPDATE', payload: bodyData});
+      localStorage.setItem('user', JSON.stringify(bodyData));    
+      enqueueSnackbar('Profile updated successfully', { variant: 'success' });
+    } catch (error) {
+      enqueueSnackbar(getError(error), { variant: 'error' });
+    }
+
   };
   return (
     <div>
       <div className='container mx-auto small my-8 p-10'>
       <div className='flex justify-between items-center gap-1'>
       <h4 className='text-3xl font-bold pb-5'>Settings</h4>
-      {/* <button
-                className='rounded bg-[#c9e7c5] accessorySide md:hidden hover:scale-x-110  p-3  cursor-pointer'
-                onClick={() => setOpenNav(!openNav)}>
-                <BiMenu fontSize={28}/>
-              </button>
-              {!openNav ? (
-                <button
-                  className='rounded bg-[#c9e7c5] dontShow hover:scale-x-110  p-3  cursor-pointer'
-                  onClick={() => setOpenNav(!openNav)}>
-                  <BiMenuAltRight className='' fontSize={28}/>
-                </button>
-              ):(
-                <div className={`top-0 right-0 fixed bg-white w-full h-full p-10' ${openNav ? 'translate-x-0' : 'translate-x-full'} ease-in-out duration-300`}>
-                  <UserSideBar setOpenNav={setOpenNav}/>
-                </div>
-              )} */}
       </div>
       <p className='text-[#2D2D2D] pb-5'>Change your Name/Password</p>
 
@@ -76,24 +99,24 @@ const Settings = () => {
               <div className='flex justify-between gap-10 pt-10 w-full'>
               <div className='flex flex-col w-full'>
                 <label
-                  htmlFor="name"
+                  htmlFor="firstName"
                   className={` pb-3 text-sm 2 ${
-                    errors.name ? 'text-red-400' : 'text-gray-700 '} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}>First Name</label>
+                    errors.firstName ? 'text-red-400' : 'text-gray-700 '} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}>First Name</label>
                 <input 
-                  name="name" 
-                  id="name" 
+                  name="firstName" 
+                  id="firstName" 
                   type="text" 
                   placeholder='Johnson'
                   required={true}
-                  {...register('name', { 
-                    required: 'Name is Required!!!' ,
+                  {...register('firstName', { 
+                    required: 'First Name is Required!!!' ,
                   })}
                   className={`block w-full ${
-                    errors.name ? 'text-red-400 border-red-400' : 'text-gray-700 '}  py-1 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
+                    errors.firstName ? 'text-red-400 border-red-400' : 'text-gray-700 '}  py-1 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
                 />
-                {errors.name && (
+                {errors.firstName && (
                   <p className="text-red-500 text-sm mt-2">
-                    Name is required.
+                   First Name is required.
                   </p>
                 )}
               </div>
@@ -206,9 +229,9 @@ const Settings = () => {
                   </div>
                   <div className='flex flex-col'>
                   <label
-                  htmlFor="newPassword"
+                  htmlFor="confirmPassword"
                   className={` pb-3 text-sm 2 ${
-                    errors.newPassword ? 'text-red-400' : 'text-gray-700 '} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}>Confirm New Password</label>
+                    errors.confirmPassword ? 'text-red-400' : 'text-gray-700 '} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}>Confirm New Password</label>
                     <input 
                       name="confirmPassword" 
                       id="confirmPassword" 
@@ -216,7 +239,7 @@ const Settings = () => {
                       required={true}
                       {...register( 'confirmPassword', {
                         validate: value =>
-                          value === watch('password') || 'The passwords do not match'
+                          value === watch('newPassword') || 'The passwords do not match'
                       })}  
                       placeholder='*****'
                       className='block w-full px-3 py-1 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white'
@@ -237,7 +260,7 @@ const Settings = () => {
             <hr/>
             <div className='mt-5'>
               <div className='block'>
-                <button className='bg-[#1F451A] text-white w-full  rounded text-center cursor-pointer p-3 font-normal' onClick={() => history('/carts')}>
+                <button className='bg-[#1F451A] text-white w-full  rounded text-center cursor-pointer p-3 font-normal'>
                 SAVE NEW SETTINGS
                 </button>
               </div>     

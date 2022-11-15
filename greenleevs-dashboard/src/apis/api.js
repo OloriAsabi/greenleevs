@@ -1,8 +1,10 @@
 import axios from "axios";
 
+const token =  localStorage.getItem("token");
+
 export const LoginUser = async (body) => {
     try {
-    const data = await axios.post(`${process.env.REACT_APP_BASEURL}/login`, body,  {
+    const data = await axios.post(`${process.env.REACT_APP_BASEURL}/v1/login`, body,  {
         headers: { 
             "Content-Type": "application/json" ,
         },
@@ -15,7 +17,7 @@ export const LoginUser = async (body) => {
 
 export const RegisterUser = async (body) => {
     try {
-      const data = await axios.post(`${process.env.REACT_APP_BASEURL}/register`, body,
+      const data = await axios.post(`${process.env.REACT_APP_BASEURL}/v1/register`, body,
           {
             headers: { 
                 "Content-Type": "application/json" ,
@@ -30,10 +32,10 @@ export const RegisterUser = async (body) => {
 
 export const LogoutUser = async () => {
     try {
-        const data = await axios.post(`${process.env.REACT_APP_BASEURL}/logout`,
+        const data = await axios.post(`${process.env.REACT_APP_BASEURL}/v1/logout`,
           {
             Headers: {
-                authorization: localStorage.getItem("token")
+                authorization: token
             }
           })
     return data; 
@@ -44,10 +46,10 @@ export const LogoutUser = async () => {
 
 export const UpdateUser = async (body) => {
     try {
-        const data = await axios.post(`${process.env.REACT_APP_BASEURL}/user`, body,
+        const data = await axios.post(`${process.env.REACT_APP_BASEURL}/v1/user`, body,
           {
             Headers: {
-                authorization: localStorage.getItem("token")
+                authorization: token
             }
           })
     return data; 
@@ -58,7 +60,7 @@ export const UpdateUser = async (body) => {
 
 export const UserForgotPassword = async (body) => {
     try {
-        const data = await axios.post(`${process.env.REACT_APP_BASEURL}/password/forgot`, body)
+        const data = await axios.post(`${process.env.REACT_APP_BASEURL}/v1/password/forgot`, body)
     return data; 
         } catch (error) {
             console.log(error)  
@@ -67,7 +69,7 @@ export const UserForgotPassword = async (body) => {
 
 export const UserResetPassword = async (body) => {
     try {
-      const data = await axios.post(`${process.env.REACT_APP_BASEURL}/password/reset`, body,
+      const data = await axios.post(`${process.env.REACT_APP_BASEURL}/v1/password/reset`, body,
           {
             headers: { 
                 "Content-Type": "application/json" ,
@@ -79,3 +81,93 @@ export const UserResetPassword = async (body) => {
             console.log(error)  
         }
   };
+
+  export const GetOrders = async () => {
+    try {
+        const data = await axios.get(`${process.env.REACT_APP_BASEURL}/v1/admin/orders`,
+            {
+              headers: { 
+                  "Content-Type": "application/json" ,
+                  "Authorization": `Bearer ${token}`
+              },
+            })
+          console.log("Get Orders",data);
+           return data; 
+          } catch (error) {
+              console.log(error)  
+          }
+  }
+
+  export const UpdateOrderStatus = async (body) => {
+    try {
+        const data = await axios.post(`${process.env.REACT_APP_BASEURL}/v1/admin/order`, body,
+            {
+              headers: { 
+                  "Content-Type": "application/json" ,
+              },
+            })
+          console.log("Update Order Status",data);
+           return data; 
+          } catch (error) {
+              console.log(error)  
+          }
+  }
+  export const CreateProducts = async (body) => {
+    try {
+        const data = await axios.post(`${process.env.REACT_APP_BASEURL}/v1/admin/product`, body,
+            {
+              headers: { 
+                  "Content-Type": "application/json" ,
+              },
+            })
+          console.log("Create Products",data);
+           return data; 
+          } catch (error) {
+              console.log(error)  
+          }
+  }
+
+  export const GetProducts = async () => {
+    try {
+        const data = await axios.get(`${process.env.REACT_APP_BASEURL}/v1/admin/products`, 
+            {
+              headers: { 
+                  "Content-Type": "application/json" ,
+                  "Authorization": `Bearer ${token}`
+              },
+            })
+          console.log("Get Products",data);
+           return data; 
+          } catch (error) {
+              console.log(error)  
+          }
+  }
+
+  export const EditProduct = async ({id, body}) => {
+    try {
+        const data = await axios.post(`${process.env.REACT_APP_BASEURL}/v1/admin/product/${id}/edit`, body,
+            {
+              headers: { 
+                  "Content-Type": "application/json" ,
+              },
+            })
+          console.log("Edit Product",data);
+           return data; 
+          } catch (error) {
+              console.log(error)  
+          }
+  }
+  export const DeleteProduct = async (id) => {
+    try {
+        const data = await axios.get(`${process.env.REACT_APP_BASEURL}/v1/admin/product/${id}/delete`,
+            {
+              headers: { 
+                  "Content-Type": "application/json" ,
+              },
+            })
+          console.log("Edit Product",data);
+           return data; 
+          } catch (error) {
+              console.log(error)  
+          }
+  }
