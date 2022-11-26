@@ -8,6 +8,9 @@ const initialState = {
   user: localStorage.getItem('user')
   ? JSON.parse(localStorage.getItem('user'))
   : null,
+  products: localStorage.getItem('user')
+  ? JSON.parse(localStorage.getItem('user'))
+  : null,
   notification: false,
 };
 
@@ -29,7 +32,12 @@ function reducer(state, action) {
       return {
           ...state,
           user: null,
-        };    
+        };
+    case "ADD_PRODUCTS":
+      return {
+        ...state, products:
+        action.payload
+      }    
       }
   };
 export const ContextProvider = ({ children }) => {

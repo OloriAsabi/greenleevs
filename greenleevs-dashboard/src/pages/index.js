@@ -6,6 +6,7 @@ export { default as Customers } from './Customers';
 export { default as Categories } from './Categories';
 export { default as Coupons } from './Coupons';
 export { default as Products} from './Products';
+export { default as ProductDetails} from './ProductDetails';
 export { default as ProductCategories } from './ProductCategories';
 export { default as Settings } from './Settings';
 export { default as Orders} from './Orders';

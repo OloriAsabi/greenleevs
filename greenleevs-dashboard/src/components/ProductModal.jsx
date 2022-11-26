@@ -3,103 +3,148 @@ import { MdOutlineCancel } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { MdDelete } from 'react-icons/md';
 import Spinner from './Spinner';
-import { client } from '../client';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
+import { useForm } from 'react-hook-form';
+import { useStateContext } from '../contexts/ContextProvider';
+import { useSnackbar } from 'notistack';
+import TagsInput from 'react-tagsinput';
+import 'react-tagsinput/react-tagsinput.css';
+import { contents, effect, strain, weights } from "../data/data"
+import { CreateProducts } from '../apis/api';
 
-const ProductModal = ({toggleMenu, setToggleMenu, child, parent, type}) => {
-  const navigate = useNavigate();
+const token =  localStorage.getItem("token");
+
+const ProductModal = ({toggleMenu, setToggleMenu}) => {
+  const { dispatch  } = useStateContext();
+  const navigate = useNavigate()
+ 
+  const { enqueueSnackbar } = useSnackbar();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    trigger
+  } = useForm();
 
   const [fields, setFields] = useState();
-  const [imageAsset, setImageAsset] = useState();
-  const [productPrice, setProductPrice] = useState();
-  const [title, setTitle] = useState('');
-  const [description, setDescription]= useState('');
-  const [parentCategory, setParentCategory] = useState([]);
-  const [childCategory, setChildCategory] = useState([]);
-  const [productType, setProductType] = useState([]);
-  const [tag, setTag] = useState();
-  const [unit, setUnit] = useState();
-  const [quantity, setQuantity]= useState()
-  const [salePrice, setSalePrice]= useState();
+  const [tags, setTags] = useState([]);
+  const [imageAsset, setImageAsset] = useState([]);
+  const [strains, setStrains] = useState(strain);
+  const [weight, setWeight] = useState(weights);
+  const [content, setContent] = useState(contents);
+  const [effects, setEffects] = useState(effect);
   const [loading, setLoading] = useState(false);
   const [wrongImageType, setWrongImageType] = useState(false);
+  const [previewImage, setPreviewImage] = useState(undefined);
 
-  // console.log(childCategory);
+  const handleTagsChange = (newTags) => {
+    console.log(tags)
+    console.log(newTags)
 
-  useEffect(() => {
-    setChildCategory(child.map((item) => item))
-    setParentCategory(parent.map((item) => item))
-    setProductType(type.map((item) => item))
-  }, [child, parent, type])
-  
-  const uploadImage = (e) => {
+    setTags(newTags);
+  };
+
+  const selectFile = (e) => {
     const selectedFile = e.target.files[0];
-    // uploading asset to sanity
+    let images = [];
+    for (let i = 0; i < e.target.files.length; i++) {
+      images.push(URL.createObjectURL(e.target.files[i]));
+    }
     if (selectedFile.type === 'image/png' || selectedFile.type === 'image/svg' || selectedFile.type === 'image/jpeg' || selectedFile.type === 'image/gif' || selectedFile.type === 'image/tiff') {
       setWrongImageType(false);
       setLoading(true);
-      client.assets
-        .upload('image', selectedFile, { contentType: selectedFile.type, filename: selectedFile.name })
-        .then((document) => {
-          setImageAsset(document);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.log('Upload failed:', error.message);
-        });
+      setImageAsset(images);
+      setPreviewImage(selectedFile);
     } else {
       setLoading(false);
       setWrongImageType(true);
     }
   };
 
-  const savePin = () => {
-    if (
-      title && 
-      childCategory && 
-      description && 
-      imageAsset?._id && 
-      parentCategory && 
-      productPrice && 
-      tag && 
-      productType && 
-      quantity && 
-      salePrice && 
-      unit) {
-      const doc = {
-        _type: 'product',
-        title,
-        description,
-        tag,
-        productPrice,
-        productType,
-        salePrice,
-        unit,
-        quantity,
-        image: {
-          _type: 'image',
-          asset: {
-            _type: 'reference',
-            _ref: imageAsset?._id,
-          },
+const uploadImage = async () => {
+    //Check if any file is selected or not
+  if (imageAsset != null) {
+    //If file selected then create FormData
+    const fileToUpload = imageAsset
+    const imageData = new FormData();
+    Array.from(fileToUpload).forEach(item => {
+      imageData.append('name', 'Image Upload');
+      imageData.append('file_attachment', item)
+    })
+    let res = await fetch(
+      'http://127.0.0.1:8000/v1/admin/upload/files',
+      {
+        method: 'post',
+        body: imageData,
+        headers: {
+          'Content-Type': 'multipart/form-data; ',
+          'Authorization': token,
         },
-        id: Math.random().toString(32).substring(2),
-        parentCategory,
-      };
-      client.create(doc).then(() => {
-        navigate('/');
-      });
-    } else {
-      setFields(true);
-
-      setTimeout(
-        () => {
-          setFields(false);
-        },
-        2000,
-      );
+      }
+    );
+    let responseJson = await res.json();
+    console.log(responseJson);
+    if (responseJson.status == 1) {
+      alert('Upload Successful');
     }
+  } else {
+    //if no file selected the show alert
+    alert('Please Select File first');
+  }
+};
+
+  const submitHandler = async (data) => {
+    console.log("Data Product Modal", data);
+
+    const body = {
+      label: data.title,
+      product_image: URL.createObjectURL(imageAsset),
+      product_images: [URL.createObjectURL(imageAsset)], 
+      quantity: data.quantity,
+      description: data.description,
+      price: data.price,
+      category_id: 2,
+      sale_price: data.salePrice,
+      tags: tags,
+      product_meta: [
+        {
+          option: "weight",
+          values: data.weight
+        },
+        {
+          option: "strain",
+          values: data.strain
+        },
+        {
+          option: "content",
+          values: data.content
+        },
+        {
+          option: "effects",
+          values: data.effects
+        }
+      ]
+    };
+
+    console.log('Body',body);
+    try {
+      CreateProducts(body)
+       .then(response => {
+        console.log(response);
+      });
+      dispatch({ type: 'ADD_PRODUCTS', payload: body});
+      localStorage.setItem('products', JSON.stringify(body));
+      navigate('/products');
+      enqueueSnackbar('Products Added Successfully', { variant: 'success' });
+    } catch (error) {
+      enqueueSnackbar("Products Upload failed", { variant: 'error' });
+    }
+   
+
   };
+
+  console.log(imageAsset);
 
   return (
     <main
@@ -158,22 +203,24 @@ const ProductModal = ({toggleMenu, setToggleMenu, child, parent, type}) => {
                   </div>
                   <input
                     type="file"
+                    accept='image/*'
+                    multiple
                     name="upload-image"
-                    onChange={uploadImage}
+                    onChange={selectFile}
                     className="w-0 h-0"
                   />
                 </label>
               ) : (
                 <div className="relative h-full">
                   <img
-                    src={imageAsset?.url}
+                    src={previewImage}
                     alt="uploaded-pic"
                     className="h-full w-full"
                   />
                   <button
                     type="button"
                     className="absolute bottom-3 right-3 p-3 rounded-full bg-white text-xl cursor-pointer outline-none hover:shadow-md transition-all duration-500 ease-in-out"
-                    onClick={() => setImageAsset(null)}
+                    onClick={() => setPreviewImage(null)}
                   >
                     <MdDelete />
                   </button>
@@ -182,142 +229,262 @@ const ProductModal = ({toggleMenu, setToggleMenu, child, parent, type}) => {
             </div>
           </div>
 
-          <div className="grid p-10 gap-6 lg:pl-5 mt-5 w-full">
+          <form 
+          className="grid p-10 gap-6 lg:pl-5 mt-5 w-full" 
+          onSubmit={handleSubmit(submitHandler)}>
             <div className='flex space-x-5'>
-            <label>Product Title : </label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder=""
-              className="w-full border border-gray-200 p-2"
-            />
-            {/* {user && (
-              <div className="flex gap-2 mt-2 mb-2 items-center bg-white rounded-lg ">
-                <img
-                  src={user.image}
-                  className="w-10 h-10 rounded-full"
-                  alt="user-profile"
-                />
-                <p className="font-bold">{user.userName}</p>
-              </div>
-            )} */}
+            <label htmlFor='title'
+            className={`block pb-3 text-sm 2 ${
+            errors.title ? "text-red-400" : "text-gray-700 "} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}
+            >Product Title : </label>
+              <input 
+                name="title" 
+                id="title" 
+                type="text" 
+                placeholder=''
+                className={`block w-full ${
+                  errors.email ? "text-red-400 border-red-400" : "text-gray-700 "} px-3 py-1 mb-2 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
+                  {...register("title", { 
+                    required: "Title is Required!!!" ,
+                   })}
+                   onKeyUp={() => {
+                     trigger("title");
+                   }}
+                  required={true}
+                  />
+                   {errors.title && (
+                  <p className="text-red-500 text-sm mt-2">
+                    Title is Required!!!
+                  </p>
+                )}
             </div>
             <div className='flex space-x-5'>
-            <label>Product Details:</label>
-            <input
-              type="text"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder=""
-              className="w-full border border-gray-200 p-2"
-            />
+            <label
+            htmlFor='description'
+              className={`block pb-3 text-sm 2 ${
+              errors.description ? "text-red-400" : "text-gray-700 "} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}>Product Description:</label>
+           <input 
+                name="description" 
+                id="description" 
+                type="text" 
+                placeholder=''
+                className={`block w-full ${
+                  errors.email ? "text-red-400 border-red-400" : "text-gray-700 "} px-3 py-1 mb-2 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
+                  {...register("description", { 
+                    required: "Description is Required!!!" ,
+                   })}
+                   onKeyUp={() => {
+                     trigger("description");
+                   }}
+                  required={true}
+                  />
+                   {errors.description && (
+                  <p className="text-red-500 text-sm mt-2">
+                    Description is Required!!!
+                  </p>
+                )}
             </div>
             <div className='flex space-x-5'>
-            <label>Product Tag:</label>
-            <input
-              type="text"
-              vlaue={tag}
-              onChange={(e) => setTag(e.target.value)}
-              placeholder=""
-              className="w-full border border-gray-200 p-2"
-            />
+            <label
+              htmlFor="tags"
+              className={`block pb-3 text-sm 2 ${
+                        errors.tags ? 'text-red-400' : 'text-gray-700 '
+               } dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}
+              >
+                     Product Tags:
+                    </label>
+                    <TagsInput
+                      name="tags"
+                      id="tags"
+                      autoComplete="off"
+                      required={true}
+                      // {...register('tags', {
+                      //   required: 'Please Enter the tags!!!',
+                      // validate: v => console.log(v)
+                      // })}
+                      placeholder="Enter Tags"
+                      maxTags={10}
+                      value={tags}
+                      onChange={handleTagsChange}
+                      className="block w-full px-3 py-1 text-sm
+                      h-32 focus:outline-none leading-5 rounded-md tag-box react-tagsinput focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#0F1926] border p-2 bg-gray-100 border-transparent focus:bg-white"
+                      type="text"
+                    />
+                    {errors.tags && <p className="mt-2 text-sm text-red-500">Please Enter the tags!!!</p>}
             </div>
-            <div className='flex space-x-5'>
+            {/* <div className='flex space-x-5'>
             <label>Unit(kg/pc/lb/ml/g...etc):</label>
             <input
               type="number"
-              value={unit}
-              onChange={(e) => setUnit(e.target.value)}
               placeholder=""
               className="w-full border border-gray-200 p-2"
             />
+            </div> */}
+            <div className='flex space-x-5'>
+            <label
+             htmlFor='quantity'
+             className={`block pb-3 text-sm 2 ${
+             errors.quantity ? "text-red-400" : "text-gray-700 "} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}>Product Quantity:</label>
+                <input 
+                name="quantity" 
+                id="quantity" 
+                type="number" 
+                placeholder=''
+                className={`block w-full ${
+                  errors.quantity ? "text-red-400 border-red-400" : "text-gray-700 "} px-3 py-1 mb-2 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
+                  {...register("quantity", { 
+                    required: "quantity is Required!!!" ,
+                   })}
+                   onKeyUp={() => {
+                     trigger("quantity");
+                   }}
+                  required={true}
+                  />
+                   {errors.quantity && (
+                  <p className="text-red-500 text-sm mt-2">
+                    quantity is Required!!!
+                  </p>
+                )}
             </div>
             <div className='flex space-x-5'>
-            <label>Product Quantity:</label>
-              <input
-              type="number"
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-              placeholder=""
-              className="w-full border border-gray-200 p-2"
-            />
+            <label
+              htmlFor='price'
+              className={`block pb-3 text-sm 2 ${
+              errors.price ? "text-red-400" : "text-gray-700 "} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}>Product Price:</label>
+            <input 
+                name="price" 
+                id="price" 
+                type="number" 
+                placeholder=''
+                className={`block w-full ${
+                  errors.price ? "text-red-400 border-red-400" : "text-gray-700 "} px-3 py-1 mb-2 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
+                  {...register("price", { 
+                    required: "price is Required!!!" ,
+                   })}
+                   onKeyUp={() => {
+                     trigger("price");
+                   }}
+                  required={true}
+                  />
+                   {errors.price && (
+                  <p className="text-red-500 text-sm mt-2">
+                    price is Required!!!
+                  </p>
+                )}
             </div>
             <div className='flex space-x-5'>
-            <label>Product Price:</label>
-              <input
-              type="number"
-              value={productPrice}
-              onChange={(e) => setProductPrice(e.target.value)}
-              placeholder=""
-              className="w-full border border-gray-200 p-2"
-            />
+            <label
+              htmlFor='salePrice'
+              className={`block pb-3 text-sm 2 ${
+              errors.salePrice ? "text-red-400" : "text-gray-700 "} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}>Product Sale Price:</label>
+            <input 
+                name="salePrice" 
+                id="salePrice" 
+                type="number" 
+                placeholder=''
+                className={`block w-full ${
+                  errors.salePrice ? "text-red-400 border-red-400" : "text-gray-700 "} px-3 py-1 mb-2 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
+                  {...register("salePrice", { 
+                    required: "salePrice is Required!!!" ,
+                   })}
+                   onKeyUp={() => {
+                     trigger("salePrice");
+                   }}
+                  required={true}
+                  />
+                   {errors.salePrice && (
+                  <p className="text-red-500 text-sm mt-2">
+                    Sales Price is Required!!!
+                  </p>
+                )}
             </div>
-            <div className='flex space-x-5'>
-            <label>Sale Price:</label>
-            <input
-              type="number"
-              value={salePrice}
-              onChange={(e) => setSalePrice(e.target.value)}
-              placeholder=""
-              className="w-full border border-gray-200 p-2"
-            />
-            </div>
-            <div className="">
+            <div className='flex space-x-5 mb-5'>
+                <label className="text-sm font-normal">Product Weight:</label>
+                <select
+                 id="weight"  
+                 className={` ${
+                errors.weight ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
+                {...register('weight')}
+                  onChange={(e) => {
+                    setWeight(e.target.value);
+                  }}
+                >
+                  <option value="others" className="sm:text-bg bg-white">Select Weight</option>
+                  {weights.map((item) => (
+                  <option className="text-base border-0 outline-none capitalize bg-white text-black " value={item.name}  key={item.id}>
+                    {item.name}
+                  </option>
+                      ))}
+                </select>
+              </div>
               <div className='flex space-x-5 mb-5'>
-                <label className="text-sm font-normal">Parent category:</label>
+                <label className="text-sm font-normal">Product Strain:</label>
                 <select
-                  onChange={(e)=>(setParentCategory(e))}
-                  className="w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer"
+                 id="strain"  
+                 className={` ${
+                errors.strain ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
+                {...register('strain')}
+                  onChange={(e) => {
+                    setStrains(e.target.value);
+                  }}
                 >
-                  <option value="others" className="sm:text-bg bg-white">Select Category</option>
-                  {parentCategory.map((item) => (
-                    <option className="text-base border-0 outline-none capitalize bg-white text-black " value={item} key={item}>
-                      {item}
-                    </option>
-                  ))}
+                  <option value="others" className="sm:text-bg bg-white">Select Strain</option>
+                  {strain.map((item) => (
+                  <option className="text-base border-0 outline-none capitalize bg-white text-black " value={item.name}  key={item.id}>
+                    {item.name}
+                  </option>
+                      ))}
                 </select>
               </div>
               <div className='flex space-x-5 mb-3'>
-                <label>Child category:</label>
+                <label>Product Content:</label>
                 <select
-                  onChange={(e) => (setChildCategory(e.target.value))}
-                  className="w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer"
+                  onChange={(e) => {
+                    setContent(e.target.value);
+                  }}
+                  id="content"  
+                  className={` ${
+                    errors.content ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
+                    {...register('content')}
                 >
-                  <option value="others" className="sm:text-bg bg-white">Select Category</option>
-                  {childCategory.map((item) => (
-                    <option className="text-base border-0 outline-none capitalize bg-white text-black " key={item} value={item}>
-                      {item}
-                    </option>
-                  ))}
+                  <option value="others" className="sm:text-bg bg-white">Select Content</option>
+                  {content.map((item) => (
+                  <option className="text-base border-0 outline-none capitalize bg-white text-black " value={item.name}  key={item.id}>
+                    {item.name}
+                  </option>
+                      ))}
                 </select>
               </div>
               <div className='flex space-x-5 mb-3'>
-                <label>Product type:</label>
+                <label>Product Effects:</label>
                 <select
-                  onChange={(e) => (setProductType(e))}
-                  className="outline-none w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer"
+                  // className="outline-none w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer"
+                  onChange={(e) => {
+                    setEffects(e.target.value);
+                  }}
+                  id="effects"  
+                  className={` ${
+                    errors.effects ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
+                  {...register('effects')}
                 >
-                  <option value="others" className="sm:text-bg bg-white">Select Category</option>
-                  {productType.map((item) => (
-                    <option className="text-base border-0 outline-none capitalize bg-white text-black " value={item} key={item}>
-                      {item}
-                    </option>
-                  ))}
+                  <option value="others" className="sm:text-bg bg-white">Select Effects</option>
+                  {effects.map((item) => (
+                  <option className="text-base border-0 outline-none capitalize bg-white text-black " value={item.name} key={item.id}>
+                    {item.name}
+                  </option>
+                      ))}
                 </select>
               </div>
 
               <div className="flex justify-end items-end mt-5">
                 <button
-                  type="button"
-                  onClick={savePin}
+                  type="submit"
                   className="bg-[#1F451A] text-white hover: cursor-pointer p-4 rounded"
                 >
                 Add Products
                 </button>
               </div>
-            </div>
-          </div>
+          </form>
         </div>
         </div>
         </article>

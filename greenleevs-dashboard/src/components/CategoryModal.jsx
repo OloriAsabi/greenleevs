@@ -3,7 +3,6 @@ import { MdOutlineCancel } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { MdDelete } from 'react-icons/md';
 import Spinner from './Spinner';
-import { client } from '../client';
 import { AiOutlineCloudUpload } from 'react-icons/ai';
 
 const CategoryModal = ({toggleMenu, setToggleMenu, type}) => {
@@ -28,15 +27,15 @@ const CategoryModal = ({toggleMenu, setToggleMenu, type}) => {
     if (selectedFile.type === 'image/png' || selectedFile.type === 'image/svg' || selectedFile.type === 'image/jpeg' || selectedFile.type === 'image/gif' || selectedFile.type === 'image/tiff') {
       setWrongImageType(false);
       setLoading(true);
-      client.assets
-        .upload('image', selectedFile, { contentType: selectedFile.type, filename: selectedFile.name })
-        .then((document) => {
-          setImageAsset(document);
-          setLoading(false);
-        })
-        .catch((error) => {
-          console.log('Upload failed:', error.message);
-        });
+      // client.assets
+      //   .upload('image', selectedFile, { contentType: selectedFile.type, filename: selectedFile.name })
+      //   .then((document) => {
+      //     setImageAsset(document);
+      //     setLoading(false);
+      //   })
+      //   .catch((error) => {
+      //     console.log('Upload failed:', error.message);
+      //   });
     } else {
       setLoading(false);
       setWrongImageType(true);
@@ -63,9 +62,9 @@ const CategoryModal = ({toggleMenu, setToggleMenu, type}) => {
         },
         id: Math.random().toString(32).substring(2),
       };
-      client.create(doc).then(() => {
-        navigate('/');
-      });
+      // client.create(doc).then(() => {
+      //   navigate('/');
+      // });
     } else {
       setFields(true);
 

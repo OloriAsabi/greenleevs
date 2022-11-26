@@ -5,7 +5,7 @@ import { Routes, Route, useNavigate  } from 'react-router-dom';
 
 import { useStateContext } from './contexts/ContextProvider';
 import { Sidebar, Navbar } from './components';
-import { GetProducts } from './apis/api'
+import Productdetails from './pages/ProductDetails';
 
 
 function App() {
@@ -14,7 +14,6 @@ function App() {
   const { user } = state;
   const navigate = useNavigate();
   const scrollRef = useRef(null);
-  const [products, setProducts] = useState();
 
   useEffect(() => {
     if(!user) {
@@ -22,14 +21,8 @@ function App() {
     }else{
      setUserInfo(user)
     }
-    GetProducts()
-      .then((data) => {
-      setProducts(data);
-      // localStorage.clear();
-   })
   }, [navigate, user]);
 
-  console.log(products);
 
   useEffect(() => {
     scrollRef.current.scrollTo(0, 0)
@@ -63,6 +56,7 @@ function App() {
               <Route path="/home" element={(<Home/>)} />
 
               <Route path="/products" element={(<Products />)} />
+              <Route path="/products/:id" element={(<Productdetails />)} />
               <Route path="/categories" element={(<Categories />)} />
               <Route path="/customers" element={(<Customers />)} />
               <Route path="/orders" element={(<Orders />)} />

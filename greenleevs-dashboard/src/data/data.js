@@ -15,38 +15,45 @@ export const links = [
           id: 1,  
           name: 'Home',
           icon: <HiOutlineHome/>,
+          href: 'home'
         },
         {
             id: 2,  
             name: 'Products',
             icon: <FiShoppingBag />,
+            href: 'products'
         },
         {
             id: 3,  
             name: 'Categories',
             icon: <BiCategory />,
+            href: 'categories'
         },
         {
             id: 4,  
             name: 'Customers',
             icon: <IoIosPeople/>,
+            href: 'customers'
         },
         {
             id: 5,  
             name: 'Orders',
             icon: <BsCardList/>,
+            href: 'orders'
 
         },
         {
             id: 6,  
             name: 'Coupons',
             icon: <BiGift/>,
+            href: 'coupons'
 
         },
         {
             id: 7,  
             name: 'Settings',
             icon: <FiSettings />,
+            href: 'settings'
 
         },
 
@@ -1547,3 +1554,152 @@ export const couponData = () => {
   ]
   return data
 }
+
+export const strain = [
+  { id: 1,
+    name: "hybrid"
+  },
+  { id: 2,
+    name: "sativa"
+  },
+  { id: 3,
+    name: "indica"
+  }
+];
+
+export const contents = [
+  {
+    id: 1,
+    name: "THC - 100%"
+  },
+  {
+    id: 2,
+    name: "THC - 80%"
+  },
+  {
+    id: 3,
+    name: "THC - 50%"
+  },
+  {
+    id: 4,
+    name: "THC - 20%"
+  },
+  {
+    id: 5,
+    name: "THC - 10%"
+  },
+  {
+    id: 6,
+    name: "THC - 5%"
+  },
+  {
+    id: 7,
+    name: "CBD - 100%"
+  },  
+  {
+    id: 8,
+    name: "CBD - 100%"
+  },  
+  {
+    id: 9,
+    name: "CBD - 80%"
+  }, 
+  {
+    id: 10,
+    name: "CBD - 50%"
+  },  
+  {
+    id: 11,
+    name: "CBD - 20%"
+  },  
+  {
+    id: 12,
+    name: "CBD - 10%"
+  },
+  {
+    id: 13,
+    name: "CBD - 5%"
+  }
+]
+
+export const effect = [
+  {
+    id: 1,
+    name: 'happy'
+  },
+  {
+    id: 2,
+    name: 'relaxing'
+  },
+  {
+    id: 3,
+    name: 'active'
+  },
+  {
+    id: 4,
+    name: 'euphoria'
+  },
+  {
+    id: 5,
+    name: 'helps fight insomia'
+  },
+  {
+    id: 6,
+    name: 'deep relaxing'
+  },
+]
+
+export const weights = [
+  {
+    id: 1,
+    name: "100g"
+  },
+  {
+    id: 2,
+    name: "70g"
+  },
+  {
+    id: 3,
+    name: "50g"
+  },
+  {
+    id: 4,
+    name: "20g"
+  },
+  {
+    id: 5,
+    name: "10g"
+  },
+  {
+    id: 6,
+    name: "8g"
+  },
+  {
+    id: 7,
+    name: "7g"
+  },  
+  {
+    id: 8,
+    name: "6g"
+  },  
+  {
+    id: 9,
+    name: "5g"
+  }, 
+  {
+    id: 10,
+    name: "4g"
+  },  
+  {
+    id: 11,
+    name: "3g"
+  },  
+  {
+    id: 12,
+    name: "2g"
+  },
+  {
+    id: 13,
+    name: "1g"
+  }
+]

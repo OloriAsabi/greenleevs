@@ -118,6 +118,7 @@ export const UserResetPassword = async (body) => {
             {
               headers: { 
                   "Content-Type": "application/json" ,
+                  "Authorization": `Bearer ${token}`
               },
             })
           console.log("Create Products",data);
@@ -143,12 +144,30 @@ export const UserResetPassword = async (body) => {
           }
   }
 
-  export const EditProduct = async ({id, body}) => {
+
+export const getProductId = (id) => {
+  try {
+      const req = axios.get(`${process.env.REACT_APP_BASEURL}/v1/admin/product/?sku=${id}`,  {
+        headers: { 
+            "Content-Type": "application/json" ,
+            "Authorization": `Bearer ${token}`
+        },
+      });
+
+      console.log("Details", req);
+      return req;
+  } catch (error) {
+      console.log(error)  
+  }
+}
+
+export const EditProduct = async ({id, body}) => {
     try {
         const data = await axios.post(`${process.env.REACT_APP_BASEURL}/v1/admin/product/${id}/edit`, body,
             {
               headers: { 
                   "Content-Type": "application/json" ,
+                  "Authorization": `Bearer ${token}`
               },
             })
           console.log("Edit Product",data);
@@ -163,6 +182,7 @@ export const UserResetPassword = async (body) => {
             {
               headers: { 
                   "Content-Type": "application/json" ,
+                  "Authorization": `Bearer ${token}`
               },
             })
           console.log("Edit Product",data);

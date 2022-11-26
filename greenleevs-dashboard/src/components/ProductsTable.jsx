@@ -6,11 +6,17 @@ import { useTable,
    useFilters
 } from "react-table";
 import {DOTS, useCustomPagination} from './useCustomPagination';
-import { productsData } from '../data/data';
 import { classNames } from '../utils/utils';
 import { BsToggle2Off } from 'react-icons/bs';
 import { Button, PageButton } from '../utils/Button';
 import ProductModal from './ProductModal';
+import { Link, useNavigate } from 'react-router-dom';
+import { DeleteProduct, getProductId, GetProducts } from '../apis/api';
+import { useRef } from 'react';
+import { FiEdit } from 'react-icons/fi';
+import { AiFillDelete } from 'react-icons/ai';
+import EditModal from './EditModal';
+import Spinner from './Spinner';
 
 
 export function GlobalFilter({
@@ -106,14 +112,23 @@ export function GlobalFilter({
       </select>
     );
   }
-  
+
 const ProductsTable = () => {
     const [toggleMenu, setToggleMenu] = useState(false);
-    const data = useMemo(() => productsData(), []);
+    const [products, setProducts] = useState([]);
+    const [showModal, setShowModal] = useState(false);
+    const data =  useMemo(() => [...products], [products])
+    const [isLoading, setIsLoading] = useState(false)
+    const productRef = useRef();
+    const navigate = useNavigate();
 
-    const child = data.map((child) => child.childCategory)
-    const parent = data.map((parent) => parent.parentCategory);
-    const type = data.map((type) => type.productType);
+    productRef.current = products;
+    console.log("Datas", data);
+
+
+    // const child = data.map((child) => child.childCategory)
+    // const parent = data.map((parent) => parent.parentCategory);
+    // const type = data.map((type) => type.productType);
 
 //    useEffect(() => {
 //     if(toggleMenu){
@@ -123,84 +138,135 @@ const ProductsTable = () => {
 //     }
  
 //    }, [toggleMenu]);
+console.log(productRef.current);
    
-      
-  const handleEdit = () => {
+  useEffect(() => {
+    setIsLoading(true)
 
+    GetProducts()
+    .then((response) => {
+
+    const data = response.data.data
+      
+    setProducts(data)
+    setIsLoading(false)
+    // localStorage.clear();
+    }).catch((e) => {
+    console.log(e);
+    });
+  },[]);
+
+  // const productId = (rowIndex) => {
+  //   const id = productRef.current[rowIndex].id;
+    
+  //   getProductId(id)
+  //   navigate("/products/" + id);
+  // };
+
+  const handleEdit = (rowIndex) => {
+    const sku = productRef.current[rowIndex].sku;
+
+    setShowModal(true)
+    console.log('Sku: ',sku);
+    // navigate("/products/" + sku);
   }
         
-  const handleDelete = () => {}
+  const handleDelete = (rowIndex) => {
+    const id = productRef.current[rowIndex].id;
+
+    DeleteProduct(id).then(() => {
+      navigate('/products')
+
+      let newProduct = [...productRef.current];
+      newProduct.splice(rowIndex, 1)
+
+      setProducts(newProduct);
+    })
+    .catch((e) => {
+      console.log(e);
+    });
+  }
   
-    const columns = useMemo(() => [
-      {
-        Header: "ID",
-        accessor: "id",
-      },
-      {
-        Header: "Product Name",
-        accessor: "productName",
-        Cell: AvatarCell,
-        imgAccessor: "productImg",
-      },
-      {
-        Header: "Category",
-        accessor: "parentCategory",
-        Filter: SelectColumnFilter,  // new
-        filter: 'includes',  // new  
-      },
-      {
-        Header: "Price",
-        accessor: "price",
-        Filter: SelectColumnFilter,  // new
-        filter: 'includes',  // new
-      },
-      {
-        Header: "Stock",
-        accessor: "stock",
-      },
-      {
-        Header: "Status",
-        accessor: "status",
-        Cell: StatusPill,
-      },
-      {
-        Header: "Discount",
-        accessor: "discount",
-      },
-      {
-        Header: "Details",
-        accessor: "details",
-        Cell:({value}) => (
-            <div>
-                <a href='/' >{value}</a>
-            </div>
-        )
-      },
-      {
-        Header: "Published",
-        accessor: "published",
-        Cell:({value}) => (
-            <div>
-            {!toggleMenu && (
-                <button  onClick={() => setToggleMenu(true)}>{value}</button>
-            )}
-            {toggleMenu && (
-                <button  onClick={() => setToggleMenu(false)}><BsToggle2Off/></button>
-            )}  
-            </div>
-        )
-      },
-      {
-        Header: "Actions",
-        accessor: "actions",
-        Cell: ({ value }) => (
-            <div>
-              <button onClick={() => handleEdit(value)}>{value.edit}</button>
-              <button className='ml-4' onClick={() => handleDelete(value)}>{value.delete}</button>
-            </div>
-          ),
-      },    
-], [toggleMenu]);
+  const handleFileSubmit = (data) => {
+    console.log(data);
+  }
+  
+const columns = useMemo(() => [
+  {
+    Header: "ID",
+    accessor: "product_id",
+  },
+  {
+    Header: "Product Name",
+    accessor: "label",
+    Cell: AvatarCell,
+    imgAccessor: "product_image",
+  },
+  {
+    Header: "Category",
+    accessor: "category",
+    Cell: ({ value }) => (
+         <div>
+        {value.label}
+         </div>
+    ),
+  },
+  {
+    Header: "Price",
+    accessor: "price",
+    Filter: SelectColumnFilter,  // new
+    filter: 'includes',  // new
+  },
+  {
+    Header: "Stock",
+    accessor: "quantity",
+  },
+  {
+    Header: "Product Sku",
+    accessor: "sku"
+  },
+  // {
+  //   Header: "Status",
+  //   accessor: "status",
+  //   Cell: StatusPill,
+  // },
+  // {
+  //   Header: "Discount",
+  //   accessor: "discount",
+  // },
+//   {
+//     Header: "Details",
+//     accessor: "details",
+//     Cell: (props) => {
+//       const rowIdx = props.row.id;
+//       return (
+//         <div>
+//            <div onClick={() => productId(rowIdx)}>{props}</div>
+//         </div>
+//     )
+//   },
+// },
+    {
+    Header: "Actions",
+    // accessor: "actions",
+    Cell: (props) => {
+      const rowIdx = props.row.id;
+      // const rowSku = props.row.sku;
+
+      return (
+        <div className='flex gap-5'>
+          <span onClick={() =>handleEdit(rowIdx)}>
+          <FiEdit/>
+          </span>
+
+          <span onClick={() =>handleDelete(rowIdx)}>
+          <AiFillDelete/>
+          </span>
+        </div>
+      );
+    },
+  },    
+], []);
 
 
 const { 
@@ -264,12 +330,12 @@ const {
           onClick={() => setToggleMenu(true)}>
             + Add Product
         </button> 
-        <ProductModal toggleMenu={toggleMenu} parent={parent} type={type} child={child} setToggleMenu={setToggleMenu} />
+        <ProductModal toggleMenu={toggleMenu} setToggleMenu={setToggleMenu} />
         </div>
         </div>
 
-        <div className='grid items-center text-center lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-5 p-5 mb-10 border-white shadow rounded-xl'>
-        <div>
+        <form onSubmit={handleFileSubmit()} 
+        className='flex  items-center text-center gap-5 p-5 mb-10 border-white shadow rounded-xl'>
          <input
             name="userfile" 
             type="file" 
@@ -277,23 +343,17 @@ const {
             placeholder='Drop your file'
             className='w-full p-3'
          />
-         </div>
-
-         <div className='p-3 w-4/8 bg-white text-[#1F451A] text-center rounded cursor-pointer'>
+         <div className='p-3 w-4/8 bg-[#1F451A] text-white text-center rounded cursor-pointer'>
             <button>
              Upload
             </button>
          </div>
-         <div className='p-3 w-4/8 bg-[#1F451A] text-center text-white rounded cursor-pointer'>
-         <a href='/'>
-         <button>
-             Download
-            </button>
-            </a>
-         </div>
-        </div>
+         </form>
 
         <div className="mt-2 flex flex-col">
+        {isLoading && (
+            <Spinner />
+              )}
             <div className="-my-2 overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">
               <div  className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                 <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -318,7 +378,7 @@ const {
                       return (
                           <tr {...row.getRowProps()}>
                           {row.cells.map((cell) => {
-                              return <td {...cell.getCellProps()} className="px-6 py-10 whitespace-nowrap">{cell.render("Cell")}</td>
+                                 return<td {...cell.getCellProps()} className="px-6 py-10 whitespace-nowrap">{cell.render("Cell")}</td>
                           })}
                           </tr>
                       );
@@ -329,6 +389,10 @@ const {
               </div>
           </div>
          </div>
+         {showModal ? 
+          <EditModal
+           showModal={showModal} 
+           setShowModal={setShowModal} /> : ''}
 
         <div className="py-3 flex items-center text-end justify-end pt-10">
          <span>

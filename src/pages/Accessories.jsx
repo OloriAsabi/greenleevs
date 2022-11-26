@@ -86,7 +86,7 @@ const Accessories = () => {
                         {...register('sort')}>
                         <option 
                           defaultValue="select" value=""> 
-                Sort
+                            Sort
                         </option>
                         <option value="Popular">Popular</option>
                         <option value="Brand">Brand</option>
