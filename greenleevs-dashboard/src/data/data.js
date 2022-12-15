@@ -1,7 +1,7 @@
 import { HiOutlineHome } from 'react-icons/hi';
 import { FiShoppingBag, FiSettings, FiCreditCard, FiEdit } from "react-icons/fi";
 import { FaSearchPlus } from "react-icons/fa"
-import { BiCategory, BiGift } from "react-icons/bi";
+import { BiGift } from "react-icons/bi";
 import { IoIosPeople } from "react-icons/io";
 import { BsCardList, BsCurrencyDollar, BsShield, BsToggle2On, } from "react-icons/bs";
 import { AiFillDelete } from 'react-icons/ai';
@@ -24,12 +24,6 @@ export const links = [
             href: 'products'
         },
         {
-            id: 3,  
-            name: 'Categories',
-            icon: <BiCategory />,
-            href: 'categories'
-        },
-        {
             id: 4,  
             name: 'Customers',
             icon: <IoIosPeople/>,
@@ -42,13 +36,13 @@ export const links = [
             href: 'orders'
 
         },
-        {
-            id: 6,  
-            name: 'Coupons',
-            icon: <BiGift/>,
-            href: 'coupons'
+        // {
+        //     id: 6,  
+        //     name: 'Coupons',
+        //     icon: <BiGift/>,
+        //     href: 'coupons'
 
-        },
+        // },
         {
             id: 7,  
             name: 'Settings',
@@ -1567,7 +1561,7 @@ export const strain = [
   }
 ];
 
-export const contents = [
+export const thcContents = [
   {
     id: 1,
     name: "THC - 100%"
@@ -1591,7 +1585,9 @@ export const contents = [
   {
     id: 6,
     name: "THC - 5%"
-  },
+  }
+]
+export const cbdContents =[
   {
     id: 7,
     name: "CBD - 100%"

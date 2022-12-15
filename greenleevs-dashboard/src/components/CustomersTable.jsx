@@ -1,4 +1,4 @@
-import React, {useMemo, useEffect, useState } from 'react'
+import React, {useMemo, useEffect, useState, useRef } from 'react'
 import { useTable,
    useGlobalFilter, 
    useAsyncDebounce,  
@@ -8,6 +8,8 @@ import { useTable,
 import {DOTS, useCustomPagination} from './useCustomPagination';
 import { customersData } from '../data/data';
 import { Button, PageButton } from '../utils/Button';
+import { GetCustomers } from '../apis/api';
+import { useNavigate } from 'react-router-dom';
 
 export function GlobalFilter({
     globalFilter,
@@ -33,11 +35,37 @@ export function GlobalFilter({
   };  
 
 const CustomersTable = () => {
+  const [toggleMenu, setToggleMenu] = useState(false);
+  const [customers, setCustomers] = useState([]);
+  // const data =  useMemo(() => [...products], [products])
+  const [isLoading, setIsLoading] = useState(false)
+  const customerRef = useRef();
+  const navigate = useNavigate();
+
+  customerRef.current = customers;
+  // console.log("Datas", data);
+     
+  useEffect(() => {
+    setIsLoading(true)
+
+    GetCustomers()
+    .then((response) => {
+      console.log(response);
+
+    // const data = response.data.data
+      
+    // setCustomers(data)
+    // setIsLoading(true)
+    // localStorage.clear();
+    }).catch((e) => {
+    console.log(e);
+    });
+  },[]);
     const data = useMemo(() => customersData(), []);
 
     const handleEdit = () => {
 
-    }
+    };
           
     const handleDelete = () => {}
 
@@ -67,7 +95,7 @@ const CustomersTable = () => {
           accessor: "actions",
           Cell: ({ value }) => (
             <div>
-              <button onClick={() => handleEdit(value)}>{value.edit}</button>
+              {/* <button onClick={() => handleEdit(value)}>{value.edit}</button> */}
               <button className='ml-4' onClick={() => handleDelete(value)}>{value.delete}</button>
             </div>
           ),

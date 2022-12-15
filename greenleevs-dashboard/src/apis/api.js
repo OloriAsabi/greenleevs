@@ -112,6 +112,23 @@ export const UserResetPassword = async (body) => {
               console.log(error)  
           }
   }
+
+  export const DeleteOrders = async (id) => {
+    try {
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/v1/admin/orders/${id}/delete`,
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+          })
+        console.log("Edit Product",data);
+         return data; 
+        } catch (error) {
+            console.log(error)  
+        }
+  }
+
   export const CreateProducts = async (body) => {
     try {
         const data = await axios.post(`${process.env.REACT_APP_BASEURL}/v1/admin/product`, body,
@@ -147,7 +164,7 @@ export const UserResetPassword = async (body) => {
 
 export const getProductId = (id) => {
   try {
-      const req = axios.get(`${process.env.REACT_APP_BASEURL}/v1/admin/product/?sku=${id}`,  {
+      const req = axios.get(`${process.env.REACT_APP_BASEURL}/v1/admin/product?sku=${id}`,  {
         headers: { 
             "Content-Type": "application/json" ,
             "Authorization": `Bearer ${token}`
@@ -179,6 +196,55 @@ export const EditProduct = async ({id, body}) => {
   export const DeleteProduct = async (id) => {
     try {
         const data = await axios.get(`${process.env.REACT_APP_BASEURL}/v1/admin/product/${id}/delete`,
+            {
+              headers: { 
+                  "Content-Type": "application/json" ,
+                  "Authorization": `Bearer ${token}`
+              },
+            })
+          console.log("Edit Product",data);
+           return data; 
+          } catch (error) {
+              console.log(error)  
+          }
+  }
+
+
+  export const GetCustomers = async () => {
+    try {
+        const data = await axios.get(`${process.env.REACT_APP_BASEURL}/v1/admin/customers`, 
+            {
+              headers: { 
+                  "Content-Type": "application/json" ,
+                  "Authorization": `Bearer ${token}`
+              },
+            })
+          console.log("Get Customers",data);
+           return data; 
+          } catch (error) {
+              console.log(error)  
+          }
+  }
+
+  export const CreateCustomers = async (body) => {
+    try {
+        const data = await axios.post(`${process.env.REACT_APP_BASEURL}/v1/admin/customers`, body,
+            {
+              headers: { 
+                  "Content-Type": "application/json" ,
+                  "Authorization": `Bearer ${token}`
+              },
+            })
+          console.log("Create Products",data);
+           return data; 
+          } catch (error) {
+              console.log(error)  
+          }
+  }
+
+  export const DeleteCustomers = async (id) => {
+    try {
+        const data = await axios.get(`${process.env.REACT_APP_BASEURL}/v1/admin/customers/${id}/delete`,
             {
               headers: { 
                   "Content-Type": "application/json" ,

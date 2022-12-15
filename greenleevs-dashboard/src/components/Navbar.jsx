@@ -51,7 +51,6 @@ const Navbar = ({userInfo}) => {
 
     <NavButton title="Menu" customFunc={handleActiveMenu}  icon={<AiOutlineMenu />} />
     <div className="flex">
-      <NavButton title="Notification" dotColor="rgb(212, 15, 15)" customFunc={() => handleClick('notification')} color="black" icon={<RiNotification3Line />} />
       <div content="Profile" position="BottomCenter">
         <div
           className="flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray rounded-lg"
@@ -69,7 +68,6 @@ const Navbar = ({userInfo}) => {
         </div>
       </div>
 
-      {isClicked.notification && (<Notifications />)}
       {isClicked.userProfile && (<UserProfile userInfo={userInfo} />)}
     </div>
   </div>

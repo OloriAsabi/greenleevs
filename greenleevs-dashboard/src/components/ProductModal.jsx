@@ -1,20 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { MdOutlineCancel } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
-import { MdDelete } from 'react-icons/md';
-import Spinner from './Spinner';
-import { AiOutlineCloudUpload } from 'react-icons/ai';
 import { useForm } from 'react-hook-form';
 import { useStateContext } from '../contexts/ContextProvider';
 import { useSnackbar } from 'notistack';
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
-import { contents, effect, strain, weights } from "../data/data"
+import { effect, strain, thcContents, weights, cbdContents } from "../data/data"
 import { CreateProducts } from '../apis/api';
 
-const token =  localStorage.getItem("token");
-
-const ProductModal = ({toggleMenu, setToggleMenu}) => {
+const ProductModal = ({ toggleMenu, setToggleMenu }) => {
   const { dispatch  } = useStateContext();
   const navigate = useNavigate()
  
@@ -27,16 +22,34 @@ const ProductModal = ({toggleMenu, setToggleMenu}) => {
     trigger
   } = useForm();
 
-  const [fields, setFields] = useState();
   const [tags, setTags] = useState([]);
-  const [imageAsset, setImageAsset] = useState([]);
   const [strains, setStrains] = useState(strain);
   const [weight, setWeight] = useState(weights);
-  const [content, setContent] = useState(contents);
+  const [thcContent, setThcContent] = useState(thcContents);
+  const [cbdContent, setCbdContent] = useState(cbdContents);
   const [effects, setEffects] = useState(effect);
-  const [loading, setLoading] = useState(false);
-  const [wrongImageType, setWrongImageType] = useState(false);
-  const [previewImage, setPreviewImage] = useState(undefined);
+  
+  const [file, setFile] = useState([]);
+  const [image, setImage] = useState();
+
+  console.log("Images: ",image);
+
+  function uploadSingleFile(e) {
+    const selectedFile = e.target.files[0];
+    let ImagesArray = Object.entries(e.target.files).map((e) =>
+      URL.createObjectURL(e[1])
+    );
+    console.log(ImagesArray);
+    setFile([...file, ...ImagesArray]);
+    setImage(URL.createObjectURL(selectedFile))
+    console.log("file", file);
+  }
+
+  function deleteFile(e) {
+    const s = file.filter((item, index) => index !== e);
+    setFile(s);
+    console.log(s);
+  }
 
   const handleTagsChange = (newTags) => {
     console.log(tags)
@@ -45,62 +58,15 @@ const ProductModal = ({toggleMenu, setToggleMenu}) => {
     setTags(newTags);
   };
 
-  const selectFile = (e) => {
-    const selectedFile = e.target.files[0];
-    let images = [];
-    for (let i = 0; i < e.target.files.length; i++) {
-      images.push(URL.createObjectURL(e.target.files[i]));
-    }
-    if (selectedFile.type === 'image/png' || selectedFile.type === 'image/svg' || selectedFile.type === 'image/jpeg' || selectedFile.type === 'image/gif' || selectedFile.type === 'image/tiff') {
-      setWrongImageType(false);
-      setLoading(true);
-      setImageAsset(images);
-      setPreviewImage(selectedFile);
-    } else {
-      setLoading(false);
-      setWrongImageType(true);
-    }
-  };
 
-const uploadImage = async () => {
-    //Check if any file is selected or not
-  if (imageAsset != null) {
-    //If file selected then create FormData
-    const fileToUpload = imageAsset
-    const imageData = new FormData();
-    Array.from(fileToUpload).forEach(item => {
-      imageData.append('name', 'Image Upload');
-      imageData.append('file_attachment', item)
-    })
-    let res = await fetch(
-      'http://127.0.0.1:8000/v1/admin/upload/files',
-      {
-        method: 'post',
-        body: imageData,
-        headers: {
-          'Content-Type': 'multipart/form-data; ',
-          'Authorization': token,
-        },
-      }
-    );
-    let responseJson = await res.json();
-    console.log(responseJson);
-    if (responseJson.status == 1) {
-      alert('Upload Successful');
-    }
-  } else {
-    //if no file selected the show alert
-    alert('Please Select File first');
-  }
-};
 
   const submitHandler = async (data) => {
     console.log("Data Product Modal", data);
 
     const body = {
       label: data.title,
-      product_image: URL.createObjectURL(imageAsset),
-      product_images: [URL.createObjectURL(imageAsset)], 
+      product_image: image,
+      product_images: file, 
       quantity: data.quantity,
       description: data.description,
       price: data.price,
@@ -140,11 +106,7 @@ const uploadImage = async () => {
     } catch (error) {
       enqueueSnackbar("Products Upload failed", { variant: 'error' });
     }
-   
-
   };
-
-  console.log(imageAsset);
 
   return (
     <main
@@ -173,60 +135,31 @@ const uploadImage = async () => {
         />
        </div>
         <div className="flex w-full text-center justify-center items-center p-5">
-        {fields && (
-          <p className="text-red-500 mb-5 text-xl transition-all duration-150 ease-in ">Please add all fields.</p>
-        )}
         <div className="grid justify-center items-center bg-white lg:p-5 p-3 w-full">
-          <div className="p-3 flex flex-0.7 w-full">
-            <div className="flex justify-center items-center flex-col border-2 border-dotted border-gray-300 p-3 w-full h-420">
-              {loading && (
-                <Spinner />
-              )}
-              {
-                wrongImageType && (
-                  <p>It&apos;s wrong file type.</p>
-                )
-              }
-              {!imageAsset ? (
-                <label>
-                  <div className="flex flex-col items-center justify-center h-full">
-                    <div className="flex flex-col justify-center items-center">
-                      <p className="font-bold text-2xl">
-                        <AiOutlineCloudUpload />
-                      </p>
-                      <p className="text-lg">Click to upload</p>
-                    </div>
-
-                    <p className="mt-32 text-gray-400">
-                      Recommendation: Use high-quality JPG, JPEG, SVG, PNG, GIF or TIFF less than 20MB
-                    </p>
-                  </div>
-                  <input
-                    type="file"
-                    accept='image/*'
-                    multiple
-                    name="upload-image"
-                    onChange={selectFile}
-                    className="w-0 h-0"
-                  />
-                </label>
-              ) : (
-                <div className="relative h-full">
-                  <img
-                    src={previewImage}
-                    alt="uploaded-pic"
-                    className="h-full w-full"
-                  />
-                  <button
-                    type="button"
-                    className="absolute bottom-3 right-3 p-3 rounded-full bg-white text-xl cursor-pointer outline-none hover:shadow-md transition-all duration-500 ease-in-out"
-                    onClick={() => setPreviewImage(null)}
-                  >
-                    <MdDelete />
+          <div className="container">
+          <div className="form-group preview">
+          {file.length > 0 &&
+            file.map((item, index) => {
+              return (
+                <div key={item}>
+                  <img src={item} alt="" />
+                  <button type="button" className='bg-red-500 text-white p-2 rounded m-5 cursor-pointer' onClick={() => deleteFile(index)}>
+                    delete
                   </button>
                 </div>
-              )}
-            </div>
+              );
+            })}
+          </div>
+
+          <div className="form-group">
+            <input
+              type="file"
+              disabled={file.length === 5}
+              className="form-control"
+              onChange={uploadSingleFile}
+              multiple
+            />
+          </div>
           </div>
 
           <form 
@@ -354,7 +287,7 @@ const uploadImage = async () => {
             <input 
                 name="price" 
                 id="price" 
-                type="number" 
+                type="text" 
                 placeholder=''
                 className={`block w-full ${
                   errors.price ? "text-red-400 border-red-400" : "text-gray-700 "} px-3 py-1 mb-2 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
@@ -380,7 +313,7 @@ const uploadImage = async () => {
             <input 
                 name="salePrice" 
                 id="salePrice" 
-                type="number" 
+                type="text" 
                 placeholder=''
                 className={`block w-full ${
                   errors.salePrice ? "text-red-400 border-red-400" : "text-gray-700 "} px-3 py-1 mb-2 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
@@ -437,10 +370,10 @@ const uploadImage = async () => {
                 </select>
               </div>
               <div className='flex space-x-5 mb-3'>
-                <label>Product Content:</label>
+                <label>Product THC Content:</label>
                 <select
                   onChange={(e) => {
-                    setContent(e.target.value);
+                    setThcContent(e.target.value);
                   }}
                   id="content"  
                   className={` ${
@@ -448,7 +381,26 @@ const uploadImage = async () => {
                     {...register('content')}
                 >
                   <option value="others" className="sm:text-bg bg-white">Select Content</option>
-                  {content.map((item) => (
+                  {thcContent.map((item) => (
+                  <option className="text-base border-0 outline-none capitalize bg-white text-black " value={item.name}  key={item.id}>
+                    {item.name}
+                  </option>
+                      ))}
+                </select>
+              </div>
+              <div className='flex space-x-5 mb-3'>
+                <label>Product CBD Content:</label>
+                <select
+                  onChange={(e) => {
+                    setCbdContent(e.target.value);
+                  }}
+                  id="content"  
+                  className={` ${
+                    errors.content ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
+                    {...register('content')}
+                >
+                  <option value="others" className="sm:text-bg bg-white">Select Content</option>
+                  {cbdContent.map((item) => (
                   <option className="text-base border-0 outline-none capitalize bg-white text-black " value={item.name}  key={item.id}>
                     {item.name}
                   </option>

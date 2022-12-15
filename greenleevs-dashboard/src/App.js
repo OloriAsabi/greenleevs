@@ -57,10 +57,9 @@ function App() {
 
               <Route path="/products" element={(<Products />)} />
               <Route path="/products/:id" element={(<Productdetails />)} />
-              <Route path="/categories" element={(<Categories />)} />
               <Route path="/customers" element={(<Customers />)} />
               <Route path="/orders" element={(<Orders />)} />
-              <Route path="/coupons" element={(<Coupons />)} />
+              {/* <Route path="/coupons" element={(<Coupons />)} /> */}
               <Route path="/settings" element={(<Settings  />)} />
             </Routes>
           </div>

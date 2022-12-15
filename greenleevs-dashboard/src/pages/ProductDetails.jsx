@@ -1,52 +1,97 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import { getProductId } from '../apis/api'
+import { EditModal } from '../components';
+import Spinner from '../components/Spinner';
 
 
 const Productdetails = () => {
-    const { sku }  = useParams();
-    const [product, setProduct] = useState({})
+    const { id }  = useParams();
+    const [product, setProduct] = useState({});
+    const [showModal, setShowModal] = useState(false);
      const history =  useNavigate();
+     const [isLoading, setIsLoading] = useState(false)
+     const [toggleMenu, setToggleMenu] = useState(false);
+     
 
     useEffect(() => {
-        getProductId(sku).then((data) => {
+        setIsLoading(true)
+        getProductId(id).then((data) => {
             console.log(data)
-            // const items = data.data
-            // setProduct(items);
-        });
-    },[sku]);
+            const items = data.data
+            setProduct(items.data);
+            setIsLoading(false)
+        })
+    },[id]);
 
-  return (
+    console.log(product);
+
+  return (  
     <div className='container'>
-    <div className='block text-center m-10'>
-    <button className='text-white w-20 bg-black rounded items-center cursor-pointer text-center text-xl p-2 font-extrabold m-3 ' onClick={() => history('/')}>
-    Back
-    </button>
-    </div>
-        {/* <div className='flex small justify-between'>
+        {product 
+        ? 
+        <div className='flex md:flex-row flex-col small justify-between p-10' key={product.id}>
         <div className='w-screen'>
         <img src={product.product_image} className="w-full object-cover " alt="ProductImage"/>
         </div>
          <div className='w-full h-full p-5'>
-        <h2 className='text-3xl text-justify text-gray-700 '>{product.label}</h2>
-        <div className='bg-white rounded text-center text-2xl p-1 font-extrabold m-3 text-black '>${product.price}</div>
-        <div>
-            <div className='flex justify-start text-center'>
-                <h5 className='mt-2 pr-3 pt-3 pb-3'>Category:  </h5>
-                <button className='text-white w-48 bg-black rounded  p-3 font-extrabold '>{product.category.parent}</button>
+         {isLoading && (
+            <Spinner />
+              )}
+        <h2 className='text-2xl text-start text-gray-700 uppercase'>{product.label}</h2>
+        <div className='rounded text-center text-2xl p-1 font-extrabold m-3 text-[#1F451A]'>${product.price}</div>
+        <div className='justify-start'>
+            <div className='flex justify-between  text-center'>
+                <h5 className='mt-2 pr-3 pt-3 pb-3'>Category:</h5>
+                <button className='text-white bg-[#1F451A] rounded p-3'>{product?.category?.label}</button>
             </div>
-            {/* <div className='flex justify-start text-center'>
-                <h5 className='mt-2 pr-4 pt-3 pt-3 pb-3'>Rating:      </h5>
-                <button className='text-white bg-black rounded items-center text-center text-xl p-3 font-extrabold m-3'>{product.rating?.rate}</button>
+            <div className='flex justify-between text-center'>
+                <h5 className='mt-2 pr-4 pt-3 pb-3'>Tags:  </h5>
+                {product?.tags?.map((tag) => (
+                   <button className='text-white bg-[#1F451A] rounded items-center text-center p-3 m-3'>{tag}</button>
+                ))}
             </div>
-            <div className='flex justify-start text-center'>
-                <h5 className='mt-2 pr-6 pt-3 pt-3 pb-3'>Count:      </h5>
-                <button className='text-white bg-black rounded items-center text-center text-xl p-3 font-extrabold m-3'>{product.rating?.count}</button>
-            </div> */}
-        {/* </div>
-        <p className='text-justify text-xl pt-5'>{product.description}</p>
+            <div className='flex justify-between text-center'>
+                <h5 className='mt-2 pr-6 pt-3 pb-3'>Quantity:      </h5>
+                <button className='text-white bg-[#1F451A] rounded items-center text-center p-3 m-3'>{product.quantity}</button>
+            </div>
         </div>
-     </div> */} 
+        <p className='text-14 pt-5 capitalize'>{product.description}</p>
+        <div>
+            {/* {product.metas.map((meta) => (
+                    <div className='flex justify-between text-center' key={meta.id}>
+                    <h5 className='mt-2 pr-3 pt-3 pb-3 capitalize'>{meta?.option}: </h5>
+                    {meta?.values?.map((value, index) => (
+                    <div key={index}>
+                    <button className='text-[#1F451A] rounded p-3'>{value?.size  ? `size: ${value?.size}`  : value }</button>
+                    <button className='text-[#1F451A]  rounded p-3'>{value?.price ? `price:  $${value?.price}` : ""}</button>
+                    </div>
+                    ))}
+                </div>
+            ))} */}
+        </div>
+        </div>
+     </div> 
+     : ""
+}
+
+     <div className='block text-center m-10'>
+    <button className='text-white w-20 bg-[#1F451A] rounded items-center cursor-pointer text-center text-xl p-2 font-extrabold m-3'
+    onClick={() => setShowModal(true)}
+    >
+    Edit
+    </button>
+    <button className='text-white w-20 bg-[#1F451A] rounded items-center cursor-pointer text-center text-xl p-2 font-extrabold m-3 ' onClick={() => history('/products')}>
+    Back
+    </button>
+    </div>
+    {showModal ? 
+          <EditModal
+          id={id}
+           showModal={showModal} 
+           setShowModal={setShowModal}
+           products={product} /> 
+    : ''}
 </div>
   )
 }

@@ -7,16 +7,15 @@ import { useTable,
 } from "react-table";
 import {DOTS, useCustomPagination} from './useCustomPagination';
 import { classNames } from '../utils/utils';
-import { BsToggle2Off } from 'react-icons/bs';
 import { Button, PageButton } from '../utils/Button';
 import ProductModal from './ProductModal';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { DeleteProduct, getProductId, GetProducts } from '../apis/api';
 import { useRef } from 'react';
-import { FiEdit } from 'react-icons/fi';
 import { AiFillDelete } from 'react-icons/ai';
-import EditModal from './EditModal';
 import Spinner from './Spinner';
+import { FaSearchPlus } from 'react-icons/fa';
+import { useSnackbar } from 'notistack';
 
 
 export function GlobalFilter({
@@ -116,7 +115,6 @@ export function GlobalFilter({
 const ProductsTable = () => {
     const [toggleMenu, setToggleMenu] = useState(false);
     const [products, setProducts] = useState([]);
-    const [showModal, setShowModal] = useState(false);
     const data =  useMemo(() => [...products], [products])
     const [isLoading, setIsLoading] = useState(false)
     const productRef = useRef();
@@ -124,21 +122,7 @@ const ProductsTable = () => {
 
     productRef.current = products;
     console.log("Datas", data);
-
-
-    // const child = data.map((child) => child.childCategory)
-    // const parent = data.map((parent) => parent.parentCategory);
-    // const type = data.map((type) => type.productType);
-
-//    useEffect(() => {
-//     if(toggleMenu){
-//             return alert("Product Show Successfully!");
-//     } else {
-//         return alert("Product Hide Successfully!");
-//     }
- 
-//    }, [toggleMenu]);
-console.log(productRef.current);
+    const { enqueueSnackbar } = useSnackbar();
    
   useEffect(() => {
     setIsLoading(true)
@@ -149,30 +133,22 @@ console.log(productRef.current);
     const data = response.data.data
       
     setProducts(data)
-    setIsLoading(false)
+    setIsLoading(true)
     // localStorage.clear();
     }).catch((e) => {
     console.log(e);
     });
   },[]);
 
-  // const productId = (rowIndex) => {
-  //   const id = productRef.current[rowIndex].id;
+  const productId = (rowIndex) => {
+    const id = productRef.current[rowIndex].sku;
     
-  //   getProductId(id)
-  //   navigate("/products/" + id);
-  // };
+    getProductId(id)
+    navigate("/products/" + id);
+  };
 
-  const handleEdit = (rowIndex) => {
-    const sku = productRef.current[rowIndex].sku;
-
-    setShowModal(true)
-    console.log('Sku: ',sku);
-    // navigate("/products/" + sku);
-  }
-        
   const handleDelete = (rowIndex) => {
-    const id = productRef.current[rowIndex].id;
+    const id = productRef.current[rowIndex].product_id;
 
     DeleteProduct(id).then(() => {
       navigate('/products')
@@ -181,15 +157,14 @@ console.log(productRef.current);
       newProduct.splice(rowIndex, 1)
 
       setProducts(newProduct);
+      enqueueSnackbar('Products Deleted Successful', { variant: 'success' });
     })
     .catch((e) => {
       console.log(e);
+      enqueueSnackbar('Product delete Failed', { variant: 'error' });
     });
   }
   
-  const handleFileSubmit = (data) => {
-    console.log(data);
-  }
   
 const columns = useMemo(() => [
   {
@@ -225,40 +200,35 @@ const columns = useMemo(() => [
     Header: "Product Sku",
     accessor: "sku"
   },
-  // {
-  //   Header: "Status",
-  //   accessor: "status",
-  //   Cell: StatusPill,
-  // },
+  {
+    Header: "Status",
+    accessor: "status",
+    Cell: StatusPill,
+  },
   // {
   //   Header: "Discount",
   //   accessor: "discount",
   // },
-//   {
-//     Header: "Details",
-//     accessor: "details",
-//     Cell: (props) => {
-//       const rowIdx = props.row.id;
-//       return (
-//         <div>
-//            <div onClick={() => productId(rowIdx)}>{props}</div>
-//         </div>
-//     )
-//   },
-// },
-    {
-    Header: "Actions",
-    // accessor: "actions",
+  {
+    Header: "Details",
     Cell: (props) => {
       const rowIdx = props.row.id;
-      // const rowSku = props.row.sku;
+      return (
+        <div>
+           <div onClick={() => productId(rowIdx)}>
+            <FaSearchPlus/>
+           </div>
+        </div>
+    )
+  },
+},
+    {
+    Header: "Actions",
+    Cell: (props) => {
+      const rowIdx = props.row.id;
 
       return (
         <div className='flex gap-5'>
-          <span onClick={() =>handleEdit(rowIdx)}>
-          <FiEdit/>
-          </span>
-
           <span onClick={() =>handleDelete(rowIdx)}>
           <AiFillDelete/>
           </span>
@@ -307,7 +277,7 @@ const {
 
   return (
     <div>
-        <div className='grid items-center text-center lg:grid-cols-4 md:grid-cols-2  sm:grid-cols-1 gap-5 p-5 mb-10 border-white shadow rounded-xl'>
+        <div className='grid items-center text-center lg:grid-cols-4 md:grid-cols-3  sm:grid-cols-1 gap-5 p-5 mb-10 border-white shadow rounded-xl'>
         <GlobalFilter
         preGlobalFilteredRows={preGlobalFilteredRows}
         globalFilter={state.globalFilter}
@@ -334,26 +304,7 @@ const {
         </div>
         </div>
 
-        <form onSubmit={handleFileSubmit()} 
-        className='flex  items-center text-center gap-5 p-5 mb-10 border-white shadow rounded-xl'>
-         <input
-            name="userfile" 
-            type="file" 
-            accept="application/pdf, application/vnd.ms-excel"
-            placeholder='Drop your file'
-            className='w-full p-3'
-         />
-         <div className='p-3 w-4/8 bg-[#1F451A] text-white text-center rounded cursor-pointer'>
-            <button>
-             Upload
-            </button>
-         </div>
-         </form>
-
-        <div className="mt-2 flex flex-col">
-        {isLoading && (
-            <Spinner />
-              )}
+        <div className="mt-2 flex flex-col">  
             <div className="-my-2 overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">
               <div  className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                 <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -389,10 +340,6 @@ const {
               </div>
           </div>
          </div>
-         {showModal ? 
-          <EditModal
-           showModal={showModal} 
-           setShowModal={setShowModal} /> : ''}
 
         <div className="py-3 flex items-center text-end justify-end pt-10">
          <span>

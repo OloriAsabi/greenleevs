@@ -1,4 +1,4 @@
-import React, {useMemo, useEffect, useState } from 'react'
+import React, {useMemo, useEffect, useState, useRef } from 'react'
 import { useTable,
    useGlobalFilter, 
    useAsyncDebounce,  
@@ -10,6 +10,8 @@ import { ordersData } from '../data/data';
 import { classNames } from '../utils/utils';
 import { TbCloudDownload } from 'react-icons/tb';
 import { Button, PageButton } from '../utils/Button';
+import { GetOrders } from '../apis/api';
+import { useNavigate } from 'react-router-dom';
 
 
 
@@ -91,6 +93,32 @@ export function GlobalFilter({
   }
 
 const OrdersTable = () => {
+  const [toggleMenu, setToggleMenu] = useState(false);
+  const [orders, setOrders] = useState([]);
+  // const data =  useMemo(() => [...products], [products])
+  const [isLoading, setIsLoading] = useState(false)
+  const ordersRef = useRef();
+  const navigate = useNavigate();
+
+  ordersRef.current = orders;
+  // console.log("Datas", data);
+     
+  useEffect(() => {
+    setIsLoading(true)
+
+    GetOrders()
+    .then((response) => {
+      console.log(response);
+
+    // const data = response.data.data
+      
+    // setCustomers(data)
+    // setIsLoading(true)
+    // localStorage.clear();
+    }).catch((e) => {
+    console.log(e);
+    });
+  },[]);
 
 const data = useMemo(() => ordersData(), []);
 
@@ -131,7 +159,6 @@ const columns = useMemo(() => [
       accessor: "actions",
       Cell: ({ value }) => (
           <div>
-            <button onClick={() => (value)}>{value.edit}</button>
             <button className='ml-4' onClick={() => (value)}>{value.delete}</button>
           </div>
         ),
@@ -202,12 +229,6 @@ const {
             ) : null
             )
         )}
-
-        <div className='w-4/8'>
-        <button className='p-3 bg-[#1F451A] flex gap-3 text-white text-center rounded cursor-pointer'>
-           Download Orders <TbCloudDownload fontSize={28}/>
-        </button> 
-        </div>
         </div>
 
         <div className="mt-2 flex flex-col">
