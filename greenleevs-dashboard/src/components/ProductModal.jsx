@@ -12,15 +12,6 @@ import { CreateProducts } from '../apis/api';
 const ProductModal = ({ toggleMenu, setToggleMenu }) => {
   const { dispatch  } = useStateContext();
   const navigate = useNavigate()
- 
-  const { enqueueSnackbar } = useSnackbar();
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    trigger
-  } = useForm();
 
   const [tags, setTags] = useState([]);
   const [strains, setStrains] = useState(strain);
@@ -33,6 +24,16 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
   const [image, setImage] = useState();
 
   console.log("Images: ",image);
+
+   
+  const { enqueueSnackbar } = useSnackbar();
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    trigger
+  } = useForm();
 
   function uploadSingleFile(e) {
     const selectedFile = e.target.files[0];
@@ -83,8 +84,12 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
           values: data.strain
         },
         {
-          option: "content",
-          values: data.content
+          option: "thc",
+          values: data.thcContent
+        },
+        {
+          option: "cbd",
+          values: data.cbdContent
         },
         {
           option: "effects",
@@ -99,12 +104,13 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
        .then(response => {
         console.log(response);
       });
-      dispatch({ type: 'ADD_PRODUCTS', payload: body});
+      // dispatch({ type: 'ADD_PRODUCTS', payload: body});
       localStorage.setItem('products', JSON.stringify(body));
       navigate('/products');
-      enqueueSnackbar('Products Added Successfully', { variant: 'success' });
+      // enqueueSnackbar('Products Added Successfully', { variant: 'success' });
     } catch (error) {
-      enqueueSnackbar("Products Upload failed", { variant: 'error' });
+      console.log(error);
+      // enqueueSnackbar("Products Upload failed", { variant: 'error' });
     }
   };
 
@@ -377,8 +383,8 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
                   }}
                   id="content"  
                   className={` ${
-                    errors.content ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
-                    {...register('content')}
+                    errors.thcContent ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
+                    {...register('thcContent')}
                 >
                   <option value="others" className="sm:text-bg bg-white">Select Content</option>
                   {thcContent.map((item) => (
@@ -397,7 +403,7 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
                   id="content"  
                   className={` ${
                     errors.content ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
-                    {...register('content')}
+                    {...register('cbdContent')}
                 >
                   <option value="others" className="sm:text-bg bg-white">Select Content</option>
                   {cbdContent.map((item) => (

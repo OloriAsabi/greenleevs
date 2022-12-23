@@ -24,13 +24,13 @@ export const links = [
             href: 'products'
         },
         {
-            id: 4,  
+            id: 3,  
             name: 'Customers',
             icon: <IoIosPeople/>,
             href: 'customers'
         },
         {
-            id: 5,  
+            id: 4,  
             name: 'Orders',
             icon: <BsCardList/>,
             href: 'orders'
@@ -44,7 +44,7 @@ export const links = [
 
         // },
         {
-            id: 7,  
+            id: 5,  
             name: 'Settings',
             icon: <FiSettings />,
             href: 'settings'

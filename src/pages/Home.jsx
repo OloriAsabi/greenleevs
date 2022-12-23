@@ -27,9 +27,10 @@ import 'swiper/css/pagination';
 
 // import required modules
 import { Navigation, Pagination } from 'swiper';
-import { category, featuredProducts, strainTypes } from '../data/data';
+import { strainTypes } from '../data/data';
 import { MdOutlineCancel } from 'react-icons/md';
 import { Link } from 'react-router-dom';
+import { GetCategories, GetProducts } from '../apis/api';
 
 /* eslint-disable */
 const images =[
@@ -53,18 +54,19 @@ const spotlight =[
 ];
 
 // eslint-disable-next-line react/prop-types
-const SliderItems = ({pic,id, brand, price, title, tax, taste, THC, CBD}) => {
+const SliderItems = ({pic,id, brand, price, title, brandImage, taste, content, }) => {
   return(
     <div key={id} className=' p-10 text-center tracking-widest leading-8'>
       <div className='flex flex-col space-y-5 items-center justify-center'>
-        <img src={pic} className="w-48 h-48 rounded" alt='featured Products'/> 
-        <div className='p-5'>{brand}</div>
+        <img src={pic} className="w-48 h-48 rounded" alt='featured Products'/> \
+        <div className='rounded-full text-center '>
+        <img src={brandImage} className="rounded-full object-cover w-auto h-auto"  alt='' />
+        </div>
         <div className='font-bold'>{title}</div>
-        <p className='font-medium'>{price}</p>
-        <p className='pb-5'>{tax}</p>
+        <p className='font-medium'>Price: ${price}</p>
+        {/* <p className='pb-5'>{salesPrice}</p> */}
         <div className='font-bold'>{taste}</div>
-        <div><span className='font-bold'>THC</span>  {THC}</div>
-        <div><span className='font-bold'>CBD</span>  {CBD}</div>
+        <div>{content}</div>
       </div>
     </div>
   );
@@ -115,6 +117,8 @@ const Home = () => {
   const [infos, setInfos] = useState(0);
   const [spot, setSpot] = useState(0);
   const [checked, setChecked] = useState(false);
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -134,6 +138,30 @@ const Home = () => {
     };
   }, [infos, spot, value]);
 
+  useEffect(() => {
+    GetProducts()
+    .then((response) => {
+
+    const data = response.data.data
+      
+    setProducts(data)
+    }).catch((e) => {
+    console.log(e);
+    });
+  },[]);
+
+  useEffect(() => {
+    GetCategories()
+    .then((response) => {
+    console.log(response);
+    const data = response.data.data
+      
+    setCategories(data)
+    }).catch((e) => {
+    console.log(e);
+    });
+  },[]);
+
   const {
     register,
     handleSubmit,
@@ -146,6 +174,16 @@ const Home = () => {
 
   const submitHandler = async (data) => {
     console.log('Data', data );
+    const body = {
+      email: data.email,
+      // password: data.password,
+    };
+    try {
+      PostNewsletter(body) 
+      enqueueSnackbar('Newsletter Subsrcibed Successfully', { variant: 'success' });
+    } catch (error) {
+      enqueueSnackbar('Newsletter Subscrition Failed', { variant: 'error' });
+    }
   };
 
   return (
@@ -221,19 +259,27 @@ const Home = () => {
               }}
               modules={[Navigation, Pagination]} 
               className="mySwiper">
-              {featuredProducts.map((items) => (
-                <SwiperSlide key={items.id}>
-                  <Link to={`/product/${items.id}`}>
+              {products.map((items) => (
+                <SwiperSlide key={items.product_id}>
+                  <Link to={`/product/${items.sku}`}>
                     <SliderItems 
-                      id={items.id} 
-                      price={items.price} 
-                      brand={items.brand} 
-                      pic={items.pic} 
-                      title={items.title}
-                      tax={items.tax}
-                      taste={items.taste}
-                      THC={items.THC}
-                      CBD={items.CBD}
+                      id={items.product_id} 
+                      price={items.price}
+                      brandImage={items.brand.logo} 
+                      brand={items.brand.label} 
+                      pic={items.product_image} 
+                      title={items.label}
+                       content={items.metas?.map((meta) => (
+                        <div className='flex justify-between text-center ml-8' key={meta.id}>
+                        <h5 className='mt-2 pr-3 pt-3 pb-3 capitalize text-xl font-bold'>{meta?.option}: </h5>
+                        {meta?.values?.map((value, index) => (
+                        <div key={index} className="ml-8 mt-2">
+                        <button className='text-[#1F451A] text-xl rounded p-3'>{value?.size  ? `size: ${value?.size}`  : value }</button>
+                        <button className='text-[#1F451A] text-xl rounded p-3'>{value?.price ? `price:  $${value?.price}` : ""}</button>
+                        </div>
+                        ))}
+                        </div>
+                      ))} 
                     />
                   </Link>
                 </SwiperSlide>                       
@@ -275,12 +321,12 @@ const Home = () => {
         <div className="container  accessorySide  mx-auto pt-20 pb-20 small text-[#1F451A]">
           <h2 className='text-3xl text-center pb-10 font-bold'>Shop By Category</h2>
           <div className='grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-10  justify-between items-center'>
-            {category.map((cat) => (
-              <Link to={`/shop/${cat.title}`} key={cat.id}>
-                <div key={cat.id} className='w-full h-full bg-white rounded-lg border flex flex-col items-center p-10  border-gray-200 shadow-md'>
-                  <img src={cat.img} alt="" className='rounded-md w-full h-full' />
-                  <div className='text-2xl capitalize font-medium pt-5'>{cat.title}</div>
-                  <p className='pt-5 text-xl pb-5'>{cat.price}</p>
+            {categories.map((cat) => (
+              <Link to={`/shop/${cat.slug}`} key={cat.slug}>
+                <div key={cat.slug} className='w-full h-full bg-white rounded-lg border flex flex-col items-center p-10  border-gray-200 shadow-md'>
+                  <img  src="https://source.unsplash.com/random/?weed,cannabis,tinctures,thc,cbd" alt="" className='rounded-md w-full h-full' />
+                  <div className='text-2xl capitalize font-medium p-5'>{cat.label}</div>
+                  {/* <p className='pt-5 text-xl pb-5'>{cat.price}</p> */}
                   <button className='bg-[#1F451A] text-white p-3 cursor-pointer rounded-md w-full hover:scale-x-110 font-normal text-xl'>Explore</button>
                 </div>
               </Link>
@@ -291,10 +337,10 @@ const Home = () => {
           <div className='conatiner mx-auto '>
             <h1 className='text-3xl font-bold mb-10 text-[#2D2D2D] text-start shopText'>Shop By Categories</h1>
             <div className='flex flex-col justify-between items-center'>
-              {category.map(cat => (
-                <Link to={'/shop/accessories'} key={cat.id}>
+              {categories.map(cat => (
+                <Link to={'/shop/accessories'} key={cat.slug}>
                   <div className='flex flex-col justify-betwe items-center'>
-                    <div className='text-2xl p-3 cursor-pointer text-center rounded-md w-72 mb-10 hover:scale-x-110 border border-[#1F451A] capitalize text-[#1F451A] font-normal'>{cat.title}</div>
+                    <div className='text-2xl p-3 cursor-pointer text-center rounded-md w-72 mb-10 hover:scale-x-110 border border-[#1F451A] capitalize text-[#1F451A] font-normal'>{cat.label}</div>
                   </div>
                 </Link>               
               )) }
@@ -402,14 +448,18 @@ const Home = () => {
       <div className='w-screen text-center tracking-widest leading-8 p-20 mt-10 mb-10 StockBg h-full '>
         <div className='text-center flex flex-col items-center small justify-center text-white p-5'>
           <h3 className='font-bold text-3xl pb-10'>Yes, It’s in Stock</h3>
+          <a href='/shop'>
           <button className='bg-transpent hover:scale-x-110 border border-white text-white p-3 cursor-pointer rounded-md w-72 font-normal text-2xl'>SHOP OIL</button>
+          </a>
         </div>
       </div>
 
       <div className='w-screen text-center tracking-widest leading-8 p-20 mt-10 mb-10 S HomeMerchandiseBg h-full '>
         <div className='text-center flex flex-col items-center small justify-center text-white p-5'>
           <h3 className='font-bold text-3xl pb-10'>Shop for your Merchandise product here!!!</h3>
+          <a href='/comingsoon'>
           <button className='bg-transpent border hover:scale-x-110 border-white text-white p-3 cursor-pointer rounded-md w-72 font-normal text-2xl'>COMING SOON</button>
+          </a>
         </div>
       </div>
 

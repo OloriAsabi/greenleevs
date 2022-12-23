@@ -7,7 +7,7 @@ export { default as Login } from './Login';
 export { default as Register } from './Register';
 export { default as UserProfile } from './UserProfile'; 
 export { default as Carts } from './Carts';
-export { default as Accessories } from './Accessories';
+export { default as Categories } from './Categories';
 export { default as SpecialMenu } from './SpecialMenu';
 export { default as ProductDetails } from './ProductDetails';
 export { default as CheckOut } from './CheckOut';

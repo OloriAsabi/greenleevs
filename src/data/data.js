@@ -30,14 +30,17 @@ export const links = [
   {
     id: 1,  
     name: 'home',
+    link: ''
   },
   {
     id: 2,  
     name: 'shop',
+    link: 'shop'
   },
   {
     id: 3,  
-    name: 'specialmenu',
+    name: 'special Menu',
+    link: 'specialmenu'
   },
 ];
 

@@ -12,21 +12,26 @@ import american from '../assests/american.png';
 import { Mousewheel } from 'swiper';
 import { FlexStyle, GridStyle, Sidebar, SidebarCat } from '../components';
 import { useForm } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { GetCategories } from '../apis/api';
 
-const Accessories = () => {
+const Categories = ({label}) => {
   const [open, setOpen] = useState(false);
   // const [openSort, setOpenSort] = useState(false)
   const [openNav, setOpenNav] = useState(false);
+  const { id }  = useParams();
+  const [categorys, setCategory] = useState([])
   // const [isOpen, setIsOpen] = useState(false)
   const [activeFilter, setActiveFilter] = useState('All');
 
   const showGrid = () => {
-    if (window.location.pathname === '/shop/accessories') {
+    if (window.location.pathname === `/shop/${id}`) {
       return <GridStyle />;
     }
   };
   const showFlex = () => {
-    if (window.location.pathname === '/shop/accessories') {
+    if (window.location.pathname === `/shop/${id}`) {
       return <FlexStyle />;
     }
   };
@@ -47,13 +52,26 @@ const Accessories = () => {
 
     setTimeout(() => {
 
-      if (item === 'All Accessories') {
+      if (item === 'All Categories') {
         // setFilterWork(works);
       } else {
         // setFilterWork(works.filter((work) => work.tags.includes(item)));
       }
     }, 500);
   };
+
+
+  useEffect(() => {
+    GetCategories()
+    .then((response) => {
+    console.log(response);
+    // const data = response.data.data
+      
+    // setCategories(data)
+    }).catch((e) => {
+    console.log(e);
+    });
+  },[]);
   return (      
   
     <div>
@@ -61,7 +79,7 @@ const Accessories = () => {
         <Sidebar />
         <div className="h-full flex-1 small p-7">   
           <div className="p-10 flex dontShow  flex-wrap justify-between">
-            {['All Accessories', 'Bongs', 'Pipes', 'Smoking Papers', 'Vapes'].map((item, index) => (
+            {['All Categories', 'Bongs', 'Pipes', 'Smoking Papers', 'Vapes'].map((item, index) => (
               <div
                 key={index}
                 onClick={() => handleWorkFilter(item)}
@@ -202,4 +220,4 @@ const Accessories = () => {
   );
 };
 
-export default Accessories;
+export default Categories;

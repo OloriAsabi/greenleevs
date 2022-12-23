@@ -1,10 +1,11 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import './App.css';
 import { Routes, Route, useNavigate} from 'react-router-dom';
 import { BillingDetails, Footer, Navbar, PaymentDetails } from './components';
-import { Accessories, Carts, CheckOut, ComingSoon, Error, Home, Orders, ProductDetails, Settings, Shipping, Shop, SpecialMenu, UserProfile } from './pages';
+import { Carts, Categories, CheckOut, ComingSoon, Error, Home, Orders, ProductDetails, Settings, Shipping, Shop, SpecialMenu, UserProfile } from './pages';
 
 import { useStateContext } from './contexts/ContextProvider';
+import { GetCategories } from './apis/api';
 
 
 function App() {
@@ -14,12 +15,25 @@ function App() {
   const { welcome } = state;
   const navigate = useNavigate();
 
+  const [categories, setCategories] = useState([]);
+
   useEffect(() => {
     if(!welcome) {
       navigate("/welcome")
     }
     scrollRef.current.scrollTo(0, 0)
   }, [navigate, welcome]);
+
+  useEffect(() => {
+    GetCategories()
+    .then((response) => {
+    const data = response.data.data
+      
+    setCategories(data)
+    }).catch((e) => {
+    console.log(e);
+    });
+  },[]);
 
   return (
     <div className="flex flex-col justify-between h-screen">
@@ -29,8 +43,8 @@ function App() {
           <main ref={scrollRef}>
             <Routes>
               <Route exact path="/" element={(<Home />)} />
-              <Route exact path="/home" element={(<Home />)} />
               <Route exact path="/shop" element={(<Shop/>)} />
+              <Route path='/shop/:id' element={(<Categories/>)} />
               <Route path='user' element={(<UserProfile />)} >
               <Route path='orders' element={(<Orders />)} />
               <Route path='shipping' element={(<Shipping />)} />
@@ -38,7 +52,6 @@ function App() {
               </Route>
 
               <Route path='/carts' element={(<Carts />)} />
-              <Route path='/shop/accessories' element={(<Accessories />)} />
               <Route path='/specialmenu' element={(<SpecialMenu/>)} />
               <Route path="/product/:id" element={<ProductDetails/>} />
               <Route path="/checkout" element={<CheckOut/>} />

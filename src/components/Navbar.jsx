@@ -21,11 +21,11 @@ const Navbar = () => {
   return (
     <div>
       <nav className="w-full relative small bg-[#1F451A] shadow">
-        <div className="flex flex-row  pl-3 pr-3 justify-between items-center">
-          <div className="flex justify-start items-start">
+        <div className="flex flex-row  pl-10 pr-10 justify-between items-center">
+          <div className="flex justify-start pl-10 items-start">
             <a href="/">
               <img 
-                className=" flex-start object-cover  w-24 h-24  dark:text-black text-white dark:bg-white rounded-none cursor-pointer"
+                className=" flex-start object-cover  w-24 h-48  dark:text-black text-white dark:bg-white rounded-none cursor-pointer"
                 src={logo}
                 alt='logo'
               />
@@ -36,7 +36,7 @@ const Navbar = () => {
               <div key={link.id}>
                 <NavLink
                   // eslint-disable-next-line no-useless-concat
-                  to={`/${link.name}`}
+                  to={`/${link.link}`}
                   key={link.id}
                   style={({ isActive }) => ({
                     backgroundColor: isActive ? '' : '',

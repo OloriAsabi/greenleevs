@@ -7,7 +7,7 @@ class FileUploadService {
   upload(file, onUploadProgress) {
     let formData = new FormData();
 
-    formData.append("file", file);
+    formData.append("files", file);
 
     return http.post("/upload", formData, {
       headers: {

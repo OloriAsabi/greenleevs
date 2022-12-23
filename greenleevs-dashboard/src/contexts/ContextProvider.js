@@ -8,8 +8,8 @@ const initialState = {
   user: localStorage.getItem('user')
   ? JSON.parse(localStorage.getItem('user'))
   : null,
-  products: localStorage.getItem('user')
-  ? JSON.parse(localStorage.getItem('user'))
+  products: localStorage.getItem('products')
+  ? JSON.parse(localStorage.getItem('products'))
   : null,
   notification: false,
 };

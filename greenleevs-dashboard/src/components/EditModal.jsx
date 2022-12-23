@@ -142,13 +142,14 @@ const submitHandler = async (data) => {
   console.log('Body',body);
   console.log(id);
   try {
-    EditProduct(id, body)
+    EditProduct(id,body)
       .then(response => {
         console.log(response);
-        enqueueSnackbar("Product edited successfully!", { variant: 'success' });
+        // enqueueSnackbar("Product edited successfully!", { variant: 'success' });
       })    
     } catch (error) {
-    enqueueSnackbar("Products Upload failed", { variant: 'error' });
+    // enqueueSnackbar("Products Upload failed", { variant: 'error' });
+    console.log(error);
     }
 }
 

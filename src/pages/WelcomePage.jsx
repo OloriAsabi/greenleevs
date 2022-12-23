@@ -31,7 +31,6 @@ const WelcomePage = () => {
   const {
     register,
     handleSubmit,
-    watch,
     trigger,
     formState: { errors }
   } = useForm({
@@ -46,6 +45,7 @@ const WelcomePage = () => {
     dispatch({ type: 'WELCOME_INFO', payload: data});
     localStorage.setItem('welcome', JSON.stringify(data));
     navigate('/');
+    enqueueSnackbar('Welcome to Green leevs', { variant: 'success' });
   };
 
   return (

@@ -58,7 +58,7 @@ const Register = () => {
     try {
       RegisterUser(bodyData)
       .then(response => {
-        console.log(response);
+        // console.log(response);
         const { token } = response.data
         localStorage.setItem('token', token);
         console.log(localStorage.getItem(token));

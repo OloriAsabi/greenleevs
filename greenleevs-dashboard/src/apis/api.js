@@ -178,7 +178,7 @@ export const getProductId = (id) => {
   }
 }
 
-export const EditProduct = async ({id, body}) => {
+export const EditProduct = async (id, body) => {
     try {
         const data = await axios.post(`${process.env.REACT_APP_BASEURL}/v1/admin/product/${id}/edit`, body,
             {
