@@ -1,11 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,  useCallback  } from 'react';
+/* eslint-disable */
 import { useNavigate, useParams } from 'react-router-dom';
 import { category, extracts } from '../data/data';
 import {AiOutlineLeftCircle} from 'react-icons/ai';
-import image1 from '../assests/oils.jpg';
-import product4 from '../assests/weed.jpeg';
-import tin from '../assests/tinctures.jpg';
-import weed from '../assests/Rectangle 20 (4).jpg';
 import {IoIosRemoveCircleOutline, IoIosAddCircleOutline} from 'react-icons/io';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import {BsCart} from 'react-icons/bs';
@@ -13,25 +10,73 @@ import {BsCart} from 'react-icons/bs';
 import visa from '../assests/Vector (1).png';
 import master from '../assests/master.png';
 import american from '../assests/american.png';
-
+import { useSnackbar } from 'notistack';
 
 import { Mousewheel } from 'swiper';
+import { GetProductId, PostCart } from '../apis/api';
+import { Spinner } from '../components';
+import { useStateContext } from '../contexts/ContextProvider';
 
-/* eslint-disable */
+
 const ProductDetails = () => {
   const { id } = useParams();
-  // const [product, setProduct] = useState({})
+  const { state } = useStateContext();
+  const { user, cart } = state;
   const history = useNavigate();
+
+  useEffect(() => {
+    if(!user) {
+      history("/login")
+    }
+  }, [history, user]);
+
+  const { enqueueSnackbar } = useSnackbar();
+  
+  const [product, setProduct] = useState({})
   const [itemCount, setItemCount] = useState(1);
+  const [isLoading, setIsLoading] = useState(false)
 
+  const getProductById =  useCallback(() => {
+    setIsLoading(true)
+    GetProductId(id)
+    .then((res) => {
+      console.log("Product By id",res);
+          const data = res.data.data
+      
+          setProduct(data)
+          setIsLoading(false)
+          }).catch((e) => {
+          console.log(e);
+          });
+  },
+  [id]);
 
-  useEffect(() => {    
-    // export function getTopic(topicId) {
-    //     return topics.find(({ id }) => id === topicId);
-    //   }
-    // setProduct(item)
-    // item.id
+  useEffect(() => {  
+   getProductById()
   }, [id]);
+
+  const addToCartHandler = async () => {
+    const existItem = cart.cartItems.find((x) => x._id === product._id);
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+    // if (product.countInStock < quantity) {
+    //   enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
+    //   return;
+    // }
+    const body = {
+      product_id: product.product_id,
+      quantity: quantity,
+      // countInStock: product.countInStock,
+    }
+    PostCart(user, body)
+    .then((res) => {
+      console.log(res);
+      // res.status
+      enqueueSnackbar(`${product.label} added to the cart`, {
+        variant: 'success', 
+      });
+      // history('/cart')
+    })
+  }
 
   return (
     <div>
@@ -41,55 +86,45 @@ const ProductDetails = () => {
             <AiOutlineLeftCircle fontSize={28}/> Back 
           </button>
         </div>
+        {isLoading
+                  ? 
+                  <Spinner /> 
+                  :
         <div className='flex lg:flex-row productDetails md:flex-col justify-between mt-10 mb-10 gap-10'>
           <div className='w-full'>
-            <img src={image1} alt='' className='productDetailsImg1'/>
-            <div className='flex pt-5 w-full justify-start gap-10 items-center'>
-              <img src={tin} alt="" className='productDetailsImg rounded-md' />
-              <img src={product4} alt="" className='productDetailsImg rounded-md' />
-              <img src={weed} alt="" className='productDetailsImg rounded-md' />
+            <img src={product.product_image} alt='' className='productDetailsImg1'/>
+            <div className='flex pt-5 w-full justify-start gap-10 items-center' >
+            <img src={product.product_images} alt="" className='productDetailsImg rounded-md' />   
+            {/* {product.product_images?.map((pic) => {
+              <img src={pic} alt="" className='productDetailsImg rounded-md' />    
+            })}         */}
             </div>
           </div>
           <div className='flex flex-col text-start space-y-10  w-full items-start'>
-            <h3 className='text-black text-3xl'>OIL TINCTURES</h3>
-            <p className='text-[#1F451A] text-2xl '>£50.00</p>
-            <div className='text-justify text-[#2D2D2D] text-xl font-light w-8/12'>Tinctures is a sativa-leaning hybrid that excels in both potency and aroma: its caramel, citrus, and mango notes are almost as recognizable as its name. This fruit-forward strain contains the terpenes Alpha Pinene, Caryophylenne and Myrcene.</div>
+            <h3 className='text-black text-3xl'>{product.label}</h3>
+            <p className='text-[#1F451A] text-2xl '>$ {product.price}</p>
+            <div className='text-justify text-[#2D2D2D] text-xl font-light w-8/12'>{product.description}</div>
             <div>
               <ul className='space-y-5'>
                 <li className='flex justify-between text-justify gap-20 items-center'>
-                  <span className='text-black text-2xl font-normal'>Produced in; </span>
-                             Ontari
-                </li>
-                <li className='flex justify-between text-justify gap-20 items-center'>
                   <span className='text-black text-2xl font-normal'>Brand; </span>
-                        Good Supply
+                    {product?.brand?.label}
                 </li>
                 <li className='flex justify-between text-justify items-center'>
-                  <span className='text-black text-2xl font-normal'>Producer; </span>
-                        Aphria Inc.
+                  <span className='text-black text-2xl font-normal'>Brand Logo; </span>
+                  <img src={product?.brand?.logo} className="rounded-full object-cover w-auto h-32"  alt='' />
                 </li>
-                <li className='flex justify-between text-justify gap-20 items-center'>
-                  <span className='text-black text-2xl font-normal'>Plant Type; </span>
-                        Hybrid
-                </li>
-                <li className='flex justify-between text-justify gap-20 items-center '>
-                  <span className='text-black text-2xl font-normal'>THC; </span>
-                  <div className='flex flex-col'>
-                    <span> 5.70 - 30.00 mg </span>       
-                    <span> 0.20 - 1.05 mg/g</span>   
-                  </div>
-                </li>
-                <li className='flex justify-between  gap-20 items-center'>
-                  <span className='text-black text-2xl font-normal'>CBD;</span>
-                  <div className='flex flex-col'>
-                    <span> 255.00 - 345.00 mg</span>       
-                    <span> 8.95 - 12.00 mg/g</span>   
-                  </div>
-                </li>
-                <li className='flex justify-between text-justify gap-20 items-center'>
-                  <span className='text-black text-2xl font-normal'>Consumption;</span>
-                        Inhalation
-                </li>
+                {product.metas?.map((meta) => (
+                      <li className='flex justify-between text-justify gap-20 items-center' key={meta.id}>
+                      <span className='text-black text-2xl capitalize font-normal'>{meta.option}; </span>
+                            {meta?.values?.map((value, index) => (
+                           <div key={index} className="ml-8 mt-2">
+                                <button className='text-[#1F451A] text-xl rounded p-3'>{value?.size  ? `size: ${value?.size}`  : value }</button>
+                                <button className='text-[#1F451A] text-xl rounded p-3'>{value?.price ? `price:  $${value?.price}` : ""}</button>
+                              </div>
+                            ))}
+                    </li>
+                      ))} 
               </ul>
             </div>
             <div className='flex lg:flex-row productDetails  gap-10  justify-between'>
@@ -112,13 +147,16 @@ const ProductDetails = () => {
 
               </div>
               <a href='/carts' className='' >
-                <button className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'>
+                <button 
+                className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
+                >
                   <BsCart fontSize={28}/> Add to cart
                 </button>
               </a>
             </div>
           </div>
         </div>
+        }
 
         <div className='pt-10'>
           <h1 className=' text-3xl font-normal mb-10 text-[#2D2D2D] shopText'>Related Products</h1>

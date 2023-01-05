@@ -165,10 +165,26 @@ export const GetProducts =  async () => {
       cancelToken.cancel();
     };
 }
+export const GetProductId = (id) => {
+  try {
+      const req = axios.get(`${process.env.REACT_APP_BASEURL}/products/${id}`,  {
+        headers: { 
+            "Content-Type": "application/json" ,
+            "Authorization": `Bearer ${token}`
+        },
+      });
+
+      console.log("Products By Id", req);
+      return req;
+  } catch (error) {
+      console.log(error)  
+  }
+}
+
 
 export const GetCategories = async () => {
   try {
-      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/admin/categories`, 
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/categories`, 
           {
             headers: { 
                 "Content-Type": "application/json" ,
@@ -238,7 +254,32 @@ export const PostNewsletter = async (body) => {
 
 export const GetCart = async (user) => {
   try {
-      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/admin/${user}/cart`, 
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/${user}/cart`, 
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+            cancelToken: cancelToken.token,
+          })
+        console.log("Get cart",data);
+         return data; 
+        } catch (error) {
+          if (axios.isCancel(err)) {
+            console.log("Request canceled!");
+          } else {
+            console.log(error);
+          }
+        }
+        return () => {
+          cancelToken.cancel();
+        };
+}
+
+export const PostCart = async (user, body) => {
+  try {
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/${user}/cart`, 
+      body,
           {
             headers: { 
                 "Content-Type": "application/json" ,

@@ -14,7 +14,7 @@ const FlexStyle = ({ category , isLoading}) => {
           :
       <div className='flex flex-col pl-5 gap-10 pt-10 justify-between w-full'>
         {category.map((cat) => (
-          <Link to={`/product/${cat.product_id}`} key={cat.product_id}>
+          <Link to={`/product/${cat.slug}`} key={cat.product_id}>
             <div className='w-full h-full accessoryBg flex flex-row justify-between items-center gap-10 p-10 space-y-5 hover:shadow-md'>
               <img src={cat.product_image} alt="" className='rounded-md w-80 h-72' />
               <div className='flex flex-row productDetails justify-between gap-x-40'>

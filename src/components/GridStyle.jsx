@@ -15,7 +15,7 @@ const GridStyle = ({ category, isLoading }) => {
                   :
       <div className='grid lg:grid-cols-3  md:grid-cols-2 pl-5 sm:grid-cols-2 gap-10 pt-10 justify-between items-center'>
         {category && category?.map((cat) => (
-          <Link to={`/product/${cat.product_id}`} key={cat.product_id}>
+          <Link to={`/product/${cat.slug}`} key={cat.product_id}>
             <div className='w-80 h-auto bg-white rounded-lg border flex flex-col justify-between p-5 space-y-5 hover:shadow-md'>
               <img src={cat.product_image} alt="" className='rounded-md w-auto h-auto' />
                <p className='text-xl bg-[#1F451A] rounded-md  gap-2 p-3 w-24 text-white'>{cat.brand?.label}</p>

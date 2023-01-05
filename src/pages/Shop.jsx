@@ -47,15 +47,14 @@ const Shop = () => {
       <div className='small w-screen container mx-auto my-8'>
         <div>
           <h1 className='text-3xl font-bold mb-10 text-[#2D2D2D] pt-10 text-start shopText'>Categories</h1>
-          <div className='p-10'>
-            <div className='grid lg:grid-cols-3  md:grid-cols-2 pl-5 sm:grid-cols-2 gap-10 pt-10 justify-between items-center'>
-            {isLoading
+          <div className='pb-10'>
+          {isLoading
                   ? 
                   <Spinner /> 
                   :
-            <div className='grid lg:grid-cols-3  md:grid-cols-2 pl-5 sm:grid-cols-2 gap-10 pt-10 justify-between items-center'>
+            <div className='grid lg:grid-cols-3  md:grid-cols-2  sm:grid-cols-2 gap-10 pt-10 justify-between items-center'>
               {categories.map((cat) => (
-                <Link to={`/shop/${cat.slug}`} key={cat.slug} className='w-80 h-auto  bg-white ro unded-lg borderflex flex-col justify-between p-5 space-y-5 hover:shadow-md'>
+                <Link to={`/shop/${cat.slug}`} key={cat.slug} className='w-[80%] h-auto  bg-white ro unded-lg borderflex flex-col justify-between p-5 space-y-5 hover:shadow-md'>
                   <img  src={cat.image} alt="" className='rounded-md w-auto h-auto' />
                   <div className='text-2xl text-start capitalize text-[#1F451A] font-normal'>{cat.label}</div>
                   <div onClick={() => history(`/shop/${cat.slug}`)} className='' >
@@ -66,8 +65,7 @@ const Shop = () => {
                 </Link>     
               ))}
               </div>
-            } 
-            </div>
+              }
           </div>
         </div>
 

@@ -343,7 +343,7 @@ const Home = () => {
           <div className='grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-10  justify-between items-center'>
             {categories.map((cat) => (
               <Link to={`/shop/${cat.slug}`} key={cat.slug}>
-                <div key={cat.slug} className='w-full h-full bg-white rounded-lg border flex flex-col items-center p-10  border-gray-200 shadow-md'>
+                <div key={cat.slug} className='w-auto h-full bg-white rounded-lg border flex flex-col items-center p-10  border-gray-200 shadow-md'>
                   <img  src={cat.image}  alt="" className='rounded-md w-full h-full' />
                   <div className='text-2xl capitalize font-medium p-5'>{cat.label}</div>
                   {/* <p className='pt-5 text-xl pb-5'>{cat.price}</p> */}

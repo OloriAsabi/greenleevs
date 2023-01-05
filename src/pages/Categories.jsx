@@ -15,6 +15,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect } from 'react';
 import { GetCategories, GetCategoriesById } from '../apis/api';
 import { useCallback } from 'react';
+import { edibles } from '../data/data';
 
 const Categories = () => {
   const [open, setOpen] = useState(false);
@@ -81,7 +82,6 @@ const Categories = () => {
     setIsLoading(true)
     GetCategories()
     .then((response) => {
-    // console.log(response);
     const data = response.data.data
       
     setCategories(data)
@@ -100,6 +100,8 @@ const Categories = () => {
   useEffect(() => {
     getDataCategoryById()
   }, []);
+
+  console.log("Category : ", category);
   
   return (      
     <div>
@@ -185,7 +187,7 @@ const Categories = () => {
         </div>
       </div>
       <div className='pt-10 accessorySide  small pl-10 pr-`10 '>
-        <h1 className='text-3xl font-bold mb-10 text-[#2D2D2D] text-start shopText'>Categories</h1>
+        <h1 className='text-3xl font-bold mb-10 text-[#2D2D2D] capitalize text-start shopText'>Popular on {id}</h1>
         <div className='p-10'>
         {isLoading
                   ? 
@@ -210,31 +212,31 @@ const Categories = () => {
             }}
             modules={Mousewheel}
             className="mySwiper">
-            {categories.map(cat => (
-              <SwiperSlide key={cat.slug}>
-                    <Link to={`/shop/${cat.slug}`} key={cat.slug} className='w-80 h-auto  bg-white ro unded-lg borderflex flex-col justify-between p-5 space-y-5 hover:shadow-md'>
-                  <img  src={cat.image} alt="" className='rounded-md w-auto h-auto' />
-                  <div className='text-2xl text-start capitalize text-[#1F451A] font-normal'>{cat.label}</div>
-                  <div onClick={() => history(`/shop/${cat.slug}`)} className='' >
-                    <button className='text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'>
-                              Explore
-                    </button>
-                  </div>
-                </Link>                 
-              </SwiperSlide>     
-            )) }
+            {edibles.map(cat => (
+                <SwiperSlide key={cat.id}>
+                  <div className='w-full h-full bg-white rounded-lg border flex flex-col justify-between p-5 space-y-10 hover:shadow-md'>
+                    <img src={cat.img} alt="" className='rounded-md w-full h-9/12 object-cover' />
+                    <div className='text-2xl text-start text-[#1F451A] font-normal'>{cat.title}</div>
+                    <div onClick={() => history('/carts')} className='' >
+                      <button className='flex text-center items-center justify-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'>
+                        <BsCart fontSize={28}/> Add to cart
+                      </button>
+                    </div>
+                  </div>                
+                </SwiperSlide>     
+              )) }
           </Swiper>
 }
         </div>
       </div>
       <div className='pt-10 dontShow small'>
         <div className='conatiner mx-auto '>
-          <h1 className='text-3xl font-bold mb-10 text-[#2D2D2D] text-start shopText'>Shop By Categories</h1>
+          <h1 className='text-3xl font-bold mb-10 text-[#2D2D2D] text-start shopText'>Popular on {id}</h1>
           <div className='flex flex-col justify-between items-center'>
-            {categories.map(cat => (
-              <Link to={`/shop/${cat.slug}`} key={cat.slug}>
+            {edibles.map(cat => (
+              <Link to={`/shop`} key={cat.id}>
                 <div className='flex flex-col justify-betwe items-center'>
-                  <div className='text-2xl p-3 cursor-pointer rounded-md w-72 mb-10 hover:scale-x-110 border border-[#1F451A] capitalize text-[#1F451A] font-normal'>{cat.label}</div>
+                  <div className='text-2xl p-3 cursor-pointer rounded-md w-72 mb-10 hover:scale-x-110 border border-[#1F451A] capitalize text-[#1F451A] font-normal'>{cat.title}</div>
                 </div>
               </Link>               
             )) }
