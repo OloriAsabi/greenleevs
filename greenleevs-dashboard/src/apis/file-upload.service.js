@@ -23,4 +23,4 @@ class FileUploadService {
   }
 }
 
-export default new FileUploadService();
+ export default new FileUploadService();

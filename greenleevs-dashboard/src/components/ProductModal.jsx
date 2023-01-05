@@ -103,34 +103,38 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
       CreateProducts(body)
        .then(response => {
         console.log(response);
+        const responseStatus = response.data.status
+        if (responseStatus) {
+          enqueueSnackbar('Products Added Successfully', { variant: responseStatus });
+        } else {
+          enqueueSnackbar("Products Upload failed" , { variant: responseStatus });
+        }
       });
-      // dispatch({ type: 'ADD_PRODUCTS', payload: body});
+      dispatch({ type: 'ADD_PRODUCTS', payload: body});
       localStorage.setItem('products', JSON.stringify(body));
       navigate('/products');
-      // enqueueSnackbar('Products Added Successfully', { variant: 'success' });
     } catch (error) {
       console.log(error);
-      // enqueueSnackbar("Products Upload failed", { variant: 'error' });
     }
   };
 
   return (
     <main
     className={
-      " fixed overflow-hidden z-10 bg-gray-900 bg-opacity-25 inset-0 transform ease-in-out " +
+      " fixed overflow-hidden z-10 overflow-y-scroll bg-gray-900 bg-opacity-25 inset-0 transform ease-in-out " +
       ( toggleMenu
         ? " transition-opacity opacity-100 duration-500 translate-x-0  "
         : " transition-all opacity-0 translate-x-full")
     }>
       <section
       className={
-        " w-screen max right-0 absolute bg-white shadow-xl delay-400 duration-500 ease-in-out transition-all transform  " +
+        " w-screen max right-0 absolute bg-white shadow-xl delay-400 duration-500 ease-in-out overflow-y-scroll transition-all transform  " +
         (toggleMenu ? " translate-x-0 " : " translate-x-full ")
       }
       >
         <article
-        className='relative w-screen max mb-5 pb-10 grid grid-rows space-y-6 h-screen overflow-y-scroll'>
-        <div className='flex justify-between mt-5'>
+        className='relative w-screen max mb-5 pb-10 grid grid-rows space-y-6 h-full overflow-y-scroll'>
+        <div className='flex justify-between m-10'>
         <header className="p-4 font-bold text-lg">Add Your Products</header>
         <MdOutlineCancel
         className="mr-5 mt-4 cursor-pointer text-red-500"
@@ -140,7 +144,7 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
         fontSize={28}
         />
        </div>
-        <div className="flex w-full text-center justify-center items-center p-5">
+        <div className="flex w-full text-center justify-center items-center pr-10 pl-10">
         <div className="grid justify-center items-center bg-white lg:p-5 p-3 w-full">
           <div className="container">
           <div className="form-group preview">
@@ -438,6 +442,7 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
                 <button
                   type="submit"
                   className="bg-[#1F451A] text-white hover: cursor-pointer p-4 rounded"
+                   
                 >
                 Add Products
                 </button>

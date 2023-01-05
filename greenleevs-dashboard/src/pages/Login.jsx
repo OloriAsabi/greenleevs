@@ -30,7 +30,17 @@ const Login = () => {
       sub: sub,
     }
     try {
-      LoginUser(bodyData);
+      LoginUser(bodyData).then((response) => {
+        const responseStatus = response.data.status
+
+        if (responseStatus) {
+          enqueueSnackbar('Registered Successful', { variant: responseStatus });
+        } else {
+          enqueueSnackbar("Registration failed" , { variant: responseStatus });
+        }
+          
+        console.log("responseStatus ",responseStatus);
+      });
       dispatch({ type: 'USER_LOGIN', payload: bodyData });
       localStorage.setItem('user', JSON.stringify(bodyData));
     } catch (error) {
@@ -49,10 +59,17 @@ const Login = () => {
     try {
     LoginUser(bodyData) 
       .then(response => {
-        console.log(response);
+        const responseStatus = response.data.status
+
+        if (responseStatus) {
+          enqueueSnackbar('Registered Successful', { variant: responseStatus });
+        } else {
+          enqueueSnackbar("Registration failed" , { variant: responseStatus });
+        }
+          
+        console.log("responseStatus ",responseStatus);
         const { token } = response.data
         localStorage.setItem('token', token);
-        console.log(localStorage.getItem(token));
       });
       dispatch({ type: 'USER_LOGIN', payload: bodyData});
       localStorage.setItem('user', JSON.stringify(bodyData));

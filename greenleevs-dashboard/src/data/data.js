@@ -1,12 +1,14 @@
 import { HiOutlineHome } from 'react-icons/hi';
 import { FiShoppingBag, FiSettings, FiCreditCard, FiEdit } from "react-icons/fi";
 import { FaSearchPlus } from "react-icons/fa"
-import { BiGift } from "react-icons/bi";
+import { BiGift, BiCategory } from "react-icons/bi";
 import { IoIosPeople } from "react-icons/io";
 import { BsCardList, BsCurrencyDollar, BsShield, BsToggle2On, } from "react-icons/bs";
 import { AiFillDelete } from 'react-icons/ai';
 import productImage from "./productImg.jpg";
 import productImage2 from "./productImg2.jpeg";
+import { TbBrandSlack, TbError404 } from 'react-icons/tb';
+import { CgExtensionAdd } from 'react-icons/cg';
 
 export const links = [
     {
@@ -24,27 +26,38 @@ export const links = [
             href: 'products'
         },
         {
-            id: 3,  
+          id: 3,  
+          name: 'Categories',
+          icon: <BiCategory/>,
+          href: 'categories'
+      },
+        {
+            id: 4,  
             name: 'Customers',
             icon: <IoIosPeople/>,
             href: 'customers'
         },
         {
-            id: 4,  
+            id: 5,  
             name: 'Orders',
             icon: <BsCardList/>,
             href: 'orders'
 
+        },
+        {
+          id: 6,
+          name: "Brands",
+          icon: <TbBrandSlack />,
+          href: 'brands'
         },
         // {
         //     id: 6,  
         //     name: 'Coupons',
         //     icon: <BiGift/>,
         //     href: 'coupons'
-
         // },
         {
-            id: 5,  
+            id: 7,  
             name: 'Settings',
             icon: <FiSettings />,
             href: 'settings'
@@ -58,12 +71,14 @@ export const links = [
       title: 'Pages',
       links: [
         {
+          id: 1,  
           name: '404',
-        //   icon: <AiOutlineShoppingCart />,
+          icon: <TbError404 />,
         },
         {
+          id: 2,  
           name: 'Coming Soon',
-        //   icon: <IoMdContacts />,
+          icon: <CgExtensionAdd />,
         },
       ],
     },

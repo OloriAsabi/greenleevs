@@ -8,9 +8,13 @@ export { default as PieChart } from './PieChart'
 export { default as Table } from "./Table"
 export { default as  ProductsTable } from "./ProductsTable"
 export { default as  ProductModal} from "./ProductModal"
-export { default as  CategoryModal} from "./CategoryModal"
-export { default as Spinner} from "./Spinner"
+export { default as  CategoryModal} from "./CategoryModal";
+export { default as CategoriesTables } from './CategoriesTables';
+export { default as BrandTable } from './BrandTable';
+export { default as BrandModal } from './BrandModal';
+export { default as Spinner} from "./Spinner";
 export { default as CustomersTable } from './CustomersTable';
 export { default as OrdersTable } from './OrdersTable';
 export { default as CouponTable } from './CouponTable';
-export { default as EditModal} from './EditModal'
+export { default as EditProductModal } from './EditProductModal'
+export { default as EditCategoryModal } from './EditCategoryModal'

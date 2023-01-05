@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { BsToggle2Off, BsToggle2On } from 'react-icons/bs';
 import {RiArrowDropDownLine } from 'react-icons/ri';
 
-const Sidebar = () => {
+const Sidebar = ({id}) => {
   const [checked, setChecked] = useState(false);
   const history = useNavigate();
   const [openPotent, setOpenPotent] = useState(false);
@@ -38,7 +38,7 @@ const Sidebar = () => {
       >
         <h5 className='pt-5'>SUBCATEGORIES</h5>
         <div className='pt-6'>
-          <p className='pb-5'>All Accessories</p>
+          <p className='pb-5 capitalize'>All {id}</p>
           <ul className='text-[#2D2D2D] text-sm  pb-5 cursor-pointer text-start'>
             <li className='pb-2 hover:border-b-2 w-8'>Bongs</li>
             <li className='pb-2 hover:border-b-2 w-8'>Pipes</li>

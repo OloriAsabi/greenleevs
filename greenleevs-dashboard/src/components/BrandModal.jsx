@@ -5,18 +5,17 @@ import { MdDelete } from 'react-icons/md';
 import { useSnackbar } from 'notistack';
 import { useStateContext } from '../contexts/ContextProvider';
 import { useForm } from 'react-hook-form';
-import { PostCategories } from '../apis/api';
+import { PostBrand } from '../apis/api';
 
-const CategoryModal = ({toggleMenu, setToggleMenu}) => {
-  const { dispatch  } = useStateContext();
+
+const BrandModal = ({toggleMenu, setToggleMenu}) => {
+    const { dispatch  } = useStateContext();
     const navigate = useNavigate();
 
     const [file, setFile] = useState([]);
     const [image, setImage] = useState();
 
-
     console.log("Images: ",image);
-
     const { enqueueSnackbar } = useSnackbar();
 
   const {
@@ -44,39 +43,37 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
   }
 
   const submitHandler = async (data) => {
-    console.log("Categories Product Modal", data);
-
-
+    console.log("Brands Product Modal", data);
     const body = {
-      label: data.title ,
-      slug: data.slug,
-      category_image: image,
-    };
-
-    console.log('Body',body);
-
-    try {
-      PostCategories(body)
-      .then(response => {
-       console.log(response);
-      //  const responseStatus = response.data.status
-      //  if (responseStatus) {
-      //    enqueueSnackbar('Categories Added Successfully', { variant: responseStatus });
-      //  } else {
-      //    enqueueSnackbar("Categories Upload failed" , { variant: responseStatus });
-      //  }
-     });
-     dispatch({ type: 'ADD_CATEGORIES', payload: body});
-     localStorage.setItem('categories', JSON.stringify(body));
-     navigate('/categories');
-   } catch (error) {
-     console.log(error);
-    }
+        label: data.title ,
+        slug: data.slug,
+        logo: image,
+        description: data.description,
+      };
+      console.log('Body',body);
+      try {
+        PostBrand(body)
+        .then(response => {
+         console.log(response);
+        //  const responseStatus = response.data.status
+        //  if (responseStatus) {
+        //    enqueueSnackbar('Categories Added Successfully', { variant: responseStatus });
+        //  } else {
+        //    enqueueSnackbar("Categories Upload failed" , { variant: responseStatus });
+        //  }
+       });
+       dispatch({ type: 'ADD_BRANDS', payload: body});
+       localStorage.setItem('brands', JSON.stringify(body));
+       navigate('/brands');
+     } catch (error) {
+       console.log(error);
+        
+      }
 
   }
 
   return (
-    <main
+     <main
     className={
       " fixed overflow-hidden z-10 overflow-y-scroll bg-gray-900 bg-opacity-25 inset-0 transform ease-in-out " +
       ( toggleMenu
@@ -92,7 +89,7 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
         <article
         className='relative w-screen max mb-5 pb-10 grid grid-rows space-y-6 h-full overflow-y-scroll'>
         <div className='flex justify-between m-10'>
-        <header className="p-4 font-bold text-lg">Add Your Category</header>
+        <header className="p-4 font-bold text-lg">Add Your Brands</header>
         <MdOutlineCancel
         className="mr-5 mt-4 cursor-pointer text-red-500"
         onClick={() => {
@@ -136,7 +133,7 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
             <label htmlFor='title'
             className={`block pb-3 text-sm 2 ${
             errors.title ? "text-red-400" : "text-gray-700 "} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}
-            >Category Title : </label>
+            >Brand Title : </label>
               <input 
                 name="title" 
                 id="title" 
@@ -162,7 +159,7 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
             <label htmlFor='slug'
             className={`block pb-3 text-sm 2 ${
             errors.slug ? "text-red-400" : "text-gray-700 "} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}
-            >Category Slug : </label>
+            >Brands Slug : </label>
               <input 
                 name="slug" 
                 id="slug" 
@@ -184,12 +181,38 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
                   </p>
                 )}
             </div>
+            <div className='flex space-x-5'>
+            <label
+            htmlFor='description'
+              className={`block pb-3 text-sm 2 ${
+              errors.description ? "text-red-400" : "text-gray-700 "} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}>Brand Description:</label>
+           <input 
+                name="description" 
+                id="description" 
+                type="text" 
+                placeholder=''
+                className={`block w-full ${
+                  errors.email ? "text-red-400 border-red-400" : "text-gray-700 "} px-3 py-1 mb-2 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
+                  {...register("description", { 
+                    required: "Description is Required!!!" ,
+                   })}
+                   onKeyUp={() => {
+                     trigger("description");
+                   }}
+                  required={true}
+                  />
+                   {errors.description && (
+                  <p className="text-red-500 text-sm mt-2">
+                    Description is Required!!!
+                  </p>
+                )}
+            </div>
             <div className="flex justify-end items-end mt-5">
                 <button
                   type="submit"
                   className="bg-[#1F451A] text-white hover: cursor-pointer p-4 rounded"
                 >
-                Add Categories
+                Add Brands
                 </button>
               </div>
           </form>
@@ -201,4 +224,4 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
   )
 }
 
-export default CategoryModal
+export default BrandModal

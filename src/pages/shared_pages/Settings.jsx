@@ -50,7 +50,7 @@ const Settings = () => {
       password_confirmation: data.confirmPassword
     }
     try {
-      UpdateUser(bodyData);
+      UpdateUser(bodyData)   
       dispatch({ type: 'USER_UPDATE', payload: bodyData});
       localStorage.setItem('user', JSON.stringify(bodyData));    
       enqueueSnackbar('Profile updated successfully', { variant: 'success' });

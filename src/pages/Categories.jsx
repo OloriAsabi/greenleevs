@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { BiMenu, BiMenuAltRight, BiSortAlt2 } from 'react-icons/bi';
 import { BsCart, BsGrid } from 'react-icons/bs';
-import { category } from '../data/data';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Link } from 'react-router-dom';
 import visa from '../assests/Vector (1).png';
@@ -10,29 +9,32 @@ import master from '../assests/master.png';
 import american from '../assests/american.png';
 
 import { Mousewheel } from 'swiper';
-import { FlexStyle, GridStyle, Sidebar, SidebarCat } from '../components';
+import { FlexStyle, GridStyle, Sidebar, SidebarCat, Spinner } from '../components';
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { useEffect } from 'react';
-import { GetCategories } from '../apis/api';
+import { GetCategories, GetCategoriesById } from '../apis/api';
+import { useCallback } from 'react';
 
-const Categories = ({label}) => {
+const Categories = () => {
   const [open, setOpen] = useState(false);
   // const [openSort, setOpenSort] = useState(false)
   const [openNav, setOpenNav] = useState(false);
   const { id }  = useParams();
-  const [categorys, setCategory] = useState([])
+  const [categories, setCategories] = useState([])
+  const [category, setCategory] = useState([])
   // const [isOpen, setIsOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [activeFilter, setActiveFilter] = useState('All');
 
   const showGrid = () => {
     if (window.location.pathname === `/shop/${id}`) {
-      return <GridStyle />;
+      return <GridStyle category={category} isLoading={isLoading} />;
     }
   };
   const showFlex = () => {
     if (window.location.pathname === `/shop/${id}`) {
-      return <FlexStyle />;
+      return <FlexStyle category={category}  isLoading={isLoading}  />;
     }
   };
 
@@ -60,23 +62,49 @@ const Categories = ({label}) => {
     }, 500);
   };
 
+  const getDataCategoryById =  useCallback(() => {
+    setIsLoading(true)
+    GetCategoriesById(id)
+    .then((res) => {
+      console.log("Category By id",res);
+          const data = res.data.data
+      
+          setCategory(data)
+          setIsLoading(false)
+          }).catch((e) => {
+          console.log(e);
+          });
+  },
+  []);
 
-  useEffect(() => {
+  const getDataCategory =  useCallback(() => {
+    setIsLoading(true)
     GetCategories()
     .then((response) => {
-    console.log(response);
-    // const data = response.data.data
+    // console.log(response);
+    const data = response.data.data
       
-    // setCategories(data)
+    setCategories(data)
+    setIsLoading(false)
     }).catch((e) => {
     console.log(e);
     });
+  },
+  []);
+
+  useEffect(() => {
+  getDataCategory();
   },[]);
-  return (      
+
+
+  useEffect(() => {
+    getDataCategoryById()
+  }, []);
   
+  return (      
     <div>
       <div className='w-screen flex h-full '>
-        <Sidebar />
+        <Sidebar id={id} />
         <div className="h-full flex-1 small p-7">   
           <div className="p-10 flex dontShow  flex-wrap justify-between">
             {['All Categories', 'Bongs', 'Pipes', 'Smoking Papers', 'Vapes'].map((item, index) => (
@@ -91,7 +119,7 @@ const Categories = ({label}) => {
             ))}
           </div>
           <div className='flex justify-between pt-10 pb-6'>
-            <h4 className='text-2xl font-medium pb-5'>ALL ACCESSORIES</h4>
+            <h4 className='text-2xl font-medium capitalize pb-5' >ALL {id}</h4>
             <div className='flex justify-between items-center gap-10'>
               <div>
                 <form onSubmit={handleSubmit(submitSort)} >
@@ -159,6 +187,10 @@ const Categories = ({label}) => {
       <div className='pt-10 accessorySide  small pl-10 pr-`10 '>
         <h1 className='text-3xl font-bold mb-10 text-[#2D2D2D] text-start shopText'>Categories</h1>
         <div className='p-10'>
+        {isLoading
+                  ? 
+                  <Spinner /> 
+                  :
           <Swiper
             mousewheel={true}
             spaceBetween={50}
@@ -178,28 +210,31 @@ const Categories = ({label}) => {
             }}
             modules={Mousewheel}
             className="mySwiper">
-            {category.map(cat => (
-              <SwiperSlide key={cat.id}>
-                <Link to={`/shop/${cat.title}`} key={cat.id}>
-                  <div className='w-full h-full  bg-white rounded-lg border flex flex-col justify-between p-5 space-y-10 hover:shadow-md'>
-                    <img src={cat.img} alt="" className='rounded-md w-auto h-fauto' />
-                    <div className='text-2xl text-start capitalize text-[#1F451A] font-normal'>{cat.title}</div>
-                    <button className='bg-[#1F451A] text-white p-3 cursor-pointer rounded-md w-full hover:scale-x-110 text-xl'>Explore</button>
+            {categories.map(cat => (
+              <SwiperSlide key={cat.slug}>
+                    <Link to={`/shop/${cat.slug}`} key={cat.slug} className='w-80 h-auto  bg-white ro unded-lg borderflex flex-col justify-between p-5 space-y-5 hover:shadow-md'>
+                  <img  src={cat.image} alt="" className='rounded-md w-auto h-auto' />
+                  <div className='text-2xl text-start capitalize text-[#1F451A] font-normal'>{cat.label}</div>
+                  <div onClick={() => history(`/shop/${cat.slug}`)} className='' >
+                    <button className='text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'>
+                              Explore
+                    </button>
                   </div>
-                </Link>               
+                </Link>                 
               </SwiperSlide>     
             )) }
           </Swiper>
+}
         </div>
       </div>
       <div className='pt-10 dontShow small'>
         <div className='conatiner mx-auto '>
           <h1 className='text-3xl font-bold mb-10 text-[#2D2D2D] text-start shopText'>Shop By Categories</h1>
           <div className='flex flex-col justify-between items-center'>
-            {category.map(cat => (
-              <Link to={'/shop/accessories'} key={cat.id}>
+            {categories.map(cat => (
+              <Link to={`/shop/${cat.slug}`} key={cat.slug}>
                 <div className='flex flex-col justify-betwe items-center'>
-                  <div className='text-2xl p-3 cursor-pointer rounded-md w-72 mb-10 hover:scale-x-110 border border-[#1F451A] capitalize text-[#1F451A] font-normal'>{cat.title}</div>
+                  <div className='text-2xl p-3 cursor-pointer rounded-md w-72 mb-10 hover:scale-x-110 border border-[#1F451A] capitalize text-[#1F451A] font-normal'>{cat.label}</div>
                 </div>
               </Link>               
             )) }

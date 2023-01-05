@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom';
 import { getProductId } from '../apis/api'
-import { EditModal } from '../components';
+import { EditProductModal } from '../components';
 import Spinner from '../components/Spinner';
 
 
@@ -9,10 +9,8 @@ const Productdetails = () => {
     const { id }  = useParams();
     const [product, setProduct] = useState({});
     const [showModal, setShowModal] = useState(false);
-     const history =  useNavigate();
-     const [isLoading, setIsLoading] = useState(false)
-     const [toggleMenu, setToggleMenu] = useState(false);
-     
+    const history =  useNavigate();
+    const [isLoading, setIsLoading] = useState(false);   
 
     useEffect(() => {
         setIsLoading(true)
@@ -23,8 +21,6 @@ const Productdetails = () => {
             setIsLoading(false)
         })
     },[id]);
-
-    console.log(product);
 
   return (  
     <div className='container'>
@@ -48,7 +44,7 @@ const Productdetails = () => {
             <div className='flex justify-between text-center'>
                 <h5 className='mt-2 pr-4 pt-3 pb-3'>Tags:  </h5>
                 {product?.tags?.map((tag) => (
-                   <button className='text-white bg-[#1F451A] rounded items-center text-center p-3 m-3'>{tag}</button>
+                   <button className='text-white bg-[#1F451A] rounded items-center text-center p-3 m-3' key={tag}>{tag}</button>
                 ))}
             </div>
             <div className='flex justify-between text-center'>
@@ -86,7 +82,7 @@ const Productdetails = () => {
     </button>
     </div>
     {showModal ? 
-          <EditModal
+          <EditProductModal
           id={id}
            showModal={showModal} 
            setShowModal={setShowModal}

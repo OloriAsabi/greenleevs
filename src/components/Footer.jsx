@@ -18,16 +18,10 @@ const Footer = () => {
                 <a href="/" className="hover:underline">Payment & Delivery Information</a>
               </li>
               <li className="">
-                <a href="/" className="hover:underline">Legal Use of Cannabis In Ontario</a>
+                <a href="/" className="hover:underline">Legal Use of Cannabis In United States</a>
               </li>
               <li className="">
                 <a href="/" className="hover:underline">Product Recall</a>
-              </li>
-              <li className="">
-                <a href="/" className="hover:underline">Government of Canada - Cannabis</a>
-              </li>
-              <li className="mb-4">
-                <a href="/" className="hover:underline">Government of Canada - Cannabis</a>
               </li>
             </ul>
           </div>
@@ -43,16 +37,7 @@ const Footer = () => {
                 <a href="/" className="hover:underline">About Green Leevs</a>
               </li>
               <li className="">
-                <a href="/" className="hover:underline">Careers</a>
-              </li>
-              <li className="">
                 <a href="/" className="hover:underline">Media Centre</a>
-              </li>
-              <li className="">
-                <a href="/" className="hover:underline">Doing Business With OCS</a>
-              </li>
-              <li className="mb-4">
-                <a href="/" className="hover:underline">Doing Business With OCS</a>
               </li>
             </ul>
           </div>
@@ -72,9 +57,6 @@ const Footer = () => {
               </li>
               <li className="">
                 <a href="/" className="hover:underline">Privacy</a>
-              </li>
-              <li className="">
-                <a href="/" className="hover:underline">Delivery to First Nations</a>
               </li>
               <li className="mb-4">
                 <a href="/" className="hover:underline">Email Newsletter Terms and Conditions</a>

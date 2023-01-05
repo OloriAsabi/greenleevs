@@ -14,10 +14,27 @@ import { Mousewheel } from 'swiper';
 import visa from '../assests/Vector (1).png';
 import master from '../assests/master.png';
 import american from '../assests/american.png';
+import { useStateContext } from '../contexts/ContextProvider';
+import { GetCart } from '../apis/api';
 
 const Carts = () => {
   const history = useNavigate();
   const [itemCount, setItemCount] = useState(1);
+  const [carts, setCarts] = useState([]);
+
+
+  const { dispatch, state } = useStateContext();
+  const { user } = state;
+  console.log(user);
+
+  useEffect(() => {
+    GetCart(user.email)
+    .then((response) => {
+    console.log(response);
+    }).catch((e) => {
+    console.log(e);
+    });
+  },[]);
 
   return (
     <div>

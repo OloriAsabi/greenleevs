@@ -58,8 +58,16 @@ const Register = () => {
     try {
       RegisterUser(bodyData)
       .then(response => {
-        // console.log(response);
         const { token } = response.data
+        const responseStatus = response.data.status
+
+        if (responseStatus) {
+          enqueueSnackbar('Registered Successful', { variant: responseStatus });
+        } else {
+          enqueueSnackbar("Registration failed" , { variant: responseStatus });
+        }
+          
+        console.log("responseStatus ",responseStatus);
         localStorage.setItem('token', token);
         console.log(localStorage.getItem(token));
       });
@@ -182,7 +190,7 @@ const Register = () => {
              <label
              htmlFor='confirmPassword' 
              className={`block pb-3 text-sm 2 ${
-              errors.email ? "text-red-400" : "text-gray-700 "} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}>Confirm Your Password</label>
+              errors.confirmPassword ? "text-red-400" : "text-gray-700 "} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}>Confirm Your Password</label>
              <input 
               name="confirmPassword" 
               id="confirmPassword" 

@@ -3,14 +3,14 @@ import React, { createContext, useContext, useState, useReducer } from 'react';
 const StateContext = createContext();
 
 const initialState = {
-  userProfile: false,
   authenticated: false,
   user: localStorage.getItem('user')
   ? JSON.parse(localStorage.getItem('user'))
   : null,
-  products: localStorage.getItem('products')
-  ? JSON.parse(localStorage.getItem('products'))
-  : null,
+  products: [],
+  customers: [],
+  categories: [],
+  brands: [],
   notification: false,
 };
 
@@ -37,7 +37,22 @@ function reducer(state, action) {
       return {
         ...state, products:
         action.payload
-      }    
+      } ;
+      case "ADD_CUSTOMERS":
+      return {
+        ...state, customers:
+        action.payload
+      }       
+      case "ADD_CATEGORIES":
+      return {
+        ...state, categories:
+        action.payload
+      } 
+      case "ADD_BRANDS":
+        return {
+          ...state, brands:
+          action.payload
+        }       
       }
   };
 export const ContextProvider = ({ children }) => {

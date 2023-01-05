@@ -13,23 +13,33 @@ import american from '../assests/american.png';
 import { GetCategories } from '../apis/api';
 
 import 'swiper/css';
+import { useCallback } from 'react';
+import { Spinner } from '../components';
 
 
 const Shop = () => {
   const history = useNavigate();
 
   const [categories, setCategories] = useState([]);
+  const [isLoading, setIsLoading] = useState(false)
 
-  useEffect(() => {
+  const getDataCategory =  useCallback(() => {
+    setIsLoading(true)
     GetCategories()
     .then((response) => {
     console.log(response);
     const data = response.data.data
       
     setCategories(data)
+    setIsLoading(false)
     }).catch((e) => {
     console.log(e);
     });
+  },
+  []);
+
+  useEffect(() => {
+    getDataCategory()
   },[]);
 
   return (
@@ -39,9 +49,14 @@ const Shop = () => {
           <h1 className='text-3xl font-bold mb-10 text-[#2D2D2D] pt-10 text-start shopText'>Categories</h1>
           <div className='p-10'>
             <div className='grid lg:grid-cols-3  md:grid-cols-2 pl-5 sm:grid-cols-2 gap-10 pt-10 justify-between items-center'>
+            {isLoading
+                  ? 
+                  <Spinner /> 
+                  :
+            <div className='grid lg:grid-cols-3  md:grid-cols-2 pl-5 sm:grid-cols-2 gap-10 pt-10 justify-between items-center'>
               {categories.map((cat) => (
                 <Link to={`/shop/${cat.slug}`} key={cat.slug} className='w-80 h-auto  bg-white ro unded-lg borderflex flex-col justify-between p-5 space-y-5 hover:shadow-md'>
-                  <img  src="https://source.unsplash.com/random/?weed,cannabis,tinctures,thc,cbd" alt="" className='rounded-md w-auto h-auto' />
+                  <img  src={cat.image} alt="" className='rounded-md w-auto h-auto' />
                   <div className='text-2xl text-start capitalize text-[#1F451A] font-normal'>{cat.label}</div>
                   <div onClick={() => history(`/shop/${cat.slug}`)} className='' >
                     <button className='text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'>
@@ -50,6 +65,8 @@ const Shop = () => {
                   </div>
                 </Link>     
               ))}
+              </div>
+            } 
             </div>
           </div>
         </div>

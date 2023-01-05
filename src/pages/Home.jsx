@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {BsCheck2Circle } from 'react-icons/bs';
 import { TbTruckDelivery } from 'react-icons/tb';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -30,7 +30,7 @@ import { Navigation, Pagination } from 'swiper';
 import { strainTypes } from '../data/data';
 import { MdOutlineCancel } from 'react-icons/md';
 import { Link } from 'react-router-dom';
-import { GetCategories, GetProducts } from '../apis/api';
+import { GetCategories, GetProducts, PostNewsletter } from '../apis/api';
 
 /* eslint-disable */
 const images =[
@@ -58,7 +58,7 @@ const SliderItems = ({pic,id, brand, price, title, brandImage, taste, content, }
   return(
     <div key={id} className=' p-10 text-center tracking-widest leading-8'>
       <div className='flex flex-col space-y-5 items-center justify-center'>
-        <img src={pic} className="w-48 h-48 rounded" alt='featured Products'/> \
+        <img src={pic} className="w-48 h-48 rounded" alt='featured Products'/>
         <div className='rounded-full text-center '>
         <img src={brandImage} className="rounded-full object-cover w-auto h-auto"  alt='' />
         </div>
@@ -120,6 +120,34 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
 
+  const getDataProducts =  useCallback(() => {
+    GetProducts()
+    .then((response) => {
+    const data = response.data.data
+      
+    setProducts(data)
+    }).catch((e) => {
+    console.log(e);
+    })
+  },
+  [products]);
+  
+
+  const getDataCategory =  useCallback(() => {
+    GetCategories()
+    .then((response) => {
+    console.log(response);
+    const data = response.data.data
+      
+    setCategories(data)
+    }).catch((e) => {
+    console.log(e);
+    });
+  },
+  []);
+  
+
+
   useEffect(() => {
     const interval = setInterval(() => {
       if (value === images.length - 1 && infos === info.length - 1 && spot === spotlight.length -1) {
@@ -139,27 +167,11 @@ const Home = () => {
   }, [infos, spot, value]);
 
   useEffect(() => {
-    GetProducts()
-    .then((response) => {
-
-    const data = response.data.data
-      
-    setProducts(data)
-    }).catch((e) => {
-    console.log(e);
-    });
+    getDataProducts();
   },[]);
 
   useEffect(() => {
-    GetCategories()
-    .then((response) => {
-    console.log(response);
-    const data = response.data.data
-      
-    setCategories(data)
-    }).catch((e) => {
-    console.log(e);
-    });
+  getDataCategory()
   },[]);
 
   const {
@@ -176,15 +188,23 @@ const Home = () => {
     console.log('Data', data );
     const body = {
       email: data.email,
-      // password: data.password,
+      first_name: "Asabi",
+      last_name: "Oduntan"
     };
     try {
-      PostNewsletter(body) 
+      PostNewsletter(body)
+      .then((response) => {
+        console.log("Response ",response);
+        const reply = response.data
+        enqueueSnackbar(reply.message , { variant: 'success' });
+      });
       enqueueSnackbar('Newsletter Subsrcibed Successfully', { variant: 'success' });
     } catch (error) {
+      console.log(error);
       enqueueSnackbar('Newsletter Subscrition Failed', { variant: 'error' });
     }
   };
+
 
   return (
     <div className=' max-w-3xl my-8  w-full '>
@@ -265,21 +285,21 @@ const Home = () => {
                     <SliderItems 
                       id={items.product_id} 
                       price={items.price}
-                      brandImage={items.brand.logo} 
-                      brand={items.brand.label} 
-                      pic={items.product_image} 
+                      brandImage={items?.brand?.logo} 
+                      brand={items?.brand?.label} 
+                      pic={items.product_image}
                       title={items.label}
-                       content={items.metas?.map((meta) => (
-                        <div className='flex justify-between text-center ml-8' key={meta.id}>
-                        <h5 className='mt-2 pr-3 pt-3 pb-3 capitalize text-xl font-bold'>{meta?.option}: </h5>
-                        {meta?.values?.map((value, index) => (
-                        <div key={index} className="ml-8 mt-2">
-                        <button className='text-[#1F451A] text-xl rounded p-3'>{value?.size  ? `size: ${value?.size}`  : value }</button>
-                        <button className='text-[#1F451A] text-xl rounded p-3'>{value?.price ? `price:  $${value?.price}` : ""}</button>
-                        </div>
-                        ))}
-                        </div>
-                      ))} 
+                    //   content={items.metas?.map((meta) => (
+                    //     <div className='flex justify-between text-center ml-8' key={meta?.id}>
+                    //     <h5 className='mt-2 pr-3 pt-3 pb-3 capitalize text-xl font-bold'>{meta?.option}: </h5> 
+                    // {meta.values.map((value, index) => (
+                    //     <div key={index} className="ml-8 mt-2">
+                    //     <button className='text-[#1F451A] text-xl rounded p-3'>{value?.size  ? `size: ${value?.size}`  : value }</button>
+                    //     <button className='text-[#1F451A] text-xl rounded p-3'>{value?.price ? `price:  $${value?.price}` : ""}</button>
+                    //     </div>
+                    //     ))}
+                    //     </div>
+                    //   ))} 
                     />
                   </Link>
                 </SwiperSlide>                       
@@ -324,7 +344,7 @@ const Home = () => {
             {categories.map((cat) => (
               <Link to={`/shop/${cat.slug}`} key={cat.slug}>
                 <div key={cat.slug} className='w-full h-full bg-white rounded-lg border flex flex-col items-center p-10  border-gray-200 shadow-md'>
-                  <img  src="https://source.unsplash.com/random/?weed,cannabis,tinctures,thc,cbd" alt="" className='rounded-md w-full h-full' />
+                  <img  src={cat.image}  alt="" className='rounded-md w-full h-full' />
                   <div className='text-2xl capitalize font-medium p-5'>{cat.label}</div>
                   {/* <p className='pt-5 text-xl pb-5'>{cat.price}</p> */}
                   <button className='bg-[#1F451A] text-white p-3 cursor-pointer rounded-md w-full hover:scale-x-110 font-normal text-xl'>Explore</button>

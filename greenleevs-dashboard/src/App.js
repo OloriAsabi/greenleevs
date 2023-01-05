@@ -1,12 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './App.css';
-import { Categories, Coupons, Customers, Home, Orders, Products, Settings  } from "./pages";
+import { Brands, Categories, Coupons, CategoryDetails, Customers, Home, Orders, Products, Settings  } from "./pages";
 import { Routes, Route, useNavigate  } from 'react-router-dom';
 
 import { useStateContext } from './contexts/ContextProvider';
 import { Sidebar, Navbar } from './components';
 import Productdetails from './pages/ProductDetails';
-
 
 function App() {
   const [userInfo, setUserInfo] = useState();
@@ -15,13 +14,19 @@ function App() {
   const navigate = useNavigate();
   const scrollRef = useRef(null);
 
+  const getUser = useCallback(
+    () => {
+      if(!user) {
+        navigate("/login")
+      }else{
+       setUserInfo(user)
+      }
+    },[navigate, user]);
+  
+
   useEffect(() => {
-    if(!user) {
-      navigate("/login")
-    }else{
-     setUserInfo(user)
-    }
-  }, [navigate, user]);
+   getUser()
+  }, [getUser]);
 
 
   useEffect(() => {
@@ -57,8 +62,11 @@ function App() {
 
               <Route path="/products" element={(<Products />)} />
               <Route path="/products/:id" element={(<Productdetails />)} />
+              <Route path="/categories" element={(<Categories />)} />
+              <Route path="/categories/:id" element={(<CategoryDetails />)} />
               <Route path="/customers" element={(<Customers />)} />
               <Route path="/orders" element={(<Orders />)} />
+              <Route path='/brands' element={(<Brands />)} />
               {/* <Route path="/coupons" element={(<Coupons />)} /> */}
               <Route path="/settings" element={(<Settings  />)} />
             </Routes>

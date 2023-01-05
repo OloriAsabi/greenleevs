@@ -7,12 +7,13 @@ import { useTable,
 } from "react-table";
 import {DOTS, useCustomPagination} from './useCustomPagination';
 import { Button, PageButton } from '../utils/Button';
-import { DeleteCustomers, GetCustomers } from '../apis/api';
+import { GetCategories, DeleteCategories, GetCategoryById } from '../apis/api';
 import { useNavigate } from 'react-router-dom';
+import { FaSearchPlus } from 'react-icons/fa';
 import { AiFillDelete } from 'react-icons/ai';
 import { useSnackbar } from 'notistack';
-import CustomerModal from './CustomerModal';
 import Spinner from './Spinner';
+import CategoryModal from './CategoryModal';
 
 export function GlobalFilter({
     globalFilter,
@@ -37,73 +38,83 @@ export function GlobalFilter({
     )
   };  
 
-const CustomersTable = () => {
-  const [toggleMenu, setToggleMenu] = useState(false);
-  const [customers, setCustomers] = useState([]);
-  const data =  useMemo(() => [...customers], [customers]);
-  const [isLoading, setIsLoading] = useState(false)
-  const customerRef = useRef();
-  const navigate = useNavigate();
-
-  const { enqueueSnackbar } = useSnackbar();
-
-  customerRef.current = customers;
+const CategoriesTables = () => {
+    const [toggleMenu, setToggleMenu] = useState(false);
+    const [categories, setCategories] = useState([])
+    const [isLoading, setIsLoading] = useState(false);
+    const data =  useMemo(() => [...categories], [categories]);
+    const categoriesRef = useRef();
+    const navigate = useNavigate();
 
 
-  console.log("Customers",customers);
-     
-  useEffect(() => {
-   
-    setIsLoading(true)
+    const { enqueueSnackbar } = useSnackbar();
 
-    GetCustomers()
-    .then((response) => {
-    const data = response.data.data.data     
-    setCustomers(data)
-    setIsLoading(false)
-    }).catch((e) => {
-    console.log(e);
-    });
-  },[]);
+    categoriesRef.current = categories;
+  
+  
+    console.log("Categories",categories);
 
-  const handleDelete = (rowIndex) => {
-    const id = customerRef.current[rowIndex].id;
+    const categoryId = (rowIndex) => {
+        const id = categoriesRef.current[rowIndex].slug;
+        console.log(id);
+        
+        GetCategoryById(id)
+        navigate("/categories/" + id);
+      };
+       
+    const handleDelete = (rowIndex) => {
+        const id = categoriesRef.current[rowIndex].parent_id;
+    
+        DeleteCategories(id).then(() => {
+          navigate('/categories')
+    
+          let newCategories = [...categories.current];
+          newCategories.splice(rowIndex, 1)
+    
+          setCategories(newCategories);
+          enqueueSnackbar('Categories Deleted Successful', { variant: 'success' });
+        })
+        .catch((e) => {
+          console.log(e);
+          enqueueSnackbar('Categories delete Failed', { variant: 'error' });
+        });
+      }
 
-    DeleteCustomers(id).then(() => {
-      navigate('/customers')
+    useEffect(() => {
+        setIsLoading(true)
+        GetCategories()
+        .then((response) => {
+        console.log(response);
+        const data = response.data.data
+          
+        setCategories(data)
+        setIsLoading(false)
+        }).catch((e) => {
+        console.log(e);
+        });
+      },[]);
 
-      let newCustomers = [...customerRef.current];
-      newCustomers.splice(rowIndex, 1)
-
-      setCustomers(newCustomers);
-      enqueueSnackbar('Customer Deleted Successful', { variant: 'success' });
-    })
-    .catch((e) => {
-      console.log(e);
-      enqueueSnackbar('Customer delete Failed', { variant: 'error' });
-    });
-  }
-
-    const columns = useMemo(() => [
+      const columns = useMemo(() => [
         {
           Header: "ID",
-          accessor: "id",
+          accessor: "parent_id",
         },
         {
-          Header: "Joining Date",
-          accessor: "created_at",
+          Header: "Title",
+          accessor: "label",
         },
         {
-          Header: "Name",
-          accessor: "username",
-        },
-        {
-          Header: "Email",
-          accessor: "email",
-        },
-        {
-          Header: "Phone",
-          accessor: "phone_number",
+            Header: "Details",
+            Cell: (props) => {
+              const rowIdx = props.row.id;
+              return (
+                <div>
+                   <div onClick={() => categoryId(rowIdx)}>
+                    <FaSearchPlus/>
+                   </div>
+                </div>
+            )
+          },
         },
         {
           Header: "Actions",
@@ -169,9 +180,9 @@ const CustomersTable = () => {
                <div className='w-4/8'>
         <button className='p-3 bg-[#1F451A] text-white text-center rounded cursor-pointer'
           onClick={() => setToggleMenu(true)}>
-            + Add Customer
+            + Add Categories
         </button> 
-        <CustomerModal toggleMenu={toggleMenu} setToggleMenu={setToggleMenu} />
+        <CategoryModal toggleMenu={toggleMenu} setToggleMenu={setToggleMenu} />
         </div>
         </div>
       
@@ -259,4 +270,4 @@ const CustomersTable = () => {
   )
 }
 
-export default CustomersTable
+export default CategoriesTables

@@ -1,30 +1,27 @@
-import React, { useState } from 'react';
-import { MdOutlineCancel } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
-import { MdDelete } from 'react-icons/md';
 import { useSnackbar } from 'notistack';
-import { useStateContext } from '../contexts/ContextProvider';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { PostCategories } from '../apis/api';
+import { FaTimes } from 'react-icons/fa'
+import { EditCategories } from '../apis/api';
 
-const CategoryModal = ({toggleMenu, setToggleMenu}) => {
-  const { dispatch  } = useStateContext();
-    const navigate = useNavigate();
-
+const EditCategoryModal = ({ showModal, setShowModal, category, id }) => {
+    const [currentCategory, setCurrentCategory] = useState({
+        id: '',
+    });
+    const { enqueueSnackbar } = useSnackbar();
+    
     const [file, setFile] = useState([]);
     const [image, setImage] = useState();
 
-
     console.log("Images: ",image);
 
-    const { enqueueSnackbar } = useSnackbar();
+console.log("Products: ", currentCategory);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    trigger
-  } = useForm();
+useEffect(() => {
+  setCurrentCategory({
+    id:  category.id
+  })
+  }, [category.id]);
 
   function uploadSingleFile(e) {
     const selectedFile = e.target.files[0];
@@ -37,73 +34,81 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
     console.log("file", file);
   }
 
+  console.log("Images: ",image);
+
   function deleteFile(e) {
     const s = file.filter((item, index) => index !== e);
     setFile(s);
     console.log(s);
   }
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    trigger
+  } = useForm();
 
-  const submitHandler = async (data) => {
-    console.log("Categories Product Modal", data);
 
+const submitHandler = async (data) => {
+    console.log("Data Product Modal", data);
 
     const body = {
-      label: data.title ,
-      slug: data.slug,
-      category_image: image,
-    };
-
-    console.log('Body',body);
-
-    try {
-      PostCategories(body)
-      .then(response => {
-       console.log(response);
-      //  const responseStatus = response.data.status
-      //  if (responseStatus) {
-      //    enqueueSnackbar('Categories Added Successfully', { variant: responseStatus });
-      //  } else {
-      //    enqueueSnackbar("Categories Upload failed" , { variant: responseStatus });
-      //  }
-     });
-     dispatch({ type: 'ADD_CATEGORIES', payload: body});
-     localStorage.setItem('categories', JSON.stringify(body));
-     navigate('/categories');
-   } catch (error) {
-     console.log(error);
+        label: data.title,
+        slug: data.slug,
+        category_image: image,
     }
 
-  }
+    console.log('Body',body);
+    try {
+        EditCategories(id,body)
+        .then(response => {
+          console.log(response);
+          const responseStatus = response.data.status
+  
+          if (responseStatus) {
+            enqueueSnackbar('Product Edit Successful', { variant: responseStatus });
+          } else {
+            enqueueSnackbar("Product Edit failed" , { variant: responseStatus });
+          }
+            
+          console.log("responseStatus ",responseStatus);
+        })    
+      } catch (error) {
+      enqueueSnackbar("Products Edit Failed", { variant: 'error' });
+      console.log(error);
+        
+    }
+}
 
   return (
     <main
     className={
-      " fixed overflow-hidden z-10 overflow-y-scroll bg-gray-900 bg-opacity-25 inset-0 transform ease-in-out " +
-      ( toggleMenu
+      " fixed overflow-hidden overflow-y-scroll z-10 bg-gray-900 bg-opacity-25 inset-0 transform ease-in-out " +
+      ( showModal
         ? " transition-opacity opacity-100 duration-500 translate-x-0  "
         : " transition-all opacity-0 translate-x-full")
     }>
       <section
       className={
-        " w-screen max right-0 absolute bg-white shadow-xl delay-400 duration-500 ease-in-out overflow-y-scroll transition-all transform  " +
-        (toggleMenu ? " translate-x-0 " : " translate-x-full ")
+        " w-screen max right-0 absolute overflow-y-scroll bg-white shadow-xl delay-400 duration-500 ease-in-out transition-all transform  " +
+        (showModal ? " translate-x-0 " : " translate-x-full ")
       }
       >
         <article
-        className='relative w-screen max mb-5 pb-10 grid grid-rows space-y-6 h-full overflow-y-scroll'>
+        className='relative w-screen max mb-5 pb-10 grid grid-rows space-y-6 h-auto overflow-y-scroll'>
         <div className='flex justify-between m-10'>
-        <header className="p-4 font-bold text-lg">Add Your Category</header>
-        <MdOutlineCancel
+        <header className="p-4 font-bold text-lg">Edit Your Product</header>
+        <FaTimes
         className="mr-5 mt-4 cursor-pointer text-red-500"
         onClick={() => {
-          setToggleMenu(false);
+          setShowModal(false);
         }}
         fontSize={28}
         />
        </div>
         <div className="flex w-full text-center justify-center items-center pr-10 pl-10">
         <div className="grid justify-center items-center bg-white lg:p-5 p-3 w-full">
-          <div className="container">
+          <div className="container mb-5">
           <div className="form-group preview">
           {file.length > 0 &&
             file.map((item, index) => {
@@ -111,7 +116,7 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
                 <div key={item}>
                   <img src={item} alt="" />
                   <button type="button" className='bg-red-500 text-white p-2 rounded m-5 cursor-pointer' onClick={() => deleteFile(index)}>
-                    <MdDelete fontSize={20} />
+                    delete
                   </button>
                 </div>
               );
@@ -130,9 +135,11 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
           </div>
 
           <form 
-          className="grid p-10 gap-6 lg:pl-5 mt-5 w-full" 
           onSubmit={handleSubmit(submitHandler)}>
-          <div className='flex space-x-5'>
+          <div className="">
+          <div className='space-y-5'>
+
+            <div className='flex space-x-5'>
             <label htmlFor='title'
             className={`block pb-3 text-sm 2 ${
             errors.title ? "text-red-400" : "text-gray-700 "} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}
@@ -142,6 +149,7 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
                 id="title" 
                 type="text" 
                 placeholder=''
+                // value={products.label}
                 className={`block w-full ${
                   errors.title ? "text-red-400 border-red-400" : "text-gray-700 "} px-3 py-1 mb-2 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
                   {...register("title", { 
@@ -183,22 +191,25 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
                     Slug is Required!!!
                   </p>
                 )}
+            </div>        
             </div>
-            <div className="flex justify-end items-end mt-5">
+
+              <div className="flex justify-end items-end mt-5">
                 <button
                   type="submit"
                   className="bg-[#1F451A] text-white hover: cursor-pointer p-4 rounded"
                 >
-                Add Categories
+                Edit Category
                 </button>
+              </div>
               </div>
           </form>
         </div>
         </div>
         </article>
-      </section>
-    </main>
+        </section>
+        </main>
   )
 }
 
-export default CategoryModal
+export default EditCategoryModal

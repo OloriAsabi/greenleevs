@@ -19,13 +19,12 @@ const Sidebar = () => {
 
       const logout = () => {
         LogoutUser()
-        localStorage.clear();
-    
+        localStorage.clear();  
         navigate('/login');
       };
 
-  const activeLink = 'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg  text-white  text-md m-2';
-  const normalLink = 'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md text-gray-700 dark:text-gray-200 dark:hover:text-black hover:bg-light-gray m-2';
+  const activeLink = 'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg bg-[#14532d] text-white  text-md m-2';
+  const normalLink = 'flex items-center gap-5 pl-4 pt-3 pb-2.5 text-[#14532d] bg-white rounded-lg text-md text-gray-700 dark:text-gray-200 dark:hover:text-black hover:bg-light-gray m-2';
 
   return (
     <div className="ml-3 h-screen md:overflow-hidden overflow-auto md:hover:overflow-auto pb-10">
@@ -47,9 +46,6 @@ const Sidebar = () => {
                     key={link.id}
                     to={`/${link.href}`}
                     onClick={handleCloseSideBar}
-                    style={({ isActive }) => ({
-                      backgroundColor: isActive ? '#14532d' : '',
-                    })}
                     className={({ isActive }) => (isActive ? activeLink : normalLink)}
                   >
                     {link.icon}
