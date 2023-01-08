@@ -28,8 +28,6 @@ const Register = () => {
 
   const responseGoogle = (response) => {
     const userObject = jwt_decode(response.credential);
-    console.log(userObject);
-    localStorage.setItem('user', JSON.stringify(userObject));
     const { name, email, sub } = userObject;
     const bodyData = {
       username: name ,
@@ -37,20 +35,28 @@ const Register = () => {
       sub: sub,
     };
     try {
-      RegisterUser(bodyData).then(response => {
+      RegisterUser(bodyData)
+      .then(response => {
         console.log(response);
-        const { message } = response.data
-        enqueueSnackbar('Email in user', { variant: 'error' });
+        if (response.status === 200) {
+          const { token } = response.data;
+          const { user } = response.data
+          localStorage.setItem('token', token);
+          dispatch({ type: 'USER_LOGIN', payload: user});
+          localStorage.setItem('user', JSON.stringify(user));
+          navigate('/');
+          enqueueSnackbar('Registered Successful', { variant: response.status }); 
+        }else{
+          console.log(response.statusText);
+          enqueueSnackbar(response.statusText, { variant: response.status });
+        }
       });
-      dispatch({ type: 'USER_LOGIN', payload: bodyData });
-      localStorage.setItem('user', JSON.stringify(bodyData));
     } catch (error) {
       enqueueSnackbar('Registration failed', { variant: 'error' });
     }
   };
 
   const submitHandler = async (data) => {
-    console.log('Data', data );
     if (data.password !== data.confirmPassword) {
       enqueueSnackbar('Passwords don\'t match', { variant: 'error' });
       return;
@@ -67,14 +73,19 @@ const Register = () => {
       RegisterUser(bodyData)
         .then(response => {
           console.log(response);
-          const { token } = response.data;
-          localStorage.setItem('token', token);
-          console.log(localStorage.getItem(token));
+          if (response.status === 200) {
+            const { token } = response.data;
+            const { user } = response.data
+            localStorage.setItem('token', token);
+            dispatch({ type: 'USER_LOGIN', payload: user});
+            localStorage.setItem('user', JSON.stringify(user));
+            navigate('/');
+            enqueueSnackbar('Registered Successful', { variant: response.status }); 
+          }else{
+            console.log(response.statusText);
+            enqueueSnackbar(response.statusText, { variant: response.status });
+          }
         });
-      dispatch({ type: 'USER_LOGIN', payload: bodyData});
-      localStorage.setItem('user', JSON.stringify(bodyData));
-      navigate('/');
-      enqueueSnackbar('Registered Successful', { variant: 'success' });
     } catch (error) {
       enqueueSnackbar('Registration failed', { variant: 'error' });
     }

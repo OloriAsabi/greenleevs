@@ -1,9 +1,10 @@
 /* eslint-disable */
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { BsToggle2Off, BsToggle2On } from 'react-icons/bs';
 import {RiArrowDropDownLine } from 'react-icons/ri';
+import { GetBrands } from '../apis/api';
 
 const Sidebar = ({id}) => {
   const [checked, setChecked] = useState(false);
@@ -12,12 +13,39 @@ const Sidebar = ({id}) => {
   const [openPlant, setOpenPlant] = useState(false);
   const [openBrand, setBrandOpen] = useState(false);
   const [toggleBtn, setToggleBtn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false)
+  const [brands, setBrands] = useState([])
   
   const {
     register,
     handleSubmit,
     formState: { errors }
   } = useForm();
+
+  const getBrands =  useCallback(() => {
+    setIsLoading(true)
+    GetBrands()
+    .then((res) => {
+      console.log("Brands",res);
+      if (res.status === 200) {
+          const data = res.data.data
+      
+          setBrands(data)
+          setIsLoading(false)
+        }else{
+          console.log(res.statusText);
+          // enqueueSnackbar(res.statusText, { variant: res.status });
+        }
+          }).catch((e) => {
+          console.log(e);
+          });
+  },
+  []);
+
+  useEffect(() => {
+    getBrands();
+    },[]);
+  
   
   const submitHandler = (data) => {
     console.log(data);
@@ -31,6 +59,8 @@ const Sidebar = ({id}) => {
   function toggle(value){
     return !value;
   }
+
+  console.log("Brands ",brands);
   return (
     <div> 
       <div
@@ -59,7 +89,24 @@ const Sidebar = ({id}) => {
           {openBrand && (
             <form onSubmit={handleSubmit(submitHandler)} className="w-full pt-5 pb-5 space-y-10">
               <div className='flex flex-col justify-between space-y-5 items-start'>
-                <div className='flex '>
+                {brands.map((brand) => {
+                      <div className='flex' key={brand.id}>
+                      <input
+                        checked={checked}
+                        onChange={() => setChecked(toggle)}
+                        id={brand.slug} 
+                        type="checkbox" 
+                        name={brand.label} 
+                        className="h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" 
+                        aria-labelledby={brand.slug} 
+                        aria-describedby={brand.slug}
+                      />
+                      <label htmlFor={brand.slug} className="text-sm text-[#2D2D2D] ml-2 block">
+                        {brand.label}
+                      </label>
+                    </div>
+                })}
+                {/* <div className='flex '>
                   <input
                     checked={checked}
                     onChange={() => setChecked(toggle)}
@@ -73,8 +120,8 @@ const Sidebar = ({id}) => {
                   <label htmlFor="payment-1" className="text-sm text-[#2D2D2D] ml-2 block">
             Airvapes
                   </label>
-                </div>
-                <div className='flex '>
+                </div> */}
+                {/* <div className='flex '>
                   <input
                     checked={checked}
                     onChange={() => setChecked(toggle)}
@@ -118,8 +165,8 @@ const Sidebar = ({id}) => {
                   <label htmlFor="payment-1" className="text-sm text-[#2D2D2D] ml-2 block">
             Grav Labs
                   </label>
-                </div>
-                <button className='text-[#1F451A] text-sm cursor-pointer '>View More </button>
+                </div> */}
+                {/* <button className='text-[#1F451A] text-sm cursor-pointer '>View More </button> */}
               </div>
             </form>
           )}

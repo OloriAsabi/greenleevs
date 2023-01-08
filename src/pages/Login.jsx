@@ -32,9 +32,22 @@ const Login = () => {
       sub: sub,
     };
     try {
-      LoginUser(bodyData);
-      dispatch({ type: 'USER_LOGIN', payload: bodyData });
-      localStorage.setItem('user', JSON.stringify(bodyData));
+      LoginUser(bodyData)
+      .then((response) => {
+        console.log(response);
+        if (response.status === 200) {
+          const { token } = response.data;
+          const { user } = response.data
+          localStorage.setItem('token', token);
+          dispatch({ type: 'USER_LOGIN', payload: user });
+          localStorage.setItem('user', JSON.stringify(user));
+          navigate('/');
+          enqueueSnackbar('Login Successful', { variant: response.status }); 
+        }else{
+          console.log(response.statusText);
+          enqueueSnackbar(response.statusText, { variant: response.status });
+        }
+      });
     } catch (error) {
       enqueueSnackbar('Login Unautorized', { variant: 'error' });
     }
@@ -52,14 +65,19 @@ const Login = () => {
       LoginUser(bodyData) 
         .then(response => {
           console.log(response);
-          const { token } = response.data;
-          localStorage.setItem('token', token);
-          console.log(localStorage.getItem(token));
+          if (response.status === 200) {
+            const { token } = response.data;
+            const { user } = response.data
+            localStorage.setItem('token', token);
+            dispatch({ type: 'USER_LOGIN', payload: user});
+            localStorage.setItem('user', JSON.stringify(user));
+            navigate('/');
+            enqueueSnackbar('Login Successful', { variant: response.status }); 
+          }else{
+            console.log(response.statusText);
+            enqueueSnackbar(response.statusText, { variant: response.status });
+          }
         });
-      dispatch({ type: 'USER_LOGIN', payload: bodyData});
-      localStorage.setItem('user', JSON.stringify(bodyData));
-      navigate('/');
-      enqueueSnackbar('Login Successful', { variant: 'success' });
     } catch (error) {
       enqueueSnackbar('Invalid email or password', { variant: 'error' });
     }

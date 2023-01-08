@@ -13,9 +13,11 @@ import { FlexStyle, GridStyle, Sidebar, SidebarCat, Spinner } from '../component
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { useEffect } from 'react';
-import { GetCategories, GetCategoriesById } from '../apis/api';
+import { GetCategories, GetCategoriesById, GetPopularByCategory } from '../apis/api';
 import { useCallback } from 'react';
 import { edibles } from '../data/data';
+import { useSnackbar } from 'notistack';
+import { useStateContext } from '../contexts/ContextProvider';
 
 const Categories = () => {
   const [open, setOpen] = useState(false);
@@ -26,7 +28,11 @@ const Categories = () => {
   const [category, setCategory] = useState([])
   // const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [activeFilter, setActiveFilter] = useState('All');
+  const [activeFilter, setActiveFilter] = useState('All'); 
+  const { state } = useStateContext();
+  const { user, cart } = state;
+
+  const { enqueueSnackbar } = useSnackbar();
 
   const showGrid = () => {
     if (window.location.pathname === `/shop/${id}`) {
@@ -68,10 +74,30 @@ const Categories = () => {
     GetCategoriesById(id)
     .then((res) => {
       console.log("Category By id",res);
+      if (res.status === 200) {
           const data = res.data.data
       
           setCategory(data)
           setIsLoading(false)
+        }else{
+          console.log(res.statusText);
+          enqueueSnackbar(res.statusText, { variant: res.status });
+        }
+          }).catch((e) => {
+          console.log(e);
+          });
+  },
+  []);
+
+  const getPopularByCategories =  useCallback(() => {
+    setIsLoading(true)
+    GetPopularByCategory(id)
+    .then((res) => {
+      console.log("Popular by Categories ",res);
+          // const data = res.data.data
+      
+          // setCategory(data)
+          // setIsLoading(false)
           }).catch((e) => {
           console.log(e);
           });
@@ -82,10 +108,15 @@ const Categories = () => {
     setIsLoading(true)
     GetCategories()
     .then((response) => {
+      if (response.status === 200) {
     const data = response.data.data
       
-    setCategories(data)
-    setIsLoading(false)
+      setCategories(data)
+       setIsLoading(false)
+      }else{
+        console.log(response.statusText);
+        enqueueSnackbar(response.statusText, { variant: response.status });
+      }
     }).catch((e) => {
     console.log(e);
     });
@@ -101,7 +132,36 @@ const Categories = () => {
     getDataCategoryById()
   }, []);
 
+  useEffect(() => {
+    getPopularByCategories();
+  }, [])
+  
+
   console.log("Category : ", category);
+
+  const addToCartHandler = async () => {
+    const existItem = cart.cartItems.find((x) => x._id === product._id);
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+    const id = user.id
+        // if (product.countInStock < quantity) {
+    //   enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
+    //   return;
+    // }
+    const body = {
+      // product_id: product.product_id,
+      quantity: quantity,
+      // countInStock: product.countInStock,
+    }
+    PostCart(id, body)
+    .then((res) => {
+      console.log(res);
+      // res.status
+      enqueueSnackbar(`${product.label} added to the cart`, {
+        variant: 'success', 
+      });
+      // history('/cart')
+    })
+  };
   
   return (      
     <div>
@@ -218,7 +278,8 @@ const Categories = () => {
                     <img src={cat.img} alt="" className='rounded-md w-full h-9/12 object-cover' />
                     <div className='text-2xl text-start text-[#1F451A] font-normal'>{cat.title}</div>
                     <div onClick={() => history('/carts')} className='' >
-                      <button className='flex text-center items-center justify-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'>
+                      <button className='flex text-center items-center justify-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
+                        onClick={() => addToCartHandler()}>
                         <BsCart fontSize={28}/> Add to cart
                       </button>
                     </div>

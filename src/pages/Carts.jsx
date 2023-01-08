@@ -25,10 +25,10 @@ const Carts = () => {
 
   const { dispatch, state } = useStateContext();
   const { user } = state;
-  console.log(user);
+  // console.log(user);
 
   useEffect(() => {
-    GetCart(user.email)
+    GetCart(user.id)
     .then((response) => {
     console.log(response);
     }).catch((e) => {

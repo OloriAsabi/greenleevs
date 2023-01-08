@@ -120,12 +120,19 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
 
+  const { enqueueSnackbar } = useSnackbar();
+
   const getDataProducts =  useCallback(() => {
     GetProducts()
     .then((response) => {
+      if (response.status === 200) {
     const data = response.data.data
       
     setProducts(data)
+    }else{
+      console.log(response.statusText);
+      enqueueSnackbar(response.statusText, { variant: response.status });
+    }
     }).catch((e) => {
     console.log(e);
     })
@@ -137,9 +144,14 @@ const Home = () => {
     GetCategories()
     .then((response) => {
     console.log(response);
+    if (response.status === 200) {
     const data = response.data.data
       
     setCategories(data)
+  }else{
+    console.log(response.statusText);
+    enqueueSnackbar(response.statusText, { variant: response.status });
+  }
     }).catch((e) => {
     console.log(e);
     });
@@ -180,9 +192,6 @@ const Home = () => {
     formState: { errors },
     trigger
   } = useForm();
-
-  const { enqueueSnackbar } = useSnackbar();
-
 
   const submitHandler = async (data) => {
     console.log('Data', data );
@@ -281,7 +290,7 @@ const Home = () => {
               className="mySwiper">
               {products.map((items) => (
                 <SwiperSlide key={items.product_id}>
-                  <Link to={`/product/${items.sku}`}>
+                  <Link to={`/product/${items.slug}`}>
                     <SliderItems 
                       id={items.product_id} 
                       price={items.price}
@@ -292,7 +301,7 @@ const Home = () => {
                     //   content={items.metas?.map((meta) => (
                     //     <div className='flex justify-between text-center ml-8' key={meta?.id}>
                     //     <h5 className='mt-2 pr-3 pt-3 pb-3 capitalize text-xl font-bold'>{meta?.option}: </h5> 
-                    // {meta.values.map((value, index) => (
+                    // {meta?.values?.map((value, index) => (
                     //     <div key={index} className="ml-8 mt-2">
                     //     <button className='text-[#1F451A] text-xl rounded p-3'>{value?.size  ? `size: ${value?.size}`  : value }</button>
                     //     <button className='text-[#1F451A] text-xl rounded p-3'>{value?.price ? `price:  $${value?.price}` : ""}</button>

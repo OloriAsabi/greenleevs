@@ -240,11 +240,11 @@ export const PostNewsletter = async (body) => {
       })
     console.log('News letter',data);
     return data; 
-  } catch (error) {
+  } catch (err) {
     if (axios.isCancel(err)) {
       console.log("Request canceled!");
     } else {
-      console.log(error);
+      console.log(err);
     }
   } 
   return () => {
@@ -264,11 +264,11 @@ export const GetCart = async (user) => {
           })
         console.log("Get cart",data);
          return data; 
-        } catch (error) {
+        } catch (err) {
           if (axios.isCancel(err)) {
             console.log("Request canceled!");
           } else {
-            console.log(error);
+            console.log(err);
           }
         }
         return () => {
@@ -278,7 +278,7 @@ export const GetCart = async (user) => {
 
 export const PostCart = async (user, body) => {
   try {
-      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/${user}/cart`, 
+      const data = await axios.post(`${process.env.REACT_APP_BASEURL}/${user}/cart`, 
       body,
           {
             headers: { 
@@ -288,6 +288,55 @@ export const PostCart = async (user, body) => {
             cancelToken: cancelToken.token,
           })
         console.log("Get cart",data);
+         return data; 
+        } catch (err) {
+          if (axios.isCancel(err)) {
+            console.log("Request canceled!");
+          } else {
+            console.log(err);
+          }
+        }
+        return () => {
+          cancelToken.cancel();
+        };
+}
+
+
+export const GetPopularByCategory = async (slug) => {
+  try {
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/categories/${slug}/popular`, 
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+            cancelToken: cancelToken.token,
+          })
+        console.log("Get Popular By category",data);
+         return data; 
+        } catch (err) {
+          if (axios.isCancel(err)) {
+            console.log("Request canceled!", err);
+          } else {
+            console.log(err);
+          }
+        }
+        return () => {
+          cancelToken.cancel();
+        };
+}
+
+export const GetPopularProducts = async () => {
+  try {
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/popular_products`, 
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+            cancelToken: cancelToken.token,
+          })
+        console.log("Get Popular",data);
          return data; 
         } catch (error) {
           if (axios.isCancel(err)) {
@@ -300,3 +349,147 @@ export const PostCart = async (user, body) => {
           cancelToken.cancel();
         };
 }
+
+export const GetRelatedProducts = async (id) => {
+  try {
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/products/${id}/related`, 
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+            cancelToken: cancelToken.token,
+          })
+        console.log("Get Related Products",data);
+         return data; 
+        } catch (error) {
+          if (axios.isCancel(err)) {
+            console.log("Request canceled!");
+          } else {
+            console.log(error);
+          }
+        }
+        return () => {
+          cancelToken.cancel();
+        };
+}
+
+export const GetRecentlyViewed = async () => {
+  try {
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/recently_viewed`, 
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+            cancelToken: cancelToken.token,
+          })
+        console.log("Get Recently Viewed", data);
+         return data; 
+        } catch (error) {
+          if (axios.isCancel(err)) {
+            console.log("Request canceled!");
+          } else {
+            console.log(error);
+          }
+        }
+        return () => {
+          cancelToken.cancel();
+        };
+}
+
+export const FilterBrands = async (slug, id) => {
+  try {
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/categories/${slug}/?brand=${id}`, 
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+            cancelToken: cancelToken.token,
+          })
+        console.log("Filter Brands",data);
+         return data; 
+        } catch (error) {
+          if (axios.isCancel(err)) {
+            console.log("Request canceled!");
+          } else {
+            console.log(error);
+          }
+        }
+        return () => {
+          cancelToken.cancel();
+        };
+}
+
+
+export const FilterPlantType = async (slug, id) => {
+  try {
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/categories/${slug}/?plant_type=${id}`, 
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+            cancelToken: cancelToken.token,
+          })
+        console.log("Filter Plant Type",data);
+         return data; 
+        } catch (error) {
+          if (axios.isCancel(err)) {
+            console.log("Request canceled!");
+          } else {
+            console.log(error);
+          }
+        }
+        return () => {
+          cancelToken.cancel();
+        };
+}
+export const GetBrands= async () => {
+  try {
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/marks`, 
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+            cancelToken: cancelToken.token,
+          })
+        console.log("Get Brands", data);
+         return data; 
+        } catch (err) {
+          if (axios.isCancel(err)) {
+            console.log("Request canceled!");
+          } else {
+            console.log(err);
+          }
+        }
+        return () => {
+          cancelToken.cancel();
+        };
+}
+export const GetProductsByBrand = async (id) => {
+  try {
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/marks/${id}`, 
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+            cancelToken: cancelToken.token,
+          })
+        console.log("Get Products by Brands", data);
+         return data; 
+        } catch (err) {
+          if (axios.isCancel(err)) {
+            console.log("Request canceled!");
+          } else {
+            console.log(err);
+          }
+        }
+        return () => {
+          cancelToken.cancel();
+        };
+}
+

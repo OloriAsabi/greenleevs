@@ -13,7 +13,7 @@ import american from '../assests/american.png';
 import { useSnackbar } from 'notistack';
 
 import { Mousewheel } from 'swiper';
-import { GetProductId, PostCart } from '../apis/api';
+import { GetProductId, GetRecentlyViewed, GetRelatedProducts, PostCart } from '../apis/api';
 import { Spinner } from '../components';
 import { useStateContext } from '../contexts/ContextProvider';
 
@@ -32,7 +32,8 @@ const ProductDetails = () => {
 
   const { enqueueSnackbar } = useSnackbar();
   
-  const [product, setProduct] = useState({})
+  const [product, setProduct] = useState({});
+  const [recent, setRecent] = useState([]);
   const [itemCount, setItemCount] = useState(1);
   const [isLoading, setIsLoading] = useState(false)
 
@@ -41,24 +42,62 @@ const ProductDetails = () => {
     GetProductId(id)
     .then((res) => {
       console.log("Product By id",res);
+      if (res.status === 200) {
           const data = res.data.data
       
           setProduct(data)
           setIsLoading(false)
+      }else{
+        console.log(res.statusText);
+        enqueueSnackbar(res.statusText, { variant: res.status });
+      }
           }).catch((e) => {
           console.log(e);
           });
   },
   [id]);
 
+  const getRelatedProducts = useCallback(() => {
+    setIsLoading(true)
+    GetRelatedProducts(id)
+    .then((res) => {
+      console.log("Related Products",res);
+
+    }).catch((e) => {
+      console.log(e);
+      });
+  },[id]);
+
+  const getRecentlyView = useCallback(() => {
+    setIsLoading(true)
+    GetRecentlyViewed()
+    .then((res) => {
+      console.log("Recently Viewed Products", res);
+      if (res.status === 200) {
+        const data = res.data.data
+    
+        setRecent(data)
+        setIsLoading(false)
+    }else{
+      console.log(res.statusText);
+      enqueueSnackbar(res.statusText, { variant: res.status });
+    };
+    }).catch((e) => {
+      console.log(e);
+      });
+  },[id]);
+
   useEffect(() => {  
-   getProductById()
+   getProductById();
+   getRelatedProducts();
+   getRecentlyView();
   }, [id]);
 
   const addToCartHandler = async () => {
     const existItem = cart.cartItems.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
-    // if (product.countInStock < quantity) {
+    const id = user.id
+        // if (product.countInStock < quantity) {
     //   enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
     //   return;
     // }
@@ -67,12 +106,12 @@ const ProductDetails = () => {
       quantity: quantity,
       // countInStock: product.countInStock,
     }
-    PostCart(user, body)
+    PostCart(id, body)
     .then((res) => {
       console.log(res);
       // res.status
       enqueueSnackbar(`${product.label} added to the cart`, {
-        variant: 'success', 
+        variant: res.status, 
       });
       // history('/cart')
     })
@@ -146,13 +185,14 @@ const ProductDetails = () => {
                 </button>
 
               </div>
-              <a href='/carts' className='' >
+              <p className='' >
                 <button 
                 className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
+                onClick={() => addToCartHandler()}
                 >
                   <BsCart fontSize={28}/> Add to cart
                 </button>
-              </a>
+              </p>
             </div>
           </div>
         </div>
@@ -187,7 +227,8 @@ const ProductDetails = () => {
                     <div className='text-2xl text-start text-[#1F451A] font-normal'>{cat.title}</div>
                     {/* <button className='bg-[#1F451A] text-white p-3 cursor-pointer rounded-md text-xl'> <BsCart fontSize={28}/> Add to cart</button> */}
                     <a href='/carts' className='' >
-                      <button className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'>
+                      <button className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
+                        onClick={() => addToCartHandler()}>
                         <BsCart fontSize={28}/> Add to cart
                       </button>
                     </a>
@@ -223,16 +264,17 @@ const ProductDetails = () => {
               }}
               modules={Mousewheel}
               className="mySwiper">
-              {extracts.map(cat => (
-                <SwiperSlide key={cat.id}>
+              {recent.map(r => (
+                <SwiperSlide key={r.product_id}>
                   <div className='w-full h-full bg-white rounded-lg border flex flex-col justify-between p-5 space-y-10 hover:shadow-md'>
-                    <img src={cat.img} alt="" className='rounded-md w-auto h-auto object-cover' />
-                    <div className='text-2xl text-start text-[#1F451A] font-normal'>{cat.title}</div>
-                    <a href='/carts' className=' text-center ' >
-                      <button className='flex justify-center text-center items-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'>
+                    <img src={r.product_image} alt="" className='rounded-md w-auto h-auto object-cover' />
+                    <div className='text-2xl text-start text-[#1F451A] font-normal'>{r.label}</div>
+                    <p className='text-center ' >
+                      <button className='flex justify-center text-center items-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
+                      onClick={() => addToCartHandler()}>
                         <BsCart fontSize={28}/> Add to cart
                       </button>
-                    </a>
+                    </p>
                   </div>                
                 </SwiperSlide>     
               )) }

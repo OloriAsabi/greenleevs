@@ -6,6 +6,7 @@ import { Carts, Categories, CheckOut, ComingSoon, Error, Home, Orders, ProductDe
 
 import { useStateContext } from './contexts/ContextProvider';
 import { GetCategories } from './apis/api';
+import ScrollToTop from "react-scroll-to-top";
 
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
 
   return (
     <div className="flex flex-col justify-between h-screen">
+           <ScrollToTop smooth color='#1F451A' className='p-1' />
            <header>
           <Navbar/>
           </header>
