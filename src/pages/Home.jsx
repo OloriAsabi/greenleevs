@@ -33,6 +33,7 @@ import { Link } from 'react-router-dom';
 import { GetCategories, GetProducts, PostNewsletter } from '../apis/api';
 
 /* eslint-disable */
+
 const images =[
   bg1,
   bg2,
@@ -54,7 +55,7 @@ const spotlight =[
 ];
 
 // eslint-disable-next-line react/prop-types
-const SliderItems = ({pic,id, brand, price, title, brandImage, taste, content, }) => {
+const SliderItems = ({pic,id, price, title, brandImage, taste, content, }) => {
   return(
     <div key={id} className=' p-10 text-center tracking-widest leading-8'>
       <div className='flex flex-col space-y-5 items-center justify-center'>
@@ -298,17 +299,6 @@ const Home = () => {
                       brand={items?.brand?.label} 
                       pic={items.product_image}
                       title={items.label}
-                    //   content={items.metas?.map((meta) => (
-                    //     <div className='flex justify-between text-center ml-8' key={meta?.id}>
-                    //     <h5 className='mt-2 pr-3 pt-3 pb-3 capitalize text-xl font-bold'>{meta?.option}: </h5> 
-                    // {meta?.values?.map((value, index) => (
-                    //     <div key={index} className="ml-8 mt-2">
-                    //     <button className='text-[#1F451A] text-xl rounded p-3'>{value?.size  ? `size: ${value?.size}`  : value }</button>
-                    //     <button className='text-[#1F451A] text-xl rounded p-3'>{value?.price ? `price:  $${value?.price}` : ""}</button>
-                    //     </div>
-                    //     ))}
-                    //     </div>
-                    //   ))} 
                     />
                   </Link>
                 </SwiperSlide>                       
@@ -355,7 +345,6 @@ const Home = () => {
                 <div key={cat.slug} className='w-auto h-full bg-white rounded-lg border flex flex-col items-center p-10  border-gray-200 shadow-md'>
                   <img  src={cat.image}  alt="" className='rounded-md w-full h-full' />
                   <div className='text-2xl capitalize font-medium p-5'>{cat.label}</div>
-                  {/* <p className='pt-5 text-xl pb-5'>{cat.price}</p> */}
                   <button className='bg-[#1F451A] text-white p-3 cursor-pointer rounded-md w-full hover:scale-x-110 font-normal text-xl'>Explore</button>
                 </div>
               </Link>

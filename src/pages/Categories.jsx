@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { useState } from 'react';
-import { BiMenu, BiMenuAltRight, BiSortAlt2 } from 'react-icons/bi';
+import { BiMenu, BiMenuAltRight } from 'react-icons/bi';
 import { BsCart, BsGrid } from 'react-icons/bs';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Link } from 'react-router-dom';
@@ -13,9 +13,8 @@ import { FlexStyle, GridStyle, Sidebar, SidebarCat, Spinner } from '../component
 import { useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { useEffect } from 'react';
-import { GetCategories, GetCategoriesById, GetPopularByCategory } from '../apis/api';
+import { GetCategoriesById, GetPopularByCategory } from '../apis/api';
 import { useCallback } from 'react';
-import { edibles } from '../data/data';
 import { useSnackbar } from 'notistack';
 import { useStateContext } from '../contexts/ContextProvider';
 
@@ -24,8 +23,8 @@ const Categories = () => {
   // const [openSort, setOpenSort] = useState(false)
   const [openNav, setOpenNav] = useState(false);
   const { id }  = useParams();
-  const [categories, setCategories] = useState([])
   const [category, setCategory] = useState([])
+  const [popular, setPopular] = useState([])
   // const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [activeFilter, setActiveFilter] = useState('All'); 
@@ -94,38 +93,38 @@ const Categories = () => {
     GetPopularByCategory(id)
     .then((res) => {
       console.log("Popular by Categories ",res);
-          // const data = res.data.data
+          const data = res.data.data
       
-          // setCategory(data)
-          // setIsLoading(false)
+          setPopular(data)
+          setIsLoading(false)
           }).catch((e) => {
           console.log(e);
           });
   },
   []);
 
-  const getDataCategory =  useCallback(() => {
-    setIsLoading(true)
-    GetCategories()
-    .then((response) => {
-      if (response.status === 200) {
-    const data = response.data.data
+  // const getDataCategory =  useCallback(() => {
+  //   setIsLoading(true)
+  //   GetCategories()
+  //   .then((response) => {
+  //     if (response.status === 200) {
+  //   const data = response.data.data
       
-      setCategories(data)
-       setIsLoading(false)
-      }else{
-        console.log(response.statusText);
-        enqueueSnackbar(response.statusText, { variant: response.status });
-      }
-    }).catch((e) => {
-    console.log(e);
-    });
-  },
-  []);
+  //     setCategories(data)
+  //      setIsLoading(false)
+  //     }else{
+  //       console.log(response.statusText);
+  //       enqueueSnackbar(response.statusText, { variant: response.status });
+  //     }
+  //   }).catch((e) => {
+  //   console.log(e);
+  //   });
+  // },
+  // []);
 
-  useEffect(() => {
-  getDataCategory();
-  },[]);
+  // useEffect(() => {
+  // getDataCategory();
+  // },[]);
 
 
   useEffect(() => {
@@ -136,9 +135,6 @@ const Categories = () => {
     getPopularByCategories();
   }, [])
   
-
-  console.log("Category : ", category);
-
   const addToCartHandler = async () => {
     const existItem = cart.cartItems.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
@@ -264,20 +260,16 @@ const Categories = () => {
               768:{
                 width: 768,
                 slidesPerView: 2
-              },
-              //   1400:{
-              //       width: 1400,
-              //       slidesPerView: 3
-              //   },
+              }
             }}
             modules={Mousewheel}
             className="mySwiper">
-            {edibles.map(cat => (
-                <SwiperSlide key={cat.id}>
+            {popular.map(pop => (
+                <SwiperSlide key={pop.product_id}>
                   <div className='w-full h-full bg-white rounded-lg border flex flex-col justify-between p-5 space-y-10 hover:shadow-md'>
-                    <img src={cat.img} alt="" className='rounded-md w-full h-9/12 object-cover' />
-                    <div className='text-2xl text-start text-[#1F451A] font-normal'>{cat.title}</div>
-                    <div onClick={() => history('/carts')} className='' >
+                    <img src={pop.product_image} alt="" className='rounded-md w-full h-9/12 object-cover' />
+                    <div className='text-2xl text-start text-[#1F451A] font-normal'>{pop.label}</div>
+                    <div className='' >
                       <button className='flex text-center items-center justify-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
                         onClick={() => addToCartHandler()}>
                         <BsCart fontSize={28}/> Add to cart
@@ -294,10 +286,10 @@ const Categories = () => {
         <div className='conatiner mx-auto '>
           <h1 className='text-3xl font-bold mb-10 text-[#2D2D2D] text-start shopText'>Popular on {id}</h1>
           <div className='flex flex-col justify-between items-center'>
-            {edibles.map(cat => (
-              <Link to={`/shop`} key={cat.id}>
+            {popular.map(pop => (
+              <Link to={`/shop`} key={pop.product_id}>
                 <div className='flex flex-col justify-betwe items-center'>
-                  <div className='text-2xl p-3 cursor-pointer rounded-md w-72 mb-10 hover:scale-x-110 border border-[#1F451A] capitalize text-[#1F451A] font-normal'>{cat.title}</div>
+                  <div className='text-2xl p-3 cursor-pointer rounded-md w-72 mb-10 hover:scale-x-110 border border-[#1F451A] capitalize text-[#1F451A] font-normal'>{pop.label}</div>
                 </div>
               </Link>               
             )) }

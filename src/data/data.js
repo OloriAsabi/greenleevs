@@ -40,7 +40,7 @@ export const links = [
   {
     id: 3,  
     name: 'special Menu',
-    link: 'specialmenu'
+    link: 'special'
   },
 ];
 

@@ -339,7 +339,7 @@ export const GetPopularProducts = async () => {
         console.log("Get Popular",data);
          return data; 
         } catch (error) {
-          if (axios.isCancel(err)) {
+          if (axios.isCancel(error)) {
             console.log("Request canceled!");
           } else {
             console.log(error);

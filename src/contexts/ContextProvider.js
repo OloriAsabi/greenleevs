@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { createContext, useContext, useReducer } from 'react';
+import React, { createContext, useContext, useReducer, useState } from 'react';
 
 const StateContext = createContext();
 
@@ -98,12 +98,11 @@ function reducer (state, action) {
 export const ContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   
-  
   return (  
     <StateContext.Provider 
       value={{
         state,
-        dispatch
+        dispatch,
       }}>
       {children}
     </StateContext.Provider>

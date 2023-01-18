@@ -16,3 +16,4 @@ export { default as Settings} from './shared_pages/Settings';
 export { default as Shipping} from './shared_pages/Shipping';
 export { default as Error } from "./Error";
 export { default as ComingSoon} from "./ComingSoon";
+export { default as SearchModal} from "./shared_pages/SearchModal";

@@ -1,19 +1,39 @@
 /* eslint-disable */
 import React, {useState} from 'react';
 import logo from '../assests/logo.png';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import {  NavLink } from 'react-router-dom';
 import { links } from '../data/data';
-// import { GrFormSearch } from 'react-icons/gr';
+import { GrFormSearch } from 'react-icons/gr';
 import { TbChevronRight } from 'react-icons/tb';
 import { FaTimes } from 'react-icons/fa';
 import { CgMenuRight } from 'react-icons/cg';
 import {BsCart, BsSearch} from 'react-icons/bs';
 
 import navpic from '../assests/Rectangle 131.png';
+import { useStateContext } from '../contexts/ContextProvider';
+import { SearchModal } from '../pages';
+import { useForm } from 'react-hook-form';
+import { useSnackbar } from 'notistack';
 
 const Navbar = () => {
 
   const [navbar, setNavbar] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [filteredData, setFilteredData] = useState([]);
+  const [wordEntered, setWordEntered] = useState("");
+
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm();
+
+  const { enqueueSnackbar } = useSnackbar();
+ 
+  const submitHandler = async (data) => {
+    console.log('Data', data );
+  }
 
   const activeLink = 'flex cursor-pointer items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-white text-md m-2';
   const normalLink = 'flex cursor-pointer items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md text-slate-300 dark:text-gray-200 dark:hover:text-black hover:scale-x-105 m-2';
@@ -50,17 +70,32 @@ const Navbar = () => {
               </div>
             ))}
           </div>
-          <div className='w-auto ml-20 items-center homeBg md:flex hidden '>
-            <span className='flex w-72 justify-between items-center pt-10 pb-10 '>
-              {/* <GrFormSearch fontSize={38} color="white" className='fixed text-center text-white mt-3 ml-3 min-w-40'/> */}
+          <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3" onSubmit={handleSubmit(submitHandler)}>
+          <div className="relative flex w-full flex-wrap items-stretch">
+            <span 
+             className="z-10 h-full leading-snug font-normal absolute text-center text-white bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3"
+            onClick={() => setShowModal(true)}>
+              <GrFormSearch fontSize={38} color="white"/>
+              </span>
               <input
-                className='w-full rounded-xl border p-4 text-[#1F451A] bg-[#1F451A]  px-3 py-1 text-sm focus:outline-none leading-5  focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A]  h-12 focus:bg-white cursor-pointer' 
-                type="search"  
                 placeholder='What are you looking for ?'
+                type="text"
+                className="border px-3 py-3 placeholder-blueGray-300 relative bg-[#1F451A] text-[#1F451A] rounded-xl text-sm shadow focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A]  h-12 focus:bg-white cursor-pointer w-full pl-10"
+                {...register('search')}
               />
-            </span>
+          {filteredData.length != 0 && (
+              <div className="">
+              {filteredData.slice(0, 15).map((value) => {
+            return (
+              <a className="" href={`/product/${value.slug}`}>
+                <p>{value}</p>
+              </a>
+            );
+          })}
           </div>
-      
+              )}
+          </div>
+          </form>
           <div>
             {!navbar && (
               <div className='flex md:hidden justify-bewteen gap-10 mr-5 items-center'>

@@ -54,7 +54,7 @@ function App() {
               </Route>
 
               <Route path='/carts' element={(<Carts />)} />
-              <Route path='/specialmenu' element={(<SpecialMenu/>)} />
+              <Route path='/special' element={(<SpecialMenu/>)} />
               <Route path="/product/:id" element={<ProductDetails/>} />
               <Route path="/checkout" element={<CheckOut/>} />
               <Route path="/404" element={<Error/>} />

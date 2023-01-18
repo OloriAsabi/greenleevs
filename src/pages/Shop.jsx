@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { edibles, extracts } from '../data/data';
+import React, { useEffect, useState,  useCallback } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import {BsCart} from 'react-icons/bs';
 import { Link, useNavigate } from 'react-router-dom';
@@ -10,10 +9,9 @@ import { Mousewheel } from 'swiper';
 import visa from '../assests/Vector (1).png';
 import master from '../assests/master.png';
 import american from '../assests/american.png';
-import { GetCategories, GetPopularProducts } from '../apis/api';
+import { GetCategories, GetPopularByCategory, GetPopularProducts, PostCart } from '../apis/api';
 
 import 'swiper/css';
-import { useCallback } from 'react';
 import { Spinner } from '../components';
 import { useSnackbar } from 'notistack';
 import { useStateContext } from '../contexts/ContextProvider';
@@ -71,7 +69,6 @@ const Shop = () => {
     getPopularProducts();
   },[]);
 
-
   const addToCartHandler = async () => {
     const existItem = cart.cartItems.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
@@ -124,8 +121,12 @@ const Shop = () => {
         </div>
 
         <div className='pt-10'>
-          <h1 className=' text-3xl font-bold mb-10 text-[#2D2D2D] shopText'>Popular</h1>
+          <h1 className=' text-3xl font-bold mb-10 text-[#2D2D2D] shopText'>Popular</h1>        
           <div className='p-10'>
+          {isLoading
+                  ? 
+                  <Spinner /> 
+                  :
             <Swiper
               mousewheel={true}
               spaceBetween={50}
@@ -163,93 +164,7 @@ const Shop = () => {
                 </SwiperSlide>     
               )) }
             </Swiper>
-          </div>
-        </div>
-
-
-        <div className='pt-10'>
-          <div className='flex items-center xsflex justify-between'>
-            <div className='font-bold text-3xl  text-black'>Popular Edibles</div>
-            <div className='font-bold text-2xl cursor-pointer text-[#1F451A]'>See All Edibles</div>
-          </div>
-          <div className='p-10'>
-            <Swiper
-              mousewheel={true}
-              spaceBetween={50}
-              breakpoints={{
-                640:{
-                  width: 640,
-                  slidesPerView: 2
-                },
-                768:{
-                  width: 768,
-                  slidesPerView: 2
-                },
-                //   1400:{
-                //       width: 1400,
-                //       slidesPerView: 3
-                //   },
-              }}
-              modules={Mousewheel}
-              className="mySwiper">
-              {edibles.map(cat => (
-                <SwiperSlide key={cat.id}>
-                  <div className='w-full h-full bg-white rounded-lg border flex flex-col justify-between p-5 space-y-10 hover:shadow-md'>
-                    <img src={cat.img} alt="" className='rounded-md w-full h-9/12 object-cover' />
-                    <div className='text-2xl text-start text-[#1F451A] font-normal'>{cat.title}</div>
-                    <div onClick={() => history('/carts')} className='' >
-                      <button className='flex text-center items-center justify-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
-                        onClick={() => addToCartHandler()}>
-                        <BsCart fontSize={28}/> Add to cart
-                      </button>
-                    </div>
-                  </div>                
-                </SwiperSlide>     
-              )) }
-            </Swiper>
-          </div>
-        </div>
-
-        <div className='pt-10'>
-          <div className='flex items-center xsflex justify-between'>
-            <div className='font-bold text-3xl  text-black'>Popular Extracts</div>
-            <div className='font-bold text-2xl cursor-pointer text-[#1F451A]'>See All Extracts</div>
-          </div>
-          <div className='p-10'>
-            <Swiper
-              mousewheel={true}
-              spaceBetween={50}
-              breakpoints={{
-                640:{
-                  width: 640,
-                  slidesPerView: 2
-                },
-                768:{
-                  width: 768,
-                  slidesPerView: 2
-                },
-                //   1400:{
-                //       width: 1400,
-                //       slidesPerView: 3
-                //   },
-              }}
-              modules={Mousewheel}
-              className="mySwiper">
-              {extracts.map(cat => (
-                <SwiperSlide key={cat.id}>
-                  <div className='w-full h-full bg-white rounded-lg border flex flex-col justify-between p-5 space-y-10 hover:shadow-md'>
-                    <img src={cat.img} alt="" className='rounded-md w-auto h-auto object-cover' />
-                    <div className='text-2xl text-start text-[#1F451A] font-normal'>{cat.title}</div>
-                    <div onClick={() => history('/carts')} className=' text-center ' >
-                      <button className='flex justify-center text-center items-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
-                        onClick={() => addToCartHandler()}>
-                        <BsCart fontSize={28}/> Add to cart
-                      </button>
-                    </div>
-                  </div>                
-                </SwiperSlide>     
-              )) }
-            </Swiper>
+          }
           </div>
         </div>
 
