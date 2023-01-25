@@ -252,9 +252,9 @@ export const PostNewsletter = async (body) => {
   };
 }
 
-export const GetCart = async (user) => {
+export const GetCart = async () => {
   try {
-      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/${user}/cart`, 
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/user/cart`, 
           {
             headers: { 
                 "Content-Type": "application/json" ,
@@ -398,31 +398,6 @@ export const GetRecentlyViewed = async () => {
         };
 }
 
-// export const FilterProducts = async (slug, plant, brand, potency, outOfStock) => {
-//   try {
-//       const data = await axios.get(`${process.env.REACT_APP_BASEURL}/categories/${slug}
-//       /?plant_type=${plant}/?potency=${potency}&outofstock=${outOfStock}&brand=${brand}`, 
-//           {
-//             headers: { 
-//                 "Content-Type": "application/json" ,
-//                 "Authorization": `Bearer ${token}`
-//             },
-//             cancelToken: cancelToken.token,
-//           })
-//         console.log("Filter Products",data);
-//          return data; 
-//         } catch (error) {
-//           if (axios.isCancel(err)) {
-//             console.log("Request canceled!");
-//           } else {
-//             console.log(error);
-//           }
-//         }
-//         return () => {
-//           cancelToken.cancel();
-//         };
-// }
-
 export const GetBrands= async () => {
   try {
       const data = await axios.get(`${process.env.REACT_APP_BASEURL}/marks`, 
@@ -535,7 +510,7 @@ export const FilterProducts = async (slug, plant, brand, potency, outOfStock, so
       }
     }
 
-    const data = await axios.get(`${process.env.REACT_APP_BASEURL}/categories/${slug}${queryParams}`, {
+    const data = await axios.get(`${process.env.REACT_APP_BASEURL}/categories/${slug}${queryParams}}`, {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
@@ -554,4 +529,32 @@ export const FilterProducts = async (slug, plant, brand, potency, outOfStock, so
   return () => {
     cancelToken.cancel();
   };
+}
+export const GetSpecialProduct = async (special) => {
+  try {
+    let queryParams = "";
+    if (special) {
+      queryParams += `${queryParams ? "&" : "?"}special=${special}`;
+    }
+
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/products${queryParams}`, 
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+            cancelToken: cancelToken.token,
+          })
+        console.log("Get Special Products", data);
+         return data; 
+        } catch (err) {
+          if (axios.isCancel(err)) {
+            console.log("Request canceled!");
+          } else {
+            console.log(err);
+          }
+        }
+        return () => {
+          cancelToken.cancel();
+        };
 }

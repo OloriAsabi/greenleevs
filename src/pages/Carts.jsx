@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {AiOutlineLeftCircle, AiOutlineDelete} from 'react-icons/ai';
 import image1 from '../assests/oils.jpg';
@@ -8,32 +8,70 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import {BsCart} from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 
-import { category, extracts } from '../data/data';
-
 import { Mousewheel } from 'swiper';
 import visa from '../assests/Vector (1).png';
 import master from '../assests/master.png';
 import american from '../assests/american.png';
 import { useStateContext } from '../contexts/ContextProvider';
-import { GetCart } from '../apis/api';
+import { GetCart, GetPopularProducts, GetRecentlyViewed } from '../apis/api';
+import { Spinner } from '../components';
 
 const Carts = () => {
   const history = useNavigate();
   const [itemCount, setItemCount] = useState(1);
   const [carts, setCarts] = useState([]);
-
+  const [popular, setPopular] = useState([]);
+  const [isLoading, setIsLoading] = useState(false)
+  const [recent, setRecent] = useState([]);
 
   const { dispatch, state } = useStateContext();
   const { user } = state;
   // console.log(user);
+  const getPopularProducts = useCallback(() => {
+    setIsLoading(true)
+    GetPopularProducts()
+    .then((res) => {
+      console.log(res);
+      if (res.status === 200) {
+        const data = res.data.data
+    
+        setPopular(data)
+        setIsLoading(false)
+    }else{
+      console.log(res.statusText);
+      enqueueSnackbar(res.statusText, { variant: res.status });
+    }
+    })
+  },[]);
+
+  const getRecentlyView = useCallback(() => {
+    setIsLoading(true)
+    GetRecentlyViewed()
+    .then((res) => {
+      console.log("Recently Viewed Products", res);
+      if (res.status === 200) {
+        const data = res.data.data
+    
+        setRecent(data)
+        setIsLoading(false)
+    }else{
+      console.log(res.statusText);
+      enqueueSnackbar(res.statusText, { variant: res.status });
+    };
+    }).catch((e) => {
+      console.log(e);
+      });
+  },[]);
 
   useEffect(() => {
-    GetCart(user.id)
+    GetCart()
     .then((response) => {
     console.log(response);
     }).catch((e) => {
     console.log(e);
     });
+    getPopularProducts();
+    getRecentlyView()
   },[]);
 
   return (
@@ -99,8 +137,14 @@ const Carts = () => {
         </div>
 
         <div className='pt-10'>
-          <h1 className=' text-3xl font-bold mb-10 text-[#2D2D2D] shopText'>Related Products</h1>
+          <div className='text-start'>
+            <div className='font-normal text-3xl  text-black'>Recently Viewed</div>
+          </div>
           <div className='p-10'>
+          {isLoading
+                  ? 
+                  <Spinner /> 
+                  :
             <Swiper
               mousewheel={true}
               spaceBetween={50}
@@ -120,21 +164,22 @@ const Carts = () => {
               }}
               modules={Mousewheel}
               className="mySwiper">
-              {category.map(cat => (
-                <SwiperSlide key={cat.id}>
+              {recent.map(r => (
+                <SwiperSlide key={r.product_id}>
                   <div className='w-full h-full bg-white rounded-lg border flex flex-col justify-between p-5 space-y-10 hover:shadow-md'>
-                    <img src={cat.img} alt="" className='rounded-md w-auto h-auto' />
-                    <div className='text-2xl text-start text-[#1F451A] font-normal'>{cat.title}</div>
-                    {/* <button className='bg-[#1F451A] text-white p-3 cursor-pointer rounded-md text-xl'> <BsCart fontSize={28}/> Add to cart</button> */}
-                    <a href='/carts' className='' >
-                      <button className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'>
+                    <img src={r.product_image} alt="" className='rounded-md w-auto h-auto object-cover' />
+                    <div className='text-2xl text-start text-[#1F451A] font-normal'>{r.label}</div>
+                    <p className='text-center ' >
+                      <button className='flex justify-center text-center items-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
+                      onClick={() => addToCartHandler()}>
                         <BsCart fontSize={28}/> Add to cart
                       </button>
-                    </a>
+                    </p>
                   </div>                
                 </SwiperSlide>     
               )) }
             </Swiper>
+}
           </div>
         </div>
 
@@ -142,6 +187,10 @@ const Carts = () => {
         <div className='pt-10'>
           <h1 className=' text-3xl font-bold mb-10 text-[#2D2D2D] shopText'>Popular</h1>
           <div className='p-10'>
+          {isLoading
+                  ? 
+                  <Spinner /> 
+                 :
             <Swiper
               mousewheel={true}
               spaceBetween={50}
@@ -161,21 +210,24 @@ const Carts = () => {
               }}
               modules={Mousewheel}
               className="mySwiper">
-              {category.map(cat => (
-                <SwiperSlide key={cat.id}>
-                  <div className='w-full h-full bg-white rounded-lg border flex flex-col justify-between p-5 space-y-10 hover:shadow-md'>
-                    <img src={cat.img} alt="" className='rounded-md w-auto h-auto' />
-                    <div className='text-2xl text-start text-[#1F451A] font-normal'>{cat.title}</div>
-                    {/* <button className='bg-[#1F451A] text-white p-3 cursor-pointer rounded-md text-xl'> <BsCart fontSize={28}/> Add to cart</button> */}
-                    <a href='/carts' className='' >
-                      <button className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'>
-                        <BsCart fontSize={28}/> Add to cart
-                      </button>
-                    </a>
-                  </div>                
+              {popular.map(pop => (
+                <SwiperSlide key={pop.product_id}>
+                  <Link to={`/product/${pop.slug}`}>
+                    <div className='w-full h-full bg-white rounded-lg border flex flex-col justify-between p-5 space-y-10 hover:shadow-md'>
+                      <img src={pop.product_image} alt="" className='rounded-md w-auto h-auto' />
+                      <div className='text-2xl text-start text-[#1F451A] font-normal'>{pop.label}</div>
+                      <div onClick={() => history('/carts')} className='' >
+                        <button className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
+                          onClick={() => addToCartHandler()}>
+                          <BsCart fontSize={28}/> Add to cart
+                        </button>
+                      </div>
+                    </div>     
+                  </Link>           
                 </SwiperSlide>     
               )) }
             </Swiper>
+}
           </div>
         </div>
 

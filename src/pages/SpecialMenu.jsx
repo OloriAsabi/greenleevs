@@ -1,5 +1,4 @@
 import React, { useEffect, useState,  useCallback } from 'react';
-import { category } from '../data/data';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import {BsCart} from 'react-icons/bs';
 import { Link, useNavigate } from 'react-router-dom';
@@ -11,7 +10,7 @@ import { Mousewheel } from 'swiper';
 import visa from '../assests/Vector (1).png';
 import master from '../assests/master.png';
 import american from '../assests/american.png';
-import { GetPopularProducts, PostCart } from '../apis/api';
+import { GetPopularProducts, GetSpecialProduct, PostCart } from '../apis/api';
 import { useSnackbar } from 'notistack';
 import { useStateContext } from '../contexts/ContextProvider';
 
@@ -21,6 +20,7 @@ import 'swiper/css';
 
 const SpecialMenu = () => {
   const history = useNavigate();
+  const [special, setSpecial] = useState([]);
   const [popular, setPopular] = useState([]);
   const { state } = useStateContext();
   const { user, cart,  } = state;
@@ -45,10 +45,30 @@ const SpecialMenu = () => {
     }
     })
   },[]);
+  const getSpecialProducts = useCallback(() => {
+    setIsLoading(true)
+    const specials = true
+    GetSpecialProduct(specials)
+    .then((res) => {
+      console.log(res);
+      if (res.status === 200) {
+        const data = res.data.data
+    
+        setSpecial(data)
+        setIsLoading(false)
+    }else{
+      console.log(res.statusText);
+      enqueueSnackbar(res.statusText, { variant: res.status });
+    }
+    })
+  },[]);
 
   useEffect(() => {
     getPopularProducts();
+    getSpecialProducts();
   },[]);
+
+  console.log('Special',special);
 
   const addToCartHandler = async () => {
     const existItem = cart.cartItems.find((x) => x._id === product._id);
@@ -80,13 +100,13 @@ const SpecialMenu = () => {
         <div>
           <h1 className='text-3xl font-bold mb-10 text-[#2D2D2D] pt-10 text-start shopText'>Special</h1>
           <div className='grid lg:grid-cols-3  md:grid-cols-2 pl-5 sm:grid-cols-2 gap-10 pt-10 justify-between items-center'>
-            {category.map((cat) => (
-              <Link to={`/product/${cat.id}`} key={cat.id}>
+            {special.map((cat) => (
+              <Link to={`/product/${cat.slug}`} key={cat.product_id}>
                 <div className='w-80 h-auto  bg-white rounded-lg border flex flex-col justify-between p-5 space-y-5 hover:shadow-md'>
-                  <img src={cat.img} alt="" className='rounded-md w-auto h-auto' />
-                  <p className='text-14 text-[#1F451A]'>Green leevs</p>
-                  <div className='text-2xl text-start capitalize text-[#1F451A] font-normal'>{cat.title}</div>
-                  <div className=''>$75.30</div>
+                  <img src={cat.product_image} alt="" className='rounded-md w-auto h-auto' />
+                  <p className='text-14 text-[#1F451A]'>{cat.brand?.label}</p>
+                  <div className='text-2xl text-start capitalize text-[#1F451A] font-normal'>{cat.label}</div>
+                  <div className=''>$ {cat.price}</div>
                   <div onClick={() => history('/carts')} className='' >
                     <button 
                     className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
