@@ -1575,23 +1575,22 @@ export const strain = [
     name: "indica"
   }
 ];
-
 export const thcContents = [
   {
     id: 1,
-    name: "THC - 100%"
+    name: "THC - 40%"
   },
   {
     id: 2,
-    name: "THC - 80%"
+    name: "THC - 30%"
   },
   {
     id: 3,
-    name: "THC - 50%"
+    name: "THC - 20%"
   },
   {
     id: 4,
-    name: "THC - 20%"
+    name: "THC - 15%"
   },
   {
     id: 5,
@@ -1601,27 +1600,28 @@ export const thcContents = [
     id: 6,
     name: "THC - 5%"
   }
-]
+];
+
 export const cbdContents =[
   {
     id: 7,
-    name: "CBD - 100%"
-  },  
-  {
-    id: 8,
-    name: "CBD - 100%"
-  },  
-  {
-    id: 9,
-    name: "CBD - 80%"
-  }, 
-  {
-    id: 10,
     name: "CBD - 50%"
   },  
   {
-    id: 11,
+    id: 8,
+    name: "CBD - 40%"
+  },  
+  {
+    id: 9,
+    name: "CBD - 30%"
+  }, 
+  {
+    id: 10,
     name: "CBD - 20%"
+  },  
+  {
+    id: 11,
+    name: "CBD - 15%"
   },  
   {
     id: 12,
@@ -1631,7 +1631,7 @@ export const cbdContents =[
     id: 13,
     name: "CBD - 5%"
   }
-]
+];
 
 export const effect = [
   {

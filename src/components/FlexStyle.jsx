@@ -4,7 +4,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Spinner from './Spinner';
 /* eslint-disable */
 
-const FlexStyle = ({ category , isLoading}) => {
+const FlexStyle = ({ filteredProducts , isLoading}) => {
   const history = useNavigate();
   return (
     <div>
@@ -13,7 +13,7 @@ const FlexStyle = ({ category , isLoading}) => {
           <Spinner /> 
           :
       <div className='flex flex-col pl-5 gap-10 pt-10 justify-between w-full'>
-        {category.map((cat) => (
+        {filteredProducts.map((cat) => (
           <Link to={`/product/${cat.slug}`} key={cat.product_id}>
             <div className='w-full h-full accessoryBg flex flex-row justify-between items-center gap-10 p-10 space-y-5 hover:shadow-md'>
               <img src={cat.product_image} alt="" className='rounded-md w-80 h-72' />

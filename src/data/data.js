@@ -54,14 +54,125 @@ const menus = [
   { id: 'settings', title: 'Settings', icon: <AiOutlineSetting/>},
 ];
 
-    
-export function getMenu(menuId) {
-  return menus.find(({ id }) => id === menuId);
+export const plant_type = [
+{
+  id: 1,
+  type: "Hybrid"
+},
+{
+  id: 2,
+  type: "Sativa"
+},
+{
+  id: 3,
+  type: "Indica"
 }
-  
-export function getMenus() {
-  return menus;
-}
+];
+
+export const prices = [
+  {
+    lowPrice: 0,
+    highPrice: 49.99,
+  },
+  {
+    lowPrice: 10,
+    highPrice: 99.99,
+  },
+  {
+    lowPrice: 20,
+    highPrice: 149.99,
+  },
+  {
+    lowPrice: 30,
+    highPrice: 199.99,
+  },
+  {
+    lowPrice: 40,
+    highPrice: 249.99,
+  },
+  {
+    lowPrice: 50,
+    highPrice: 299.99,
+  },
+  {
+    lowPrice: 100,
+    highPrice: 349.99,
+  },
+  {
+    lowPrice: 150,
+    highPrice: 399.99,
+  },
+  {
+    lowPrice: 200,
+    highPrice: 449.99,
+  },
+  {
+    lowPrice: 300,
+    highPrice: 499.99,
+  },
+  {
+    lowPrice: 500,
+    highPrice:"and up",
+  },
+];
+
+export const thcContents = [
+  {
+    id: 1,
+    name: "THC - 40%"
+  },
+  {
+    id: 2,
+    name: "THC - 30%"
+  },
+  {
+    id: 3,
+    name: "THC - 20%"
+  },
+  {
+    id: 4,
+    name: "THC - 15%"
+  },
+  {
+    id: 5,
+    name: "THC - 10%"
+  },
+  {
+    id: 6,
+    name: "THC - 5%"
+  }
+];
+
+export const cbdContents =[
+  {
+    id: 7,
+    name: "CBD - 50%"
+  },  
+  {
+    id: 8,
+    name: "CBD - 40%"
+  },  
+  {
+    id: 9,
+    name: "CBD - 30%"
+  }, 
+  {
+    id: 10,
+    name: "CBD - 20%"
+  },  
+  {
+    id: 11,
+    name: "CBD - 15%"
+  },  
+  {
+    id: 12,
+    name: "CBD - 10%"
+  },
+  {
+    id: 13,
+    name: "CBD - 5%"
+  }
+];
 
 export const featuredProducts = [
   {
@@ -226,75 +337,3 @@ export const strainTypes = [
   }
 ];
 
-export const edibles =[
-  {
-    id: 1,
-    img: edible,
-    title: 'CHOCOLATE',
-    price: '$20.00'
-  }, {
-    id: 2,
-    img: edibles1,
-    title: 'CHOCOLATE VEGAN',
-    price: '$20.00'
-  }, {
-    id: 3,
-    img: edibles2,
-    title: 'GUMMY BEARS',
-    price: '$20.00'
-  }, {
-    id: 4,
-    img: edible,
-    title: 'GUMMY BEARS',
-    price: '$20.00'
-  }, {
-    id: 5,
-    img: edibles2,
-    title: 'GUMMY BEARS',
-    price: '$20.00'
-  }, {
-    id: 6,
-    img: edible,
-    title: 'GUMMY BEARS',
-    price: '$20.00'
-  }, {
-    id: 7,
-    img: edibles4,
-    title: 'GUMMY BEARS',
-    price: '$20.00'
-  }, {
-    id: 8,
-    img: edibles2,
-    title: 'GUMMY BEARS',
-    price: '$20.00'
-  },
-];
-
-export const extracts = [
-  {
-    id: 1,
-    img: ex,
-    title: 'Oils',
-    price: '$20.00'
-  }, {
-    id: 2,
-    img: ex1,
-    title: 'CAPSULE',
-    price: '$20.00'
-  }, {
-    id: 3,
-    img: ex2,
-    title: 'INFUSED FLOWERS',
-    price: '$20.00'
-  }, {
-    id: 4,
-    img: ex3,
-    title: 'oil',
-    price: '$20.00'
-  }, {
-    id: 5,
-    img: ex,
-    title: 'INFUSED FLOWERS',
-    price: '$20.00'
-  },
-];

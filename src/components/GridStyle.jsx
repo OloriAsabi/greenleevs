@@ -4,9 +4,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import Spinner from './Spinner';
 /* eslint-disable */
 
-const GridStyle = ({ category, isLoading }) => {
+const GridStyle = ({ isLoading, filteredProducts }) => {
   const history = useNavigate();
-  console.log("Category : ", category);
+  console.log("Category : ", filteredProducts);
   return (
     <div>
        {isLoading
@@ -14,7 +14,7 @@ const GridStyle = ({ category, isLoading }) => {
                   <Spinner /> 
                   :
       <div className='grid lg:grid-cols-3  md:grid-cols-2 pl-5 sm:grid-cols-2 gap-10 pt-10 justify-between items-center'>
-        {category && category?.map((cat) => (
+        {filteredProducts && filteredProducts.map((cat) => (
           <Link to={`/product/${cat.slug}`} key={cat.product_id}>
             <div className='w-80 h-auto bg-white rounded-lg border flex flex-col justify-between p-5 space-y-5 hover:shadow-md'>
               <img src={cat.product_image} alt="" className='rounded-md w-auto h-auto' />

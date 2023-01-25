@@ -9,7 +9,7 @@ import { Mousewheel } from 'swiper';
 import visa from '../assests/Vector (1).png';
 import master from '../assests/master.png';
 import american from '../assests/american.png';
-import { GetCategories, GetPopularByCategory, GetPopularProducts, PostCart } from '../apis/api';
+import { GetCategories, GetPopularProducts, PostCart } from '../apis/api';
 
 import 'swiper/css';
 import { Spinner } from '../components';
@@ -139,10 +139,10 @@ const Shop = () => {
                   width: 768,
                   slidesPerView: 2
                 },
-                //   1400:{
-                //       width: 1400,
-                //       slidesPerView: 3
-                //   },
+                  1400:{
+                      width: 1400,
+                      slidesPerView: 3
+                  },
               }}
               modules={Mousewheel}
               className="mySwiper">
@@ -152,7 +152,6 @@ const Shop = () => {
                     <div className='w-full h-full bg-white rounded-lg border flex flex-col justify-between p-5 space-y-10 hover:shadow-md'>
                       <img src={pop.product_image} alt="" className='rounded-md w-auto h-auto' />
                       <div className='text-2xl text-start text-[#1F451A] font-normal'>{pop.label}</div>
-                      {/* <button className='bg-[#1F451A] text-white p-3 cursor-pointer rounded-md text-xl'> <BsCart fontSize={28}/> Add to cart</button> */}
                       <div onClick={() => history('/carts')} className='' >
                         <button className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
                           onClick={() => addToCartHandler()}>

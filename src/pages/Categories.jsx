@@ -1,49 +1,57 @@
 /* eslint-disable */
 import React, { useState } from 'react';
-import { BiMenu, BiMenuAltRight } from 'react-icons/bi';
+import { BsToggle2Off, BsToggle2On } from 'react-icons/bs';
+import {RiArrowDropDownLine } from 'react-icons/ri';
+import { plant_type } from '../data/data';
+import { BiMenuAltRight } from 'react-icons/bi';
 import { BsCart, BsGrid } from 'react-icons/bs';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import visa from '../assests/Vector (1).png';
 import master from '../assests/master.png';
 import american from '../assests/american.png';
 
 import { Mousewheel } from 'swiper';
-import { FlexStyle, GridStyle, Sidebar, SidebarCat, Spinner } from '../components';
+import { FlexStyle, GridStyle, SidebarCat, Spinner } from '../components';
 import { useForm } from 'react-hook-form';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
-import { GetCategoriesById, GetPopularByCategory } from '../apis/api';
+import { FilterProducts, GetBrands, GetCategoriesById, GetPopularByCategory } from '../apis/api';
 import { useCallback } from 'react';
 import { useSnackbar } from 'notistack';
 import { useStateContext } from '../contexts/ContextProvider';
 
 const Categories = () => {
   const [open, setOpen] = useState(false);
-  // const [openSort, setOpenSort] = useState(false)
   const [openNav, setOpenNav] = useState(false);
   const { id }  = useParams();
-  const [category, setCategory] = useState([])
+  const [category, setCategory] = useState(null);
   const [popular, setPopular] = useState([])
-  // const [isOpen, setIsOpen] = useState(false)
+  const [isGrid, setIsGrid] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
   const [activeFilter, setActiveFilter] = useState('All'); 
   const { state } = useStateContext();
   const { user, cart } = state;
+  const [products, setProducts] = useState([]);
+
+  const [toggleBtn, setToggleBtn] = useState(false);
+  const [brands, setBrands] = useState([]);
+  const [plant, setPlant] = useState('');
+  const [brand, setBrand] = useState('');
+  const [potency, setPotency] = useState('');
+  const [outOfStock, setOutOfStock] = useState(false);
+  const history = useLocation();
+
+  const [openBrand, setOpenBrand] = useState(false);
+  const [openPlant, setOpenPlant] = useState(false);
+  const {
+    brandss = 'all',
+    plants = 'all',
+    potencies = 'all',
+    sort = 'default',
+  } = history.pathname
 
   const { enqueueSnackbar } = useSnackbar();
-
-  const showGrid = () => {
-    if (window.location.pathname === `/shop/${id}`) {
-      return <GridStyle category={category} isLoading={isLoading} />;
-    }
-  };
-  const showFlex = () => {
-    if (window.location.pathname === `/shop/${id}`) {
-      return <FlexStyle category={category}  isLoading={isLoading}  />;
-    }
-  };
-
   const {
     register,
     handleSubmit,
@@ -68,26 +76,6 @@ const Categories = () => {
     }, 500);
   };
 
-  const getDataCategoryById =  useCallback(() => {
-    setIsLoading(true)
-    GetCategoriesById(id)
-    .then((res) => {
-      console.log("Category By id",res);
-      if (res.status === 200) {
-          const data = res.data.data
-      
-          setCategory(data)
-          setIsLoading(false)
-        }else{
-          console.log(res.statusText);
-          enqueueSnackbar(res.statusText, { variant: res.status });
-        }
-          }).catch((e) => {
-          console.log(e);
-          });
-  },
-  []);
-
   const getPopularByCategories =  useCallback(() => {
     setIsLoading(true)
     GetPopularByCategory(id)
@@ -102,38 +90,76 @@ const Categories = () => {
           });
   },
   []);
-
-  // const getDataCategory =  useCallback(() => {
-  //   setIsLoading(true)
-  //   GetCategories()
-  //   .then((response) => {
-  //     if (response.status === 200) {
-  //   const data = response.data.data
+  const getBrands =  useCallback(() => {
+    GetBrands()
+    .then((res) => {
+      console.log("Brands",res);
+      if (res.status === 200) {
+          const data = res.data.data
       
-  //     setCategories(data)
-  //      setIsLoading(false)
-  //     }else{
-  //       console.log(response.statusText);
-  //       enqueueSnackbar(response.statusText, { variant: response.status });
-  //     }
-  //   }).catch((e) => {
-  //   console.log(e);
-  //   });
-  // },
-  // []);
-
-  // useEffect(() => {
-  // getDataCategory();
-  // },[]);
-
+          setBrands(data)
+        }else{
+          console.log(res.statusText);
+        }
+          }).catch((e) => {
+          console.log(e);
+          });
+  },
+  []);
+  const getDataCategoryById = useCallback(() => {
+    setIsLoading(true);
+    GetCategoriesById(id)
+      .then((res) => {
+        if (res.status === 200) {
+          const data = res.data.data;
+          setCategory(data);
+          setIsLoading(false);
+        } else {
+          console.log(res.statusText);
+          enqueueSnackbar(res.statusText, { variant: res.status });
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, [id]);
 
   useEffect(() => {
-    getDataCategoryById()
-  }, []);
+    getDataCategoryById();
+  }, [getDataCategoryById]);
+
+  const toggleGrid = () => setIsGrid(!isGrid);
+
+  useEffect(() => {
+    getBrands();
+    },[]);
 
   useEffect(() => {
     getPopularByCategories();
-  }, [])
+  }, []);
+  
+  // const handleFilter = (e) => {
+  //   // e.preventDefault();
+  //   setFilter({ ...filter, [e.target.name]: e.target.value });
+  // };
+
+  const handleFilterSubmit = async () => {
+    // console.log("Results", e);
+    await FilterProducts(id, plant, brand, potency, outOfStock)
+      .then((res) => {
+        if (res.status === 'success') {
+          console.log(res);
+          setProducts(res.data);
+        } else {
+          console.log(res.statusText);
+        }
+      });
+  };
+  useEffect(() => {
+   handleFilterSubmit()
+  }, []);
+  const filteredProducts = products.length > 0 ? products : category;
+
   
   const addToCartHandler = async () => {
     const existItem = cart.cartItems.find((x) => x._id === product._id);
@@ -158,29 +184,118 @@ const Categories = () => {
       // history('/cart')
     })
   };
+console.log(products);
   
   return (      
     <div>
       <div className='w-screen flex h-full '>
-        <Sidebar id={id} />
-        <div className="h-full flex-1 small p-7">   
-          <div className="p-10 flex dontShow  flex-wrap justify-between">
-            {['All Categories', 'Bongs', 'Pipes', 'Smoking Papers', 'Vapes'].map((item, index) => (
-              <div
-                key={index}
-                onClick={() => handleWorkFilter(item)}
-                className={`cursor-pointer bg-[#b3d3af] text-[#1F451A]  p-4 rounded-full
-            ${activeFilter === item ? 'text-[#1F451A] bg-[#577952]' : ''}`}
-              >
-                {item}
+      <div
+        className= "w-72 bg-white accessorySide border border-l-5 flex flex-col border-gray-300  h-full p-5  pb-10 pt-10 relative duration-300"
+      >
+         <h5 className='pt-5'>SUBCATEGORIES</h5>
+         <div className='pt-6'>
+           <p className='pb-5 capitalize'>All {id}</p>
+         <ul className='text-[#2D2D2D] text-sm  pb-5 cursor-pointer text-start'>
+             {brands.map((brand) => (
+              <div className='' key={brand.id}>
+                    <li className='pb-2 hover:border-b-2 w-8 font-medium'>{brand.label}</li>
               </div>
             ))}
+          </ul>
+          <hr/>
+        </div>
+    <form onSubmit={handleFilterSubmit}>
+          <div className='pt-6'>
+                  <div className='flex justify-between'>
+                  <p className='pb-5'>BRANDS</p>
+                  <button
+                      className=''
+                      onClick={() => setOpenBrand(!openBrand)}>
+                      <RiArrowDropDownLine fontSize={28}/>
+                    </button>
+                  </div>
+                  <div className='flex flex-col justify-between space-y-5 items-start'>
+                  {brands.map((brand) => (
+                  <div  className='flex mb-5' key={brand.id}>
+                  <input id={brand.id} 
+                    type="checkbox" 
+                    name={brand.label} 
+                    value={brand.label}
+                    onChange={(e) => setBrand(e.target.value)} 
+                    // {...register('brand')} 
+                    className="h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" 
+                    aria-labelledby={brand.label} 
+                    aria-describedby={brand.label} /> 
+                    <label htmlFor={brand.label} className="text-sm text-[#2D2D2D] ml-2 block">
+                      {brand.label}
+                      </label>
+                      </div>
+                  ))}
+                    </div>
+            <hr/>
           </div>
+
+          <div className='pt-6'>
+                <div className='flex justify-between'>
+                  <p className='pb-5'>PLANT TYPES</p>
+                <button
+                    className=''
+                    onClick={() => setOpenPlant(!openPlant)}>
+                    <RiArrowDropDownLine fontSize={28}/>
+                  </button>
+                </div>
+                   <div className='flex flex-col justify-between pb-5 space-y-5 items-start'>       
+                      {plant_type.map((item) => (
+                        <div className='flex ' key={item.id}>
+                          <input 
+                            value={item.type}
+                            id={item.id}
+                            type="checkbox" 
+                            name={item.type} 
+                            className="h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" 
+                            aria-labelledby={item.type} 
+                            aria-describedby={item.type} 
+                            // {...register('plant')} 
+                            onChange={(e) => setPlant(e.target.value)}
+                             />             
+                      <label htmlFor={item.type}  className="text-sm text-[#2D2D2D] ml-2 block">
+                        {item.type} 
+                      </label>
+                      </div>
+                      ))}               
+                  </div>
+              <hr/>
+          </div>
+          <div className='flex flex-col pt-5 w-full'>
+                 <select name="potency"    onChange={(e) => setPotency(e.target.value)}>
+                     <option value="">Select Potency</option>
+                     <option value="low">Low</option>
+                     <option value="medium">Medium</option>
+                     <option value="high">High</option>
+                 </select>
+          </div>      
+
+            <div className='flex justify-between pt-10 pb-5'>
+              <p className='pb-5 text-[#2D2D2D] text-sm'>Out of Stock</p>
+              <button onClick={() => setToggleBtn(!toggleBtn)} 
+              onChange={() => setOutOfStock(!outOfStock)} >
+                {toggleBtn ?  
+                  <BsToggle2On fontSize={28} className="cursor-pointer scroll-smooth transition ease-linear text-[#1F451A]"/> 
+                  :
+                  <BsToggle2Off fontSize={28} className="cursor-pointer text-[#1F451A]"/> 
+                }
+              </button>  
+              </div>
+
+            {/* <button type="submit" className='text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'>Filter</button> */}
+      </form>
+      </div>
+        <div className="h-full flex-1 small p-7">   
           <div className='flex justify-between pt-10 pb-6'>
             <h4 className='text-2xl font-medium capitalize pb-5' >ALL {id}</h4>
             <div className='flex justify-between items-center gap-10'>
               <div>
-                <form onSubmit={handleSubmit(submitSort)} >
+                {/* <form onSubmit={handleSubmit(submitSort)} >
                   <div>
                     <div className=''>
                       <select id="sort"  
@@ -204,18 +319,15 @@ const Categories = () => {
                       )}
                     </div>
                   </div>
-                </form>    
+                </form>     */}
+              </div>       
+              <div>
+              <button 
+              onClick={toggleGrid}     
+              className='rounded bg-[#c9e7c5] accessorySide  hover:scale-x-110  p-3  cursor-pointer'>
+                  <BsGrid fontSize={28}/>
+              </button>
               </div>
-              <button
-                className='rounded bg-[#c9e7c5]  hover:scale-x-110  p-3  cursor-pointer'
-                onClick={() => setOpen(!open)}>
-                <BsGrid fontSize={28}/>
-              </button>
-              <button
-                className='rounded bg-[#c9e7c5] accessorySide  hover:scale-x-110  p-3  cursor-pointer'
-                onClick={() => setOpen(!open)}>
-                <BiMenu fontSize={28}/>
-              </button>
               {!openNav ? (
                 <button
                   className='rounded bg-[#c9e7c5] dontShow hover:scale-x-110  p-3  cursor-pointer'
@@ -229,17 +341,10 @@ const Categories = () => {
               )}
             </div>
           </div>
+          {isGrid ?   
+              <FlexStyle filteredProducts={filteredProducts} isLoading={isLoading} /> :
+               <GridStyle filteredProducts={filteredProducts} isLoading={isLoading} /> }
           <hr />
-          <div className='w-full'>
-            {!open && (
-              showGrid()
-            )} 
-            <div className='w-full'>
-              {open && (
-                showFlex()
-              )} 
-            </div>
-          </div>
         </div>
       </div>
       <div className='pt-10 accessorySide  small pl-10 pr-`10 '>
