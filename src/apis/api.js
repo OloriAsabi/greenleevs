@@ -522,49 +522,29 @@ export const GetSearchParams = async (searchTerm) => {
 //         throw error;
 //     }
 // };
-export const FilterProducts = async (slug, plant, brand, potency, outOfStock, sort) => {
-  try {
-  let queryParams = "";
-      if (plant !== 'all') {
-          queryParams += `?plan_type=${plant}`;
+
       }
-  
-      if (brand) {
-          queryParams += `${queryParams ? "&" : "?"}brand=${brand}`;
-      }
-  
-      if (potency) {
-          queryParams += `${queryParams ? "&" : "?"}potency=${potency}`;
-      }
-  
-      if (outOfStock) {
-          queryParams += `${queryParams ? "&" : "?"}out_of_stock=${outOfStock}`;
-      }
-      let order = '';
-      if (sort !== 'default') {
-        if (sort === 'popular') order = '| order(price asc)';
-        if (sort === 'highest') order = '| order(price desc)';
-        if (sort === 'toprated') order = '| order(rating desc)';
-      }
-      queryParams+=`${queryParams ? "&" : "?"}sort=${sort}`;
-  
-      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/categories/${slug}/${queryParams}`, {
-          headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
-          },
-          cancelToken: cancelToken.token
-      });
-      console.log("Filter Products", data);
-      return data;
+    }
+
+    const data = await axios.get(`${process.env.REACT_APP_BASEURL}/categories/${slug}${queryParams}`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      },
+      cancelToken: cancelToken.token
+    });
+    console.log("Filter Products", data);
+    return data;
   } catch (error) {
-      if (axios.isCancel(error)) {
-          console.log("Request canceled!");
-      } else {
-          console.log(error);
-      }
+    if (axios.isCancel(error)) {
+      console.log("Request canceled!");
+    } else {
+      console.log(error);
+    }
   }
   return () => {
-      cancelToken.cancel();
+    cancelToken.cancel();
   };
+
+
 }
