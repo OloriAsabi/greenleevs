@@ -22,7 +22,6 @@ import { useSnackbar } from 'notistack';
 import { useStateContext } from '../contexts/ContextProvider';
 
 const Categories = () => {
-  const [open, setOpen] = useState(false);
   const [openNav, setOpenNav] = useState(false);
   const { id }  = useParams();
   const [category, setCategory] = useState(null);
@@ -268,7 +267,7 @@ console.log(products);
           </div>
           <div className='flex flex-col pt-5 w-full'>
                  <select name="potency"    onChange={(e) => setPotency(e.target.value)}>
-                     <option value="">Select Potency</option>
+                     <option value="default">Select Potency</option>
                      <option value="low">Low</option>
                      <option value="medium">Medium</option>
                      <option value="high">High</option>
@@ -295,7 +294,7 @@ console.log(products);
             <h4 className='text-2xl font-medium capitalize pb-5' >ALL {id}</h4>
             <div className='flex justify-between items-center gap-10'>
               <div>
-                {/* <form onSubmit={handleSubmit(submitSort)} >
+                <form onSubmit={handleSubmit(submitSort)} >
                   <div>
                     <div className=''>
                       <select id="sort"  
@@ -304,13 +303,13 @@ console.log(products);
                   text-white cursor-pointer rounded-md accessorySide hover:scale-x-110 font-normal text-xl border p-4 `}
                         {...register('sort')}>
                         <option 
-                          defaultValue="select" value=""> 
+                          defaultValue="select" value="default"> 
                             Sort
                         </option>
-                        <option value="Popular">Popular</option>
-                        <option value="Brand">Brand</option>
-                        <option value="Price: Low to High">Price: Low to High</option>
-                        <option value="Price: High to Low">Price: High to Low</option>
+                        <option value="popular">Popular</option>
+                        <option value="brand">Brand</option>
+                        <option value="lowest">Price: Low to High</option>
+                        <option value="highest">Price: High to Low</option>
                       </select>
                       {errors.sort && (
                         <p className="text-red-500 text-sm mt-2">
@@ -319,7 +318,7 @@ console.log(products);
                       )}
                     </div>
                   </div>
-                </form>     */}
+                </form>    
               </div>       
               <div>
               <button 

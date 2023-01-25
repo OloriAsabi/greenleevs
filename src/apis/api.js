@@ -522,34 +522,39 @@ export const GetSearchParams = async (searchTerm) => {
 //         throw error;
 //     }
 // };
-export const FilterProducts = async (slug, plant, brand, potency, outOfStock) => {
+const FilterProducts = async (slug, plant, brand, potency, outOfStock, sort) => {
   try {
-      let filters = "";
-
+  let queryParams = "";
       if (plant !== 'all') {
-          filters += `?plan_type=${plant}`;
+          queryParams += `?plan_type=${plant}`;
       }
-
+  
       if (brand) {
-          filters += `${filters ? "&" : "?"}brand=${brand}`;
+          queryParams += `${queryParams ? "&" : "?"}brand=${brand}`;
       }
-
+  
       if (potency) {
-          filters += `${filters ? "&" : "?"}potency=${potency}`;
+          queryParams += `${queryParams ? "&" : "?"}potency=${potency}`;
       }
-
+  
       if (outOfStock) {
-          filters += `${filters ? "&" : "?"}out_of_stock=${outOfStock}`;
+          queryParams += `${queryParams ? "&" : "?"}out_of_stock=${outOfStock}`;
       }
-
-      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/categories/${slug}/${filters}`,
-          {
-              headers: {
-                  "Content-Type": "application/json",
-                  "Authorization": `Bearer ${token}`
-              },
-              cancelToken: cancelToken.token,
-          })
+      let order = '';
+      if (sort !== 'default') {
+        if (sort === 'lowest') order = '| order(price asc)';
+        if (sort === 'highest') order = '| order(price desc)';
+        if (sort === 'toprated') order = '| order(rating desc)';
+      }
+      queryParams+=`${queryParams ? "&" : "?"}sort=${sort}`;
+  
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/categories/${slug}/${queryParams}`, {
+          headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${token}`
+          },
+          cancelToken: cancelToken.token
+      });
       console.log("Filter Products", data);
       return data;
   } catch (error) {
