@@ -523,49 +523,6 @@ export const GetSearchParams = async (searchTerm) => {
 //     }
 // };
 
-const _first = (arr) => {
-  if (typeof arr === 'object' && arr.hasOwnProperty('length') && arr.length > 0) {
-    return arr[0];
-  }
-  return '';
-}
-
-export const FilterProducts = async (slug, plant, brand, potency, outOfStock, sort) => {
-  console.log( slug, plant, brand, potency, outOfStock, sort)
-  try {
-    let queryParams = "";
-    if (plant) {
-      const f = _first(plant);
-      /** f.length == 0 is to check if there was an error gettin the first plant type */
-      queryParams += `?plan_type=${ f.length == 0 || plant == 'all' ? 'all' : f}`;
-    }
-
-    if (brand) {
-      queryParams += `${queryParams ? "&" : "?"}brand=${brand}&sort=true`;
-    }
-
-    if (potency) {
-      queryParams += `${queryParams ? "&" : "?"}potency=${potency}`;
-    }
-
-    if (outOfStock) {
-      queryParams += `${queryParams ? "&" : "?"}out_of_stock=${outOfStock}`;
-    }
-
-    let order = '';
-    let sortKey = 'price';
-
-    if ( typeof sort == "string" && sort !== 'default') {
-/*
-      if (sort === 'lowest') order = '| order(price asc)';
-      if (sort === 'highest') order = '| order(price desc)';
-      if (sort === 'toprated') order = '| order(rating desc)';
-*/
-
-      if (sort === 'lowest') order = 'price_low_to_high';
-      if (sort === 'highest') order = 'price_high_to_low';
-      if (sort === 'lowest' || sort === "highest") {
-        queryParams+=`${queryParams ? "&" : "?"}sort=true&${sortKey}=${order}`;
       }
     }
 
