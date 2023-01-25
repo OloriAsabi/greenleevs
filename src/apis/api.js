@@ -522,7 +522,7 @@ export const GetSearchParams = async (searchTerm) => {
 //         throw error;
 //     }
 // };
-const FilterProducts = async (slug, plant, brand, potency, outOfStock, sort) => {
+export const FilterProducts = async (slug, plant, brand, potency, outOfStock, sort) => {
   try {
   let queryParams = "";
       if (plant !== 'all') {
@@ -542,7 +542,7 @@ const FilterProducts = async (slug, plant, brand, potency, outOfStock, sort) => 
       }
       let order = '';
       if (sort !== 'default') {
-        if (sort === 'lowest') order = '| order(price asc)';
+        if (sort === 'popular') order = '| order(price asc)';
         if (sort === 'highest') order = '| order(price desc)';
         if (sort === 'toprated') order = '| order(rating desc)';
       }
