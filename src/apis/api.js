@@ -494,35 +494,44 @@ export const GetSearchParams = async (searchTerm) => {
 }
 
 
-// export const FilterProducts = async (id, plant, brand, potency, outOfStock) => {
-//     let filters = {}
-//     if (plant) {
-//         filters.plan_type = plant;
-//     }
-//     if (brand) {
-//         filters.brand = brand;
-//     }
-//     if (potency) {
-//         filters.potency = potency;
-//     }
-//     if (outOfStock) {
-//         filters.out_of_stock = outOfStock;
-//     }
-//     try {
-//         const { data } = await axios.get(`${process.env.REACT_APP_BASEURL}/categories/${id}`, {
-//             headers: {
-//                 "Content-Type": "application/json",
-//                 "Authorization": `Bearer ${token}`
-//             },
-//             params: filters
-//         });
-//         return data;
-//     } catch (error) {
-//         console.error(error);
-//         throw error;
-//     }
-// };
 
+const _first = (arr) => {
+  if (typeof arr === 'object' && arr.hasOwnProperty('length') && arr.length > 0) {
+    return arr[0];
+  }
+  return '';
+}
+
+export const FilterProducts = async (slug, plant, brand, potency, outOfStock, sort) => {
+  console.log( slug, plant, brand, potency, outOfStock, sort)
+  try {
+    let queryParams = "";
+    if (plant) {
+      const f = _first(plant);
+      /** f.length == 0 is to check if there was an error gettin the first plant type */
+      queryParams += `?plan_type=${ f.length == 0 || plant == 'all' ? 'all' : f}`;
+    }
+
+    if (brand) {
+      queryParams += `${queryParams ? "&" : "?"}brand=${brand}&sort=true`;
+    }
+
+    if (potency) {
+      queryParams += `${queryParams ? "&" : "?"}potency=${potency}`;
+    }
+
+    if (outOfStock) {
+      queryParams += `${queryParams ? "&" : "?"}out_of_stock=${outOfStock}`;
+    }
+
+    let order = '';
+    let sortKey = 'price';
+
+    if ( typeof sort == "string" && sort !== 'default') {
+      if (sort === 'lowest') order = 'price_low_to_high';
+      if (sort === 'highest') order = 'price_high_to_low';
+      if (sort === 'lowest' || sort === "highest") {
+        queryParams+=`${queryParams ? "&" : "?"}sort=true&${sortKey}=${order}`;
       }
     }
 
@@ -545,6 +554,4 @@ export const GetSearchParams = async (searchTerm) => {
   return () => {
     cancelToken.cancel();
   };
-
-
 }

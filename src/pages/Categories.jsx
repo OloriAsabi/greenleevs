@@ -1,12 +1,11 @@
 /* eslint-disable */
 import React, { useState } from 'react';
 import { BsToggle2Off, BsToggle2On } from 'react-icons/bs';
-import {RiArrowDropDownLine } from 'react-icons/ri';
-import { plant_type } from '../data/data';
+import { cbdContents, plant_type, thcContents } from '../data/data';
 import { BiMenuAltRight } from 'react-icons/bi';
 import { BsCart, BsGrid } from 'react-icons/bs';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useParams  } from 'react-router-dom';
 import visa from '../assests/Vector (1).png';
 import master from '../assests/master.png';
 import american from '../assests/american.png';
@@ -14,7 +13,6 @@ import american from '../assests/american.png';
 import { Mousewheel } from 'swiper';
 import { FlexStyle, GridStyle, SidebarCat, Spinner } from '../components';
 import { useForm } from 'react-hook-form';
-import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { FilterProducts, GetBrands, GetCategoriesById, GetPopularByCategory } from '../apis/api';
 import { useCallback } from 'react';
@@ -28,27 +26,14 @@ const Categories = () => {
   const [popular, setPopular] = useState([])
   const [isGrid, setIsGrid] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
-  const [activeFilter, setActiveFilter] = useState('All'); 
   const { state } = useStateContext();
   const { user, cart } = state;
   const [products, setProducts] = useState([]);
 
   const [toggleBtn, setToggleBtn] = useState(false);
   const [brands, setBrands] = useState([]);
-  const [plant, setPlant] = useState('');
-  const [brand, setBrand] = useState('');
   const [potency, setPotency] = useState('');
   const [outOfStock, setOutOfStock] = useState(false);
-  const history = useLocation();
-
-  const [openBrand, setOpenBrand] = useState(false);
-  const [openPlant, setOpenPlant] = useState(false);
-  const {
-    brandss = 'all',
-    plants = 'all',
-    potencies = 'all',
-    sort = 'default',
-  } = history.pathname
 
   const { enqueueSnackbar } = useSnackbar();
   const {
@@ -64,20 +49,6 @@ const Categories = () => {
 
   const submitSort = (data) => {
     console.log(data);
-  };
-
-  
-  const handleWorkFilter = (item) => {
-    setActiveFilter(item);
-
-    setTimeout(() => {
-
-      if (item === 'All Categories') {
-        // setFilterWork(works);
-      } else {
-        // setFilterWork(works.filter((work) => work.tags.includes(item)));
-      }
-    }, 500);
   };
 
   const getPopularByCategories =  useCallback(() => {
@@ -142,16 +113,6 @@ const Categories = () => {
     getPopularByCategories();
   }, []);
   
-  // const handleFilter = (e) => {
-  //   // e.preventDefault();
-  //   setFilter({ ...filter, [e.target.name]: e.target.value });
-  // };
-
-/**
- * also changed the signature type of handleFilterSubmit
-  const handleFilterSubmit = async () => {
-    formValues: Record<string, any>
-*/
   const handleFilterSubmit = async (formValues) => {
     // console.log("Results", e);
     await FilterProducts(id, formValues['plant'], formValues['brand'], potency, outOfStock, formValues['sort']).then((res) => {
@@ -164,14 +125,6 @@ const Categories = () => {
     });
   };
 
-/* change by A
-  useEffect(() => {
-   handleFilterSubmit()
-  }, []);
-*/
-
-/* by leveraging the watch functionality provided by useForm hook, we can watch for any changes to the form fields and make API calls to the backend for the necessary data.
-*/
 useEffect(() => {
   const subscription = watch((value, { name, type }) => {
 
@@ -235,14 +188,7 @@ return (
       </div>
   <form>
         <div className='pt-6'>
-                <div className='flex justify-between'>
                 <p className='pb-5'>BRANDS</p>
-                <button
-                    className=''
-                    onClick={() => setOpenBrand(!openBrand)}>
-                    <RiArrowDropDownLine fontSize={28}/>
-                  </button>
-                </div>
                 <div className='flex flex-col justify-between space-y-5 items-start'>
                 {brands.map((brand) => (
                 <div  className='flex mb-5' key={brand.id}>
@@ -250,7 +196,6 @@ return (
                   type="checkbox" 
                   name={brand.label} 
                   value={brand.label}
-                  // onChange={(e) => setBrand(e.target.value)} 
                   {...register('brand')} 
                   className="h-4 w-4 border-gray-300 focus:ring-2 focus:ring-blue-300" 
                   aria-labelledby={brand.label} 
@@ -265,14 +210,7 @@ return (
         </div>
 
         <div className='pt-6'>
-              <div className='flex justify-between'>
                 <p className='pb-5'>PLANT TYPES</p>
-              <button
-                  className=''
-                  onClick={() => setOpenPlant(!openPlant)}>
-                  <RiArrowDropDownLine fontSize={28}/>
-                </button>
-              </div>
                  <div className='flex flex-col justify-between pb-5 space-y-5 items-start'>       
                     {plant_type.map((item) => (
                       <div className='flex ' key={item.id}>
@@ -285,7 +223,6 @@ return (
                           aria-labelledby={item.type} 
                           aria-describedby={item.type} 
                           {...register('plant')} 
-                          // onChange={(e) => setPlant(e.target.value)}
                            />             
                     <label htmlFor={item.type}  className="text-sm text-[#2D2D2D] ml-2 block">
                       {item.type} 
@@ -296,12 +233,21 @@ return (
             <hr/>
         </div>
         <div className='flex flex-col pt-5 w-full'>
+        <p className='pb-5'>Select THC Potency</p>
                <select name="potency" onChange={(e) => setPotency(e.target.value)}>
-                   <option value="default">Select Potency</option>
-                   <option value="low">Low</option>
-                   <option value="medium">Medium</option>
-                   <option value="high">High</option>
-               </select>
+                   <option value="default">All</option>
+                   {thcContents.map((thc) => (
+                           <option value={thc.name} id={thc.id}>{thc.name}</option>
+                   ))}
+          </select>
+
+          <p className='pb-5'>Select CBD Potency</p>
+               <select name="potency" onChange={(e) => setPotency(e.target.value)}>
+                   <option value="default">All</option>
+                   {cbdContents.map((cbd) => (
+                           <option value={cbd.name} id={cbd.id}>{cbd.name}</option>
+                   ))}
+          </select>
         </div>      
 
           <div className='flex justify-between pt-10 pb-5'>
@@ -315,8 +261,6 @@ return (
               }
             </button>  
             </div>
-
-          {/* <button type="submit" className='text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'>Filter</button> */}
     </form>
     </div>
       <div className="h-full flex-1 small p-7">   
