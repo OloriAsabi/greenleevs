@@ -2,6 +2,20 @@ import axios from "axios";
 
 const token =  localStorage.getItem("token");
 
+export const UploadFiles = async (body) => {
+  try {
+    const data = await axios.post(`${process.env.REACT_APP_BASEURL}/admin/upload/files`, body, {
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
+    });
+
+    return data;
+  } catch (error) {
+    console.log(error);
+  }
+};
+
 export const LoginUser = async (body) => {
     try {
     const data = await axios.post(`${process.env.REACT_APP_BASEURL}/login`, body,  {

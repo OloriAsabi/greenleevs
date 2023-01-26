@@ -7,7 +7,7 @@ import { useSnackbar } from 'notistack';
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
 import { effect, strain, thcContents, weights, cbdContents } from "../data/data"
-import { CreateProducts } from '../apis/api';
+import { CreateProducts, UploadFiles } from '../apis/api';
 
 const ProductModal = ({ toggleMenu, setToggleMenu }) => {
   const { dispatch  } = useStateContext();
@@ -20,7 +20,8 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
   const [cbdContent, setCbdContent] = useState(cbdContents);
   const [effects, setEffects] = useState(effect);
   
-  const [file, setFile] = useState([]);
+  const [uploadedFiles, setUploadedFiles] = useState([]);
+  const [files, setFiles] = useState([]);
   const [image, setImage] = useState();
 
   console.log("Images: ",image);
@@ -36,19 +37,44 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
   } = useForm();
 
   function uploadSingleFile(e) {
-    const selectedFile = e.target.files[0];
-    let ImagesArray = Object.entries(e.target.files).map((e) =>
-      URL.createObjectURL(e[1])
+    const selectedFiles = Array.from(e.target.files);
+    setFiles(
+      [
+        ...files,
+        ...selectedFiles
+      ]
     );
-    console.log(ImagesArray);
-    setFile([...file, ...ImagesArray]);
-    setImage(URL.createObjectURL(selectedFile))
-    console.log("file", file);
+    console.log(selectedFiles);
+    const formData = new FormData();
+    selectedFiles.forEach( (file) => {
+      formData.append("files[]", file, file.name);
+    });
+
+    /** TODO: need to catch and let users know about the error!!! */
+    UploadFiles(formData).then( (res) => {
+      console.log(res);
+      if ( res !== undefined && res !== null && res.data !== undefined && res.data !== null) {
+        setUploadedFiles(
+          [
+            ...uploadedFiles,
+            ...res.data.data
+          ]
+        );
+      }
+    } );
+
+    // let ImagesArray = Object.entries(e.target.files).map((e) =>
+    //   URL.createObjectURL(e[1])
+    // );
+    // console.log(ImagesArray);
+    // setFiles([...file, ...ImagesArray]);
+    // setImage(URL.createObjectURL(selectedFile))
+    // console.log("file", file);
   }
 
   function deleteFile(e) {
-    const s = file.filter((item, index) => index !== e);
-    setFile(s);
+    const s = files.filter((item, index) => index !== e);
+    setFiles(s);
     console.log(s);
   }
 
@@ -64,10 +90,49 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
   const submitHandler = async (data) => {
     console.log("Data Product Modal", data);
 
+/*
+    const formData = new FormData();
+    formData.append('tags', tags);
+    formData.append('category_id', 2);
+    formData.append('price', data.price);
+    formData.append('label', data.title);
+    formData.append('product_image', "");
+    formData.append('product_images', files);
+    formData.append('quantity', data.quantity);
+    formData.append('description', data.description);
+    formData.append('sale_price', data.salePrice);
+
+    formData.append('product_meta', JSON.stringify([
+      {
+        option: "weight",
+        values: data.weight
+      },
+      {
+        option: "strain",
+        values: data.strain
+      },
+      {
+        option: "thc",
+        values: data.thcContent
+      },
+      {
+        option: "cbd",
+        values: data.cbdContent
+      },
+      {
+        option: "effects",
+        values: data.effects
+      }
+    ]));
+
+    files.forEach( (_file) => {
+      formData.append("files[]", _file, _file.name);
+    });
+*/
     const body = {
       label: data.title,
-      product_image: image,
-      product_images: file, 
+      product_image: uploadedFiles[0]['file_url'],
+      product_images: uploadedFiles.map((file) => file['file_url']),
       quantity: data.quantity,
       description: data.description,
       price: data.price,
@@ -97,8 +162,8 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
         }
       ]
     };
-
     console.log('Body',body);
+
     try {
       CreateProducts(body)
        .then(response => {
@@ -148,10 +213,10 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
         <div className="grid justify-center items-center bg-white lg:p-5 p-3 w-full">
           <div className="container">
           <div className="form-group preview">
-          {file.length > 0 &&
-            file.map((item, index) => {
+          {files.length > 0 &&
+            files.map((item, index) => {
               return (
-                <div key={item}>
+                <div key={index}>
                   <img src={item} alt="" />
                   <button type="button" className='bg-red-500 text-white p-2 rounded m-5 cursor-pointer' onClick={() => deleteFile(index)}>
                     delete
@@ -164,7 +229,7 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
           <div className="form-group">
             <input
               type="file"
-              disabled={file.length === 5}
+              disabled={files.length === 5}
               className="form-control"
               onChange={uploadSingleFile}
               multiple
