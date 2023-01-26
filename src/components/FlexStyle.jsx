@@ -1,11 +1,56 @@
+import { useSnackbar } from 'notistack';
 import React from 'react';
 import { BsCart } from 'react-icons/bs';
 import { Link, useNavigate } from 'react-router-dom';
+import { PostCart } from '../apis/api';
+import { useStateContext } from '../contexts/ContextProvider';
 import Spinner from './Spinner';
 /* eslint-disable */
 
 const FlexStyle = ({ filteredProducts , isLoading}) => {
   const history = useNavigate();
+
+
+  const { state } = useStateContext();
+  const { cart } = state;
+  const { enqueueSnackbar } = useSnackbar();
+
+  const addToCartHandler = async (e) => {
+    const existItem = cart.cartItems.find((x) => x._id === e.product_id);
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+        if (e.countinStock < quantity) {
+      enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
+      return;
+    }
+    const body = {
+      product_id: e.product_id,
+      quantity: quantity,
+    }
+    PostCart(body)
+      .then((res) => {
+        console.log(res);
+        dispatch({
+          type: 'CART_ADD_ITEM',
+          payload: {
+            _key: e.product_id,
+            name: e.label,
+            countInStock: e.countinStock,
+            slug: e.slug,
+            price: e.price,
+            image: e.product_image,
+            quantity,
+          },
+        });
+        if(res.data.status === 'success'){
+           enqueueSnackbar(`${product.label} added to the cart`, {
+          variant: res.status, 
+        });
+              // history('/carts')
+        }else{
+          enqueueSnackbar(res.data.message, { variant: res.data.status });
+        }
+      })
+  };
   return (
     <div>
        {isLoading
@@ -24,8 +69,9 @@ const FlexStyle = ({ filteredProducts , isLoading}) => {
                   <div className=''>$ {cat.price}</div>
                 </div>
                       
-                <div onClick={() => history('/carts')} className='p-5' >
-                  <button className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-5 w-full'>
+                <div className='p-5' >
+                  <button className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-5 w-full'
+                    onClick={() => addToCartHandler(cat)}>
                     <BsCart fontSize={28}/> Add to cart 
                   </button>
                 </div>

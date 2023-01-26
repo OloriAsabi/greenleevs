@@ -13,7 +13,7 @@ import visa from '../assests/Vector (1).png';
 import master from '../assests/master.png';
 import american from '../assests/american.png';
 import { useStateContext } from '../contexts/ContextProvider';
-import { GetCart, GetPopularProducts, GetRecentlyViewed } from '../apis/api';
+import { GetCart, GetPopularProducts, GetRecentlyViewed, UpdateCart } from '../apis/api';
 import { Spinner } from '../components';
 
 const Carts = () => {
@@ -25,8 +25,7 @@ const Carts = () => {
   const [recent, setRecent] = useState([]);
 
   const { dispatch, state } = useStateContext();
-  const { user } = state;
-  // console.log(user);
+  const { cart: {cartItems} } = state;
   const getPopularProducts = useCallback(() => {
     setIsLoading(true)
     GetPopularProducts()
@@ -38,8 +37,7 @@ const Carts = () => {
         setPopular(data)
         setIsLoading(false)
     }else{
-      console.log(res.statusText);
-      enqueueSnackbar(res.statusText, { variant: res.status });
+      enqueueSnackbar(res.data.message, { variant: res.data.status });
     }
     })
   },[]);
@@ -55,8 +53,7 @@ const Carts = () => {
         setRecent(data)
         setIsLoading(false)
     }else{
-      console.log(res.statusText);
-      enqueueSnackbar(res.statusText, { variant: res.status });
+      enqueueSnackbar(res.data.message, { variant: res.data.status });
     };
     }).catch((e) => {
       console.log(e);
@@ -65,14 +62,72 @@ const Carts = () => {
 
   useEffect(() => {
     GetCart()
-    .then((response) => {
-    console.log(response);
+    .then((res) => {
+    console.log("Get Cart Fot", res);
+    if (res.status === 200) {
+      const data = res.data.data
+  
+      setCarts(data)
+      setIsLoading(false)
+      }else{
+        enqueueSnackbar(res.data.message, { variant: res.data.status });
+      };
     }).catch((e) => {
     console.log(e);
     });
     getPopularProducts();
-    getRecentlyView()
+    getRecentlyView();
   },[]);
+
+  const updateCartHandler = async(item, quantity) => {
+    if (item.product.countinStock < quantity) {
+      enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
+      return;
+    }
+    const body = {
+      product_id: item.product_id,
+      quantity: quantity,
+    }
+    UpdateCart(body)
+      .then((res) => {
+        console.log(res);
+        dispatch({
+          type: 'CART_ADD_ITEM',
+          payload: {
+            _key: item.product_id,
+            name: item.label,
+            countInStock: item.countinStock,
+            slug: item.slug,
+            price: item.price,
+            image: item.product_image,
+            quantity,
+          },
+        });
+        if(res.data.status === 'success'){
+           enqueueSnackbar(` Cart Updated`, {
+          variant: res.status, 
+        });
+              // history('/carts')
+        }else{
+          enqueueSnackbar(res.data.message, { variant: res.data.status });
+        }
+      })
+    dispatch({
+      type: 'CART_ADD_ITEM',
+      // payload: {
+      //   _key: item._key,
+      //   name: item.name,
+      //   countInStock: item.countInStock,
+      //   slug: item.slug,
+      //   price: item.price,
+      //   image: item.image,
+      //   quantity,
+      // },
+    });
+    enqueueSnackbar(`${item.product.label} updated in the cart`, {
+      variant: res.status, 
+    });
+  }
 
   return (
     <div>
@@ -87,36 +142,65 @@ const Carts = () => {
           <div className='w-full'>
             <h4 className='text-3xl font-bold pb-5'>Carts</h4>
             <div className='w-full h-54  bg-white rounded-lg border flex flex-col p-10  border-gray-200 shadow-md'>
-              <div className='flex lg:flex-row productDetails justify-between gap-10'>
-                <img src={image1} alt='' className='cartBg '/>
+            {cartItems.length === 0 ?(
+              <div>
+                  <h4>
+                    Cart is empty.{' '}
+                    <a href="/shop" passHref>
+                    <p>Go shopping</p>
+                    </a>
+                </h4>
+              </div>
+            ) : (
+              <div>
+              {carts.map((cat) => (
+                <div className='flex lg:flex-row productDetails justify-between gap-10' key={cat.product_id}>
+                <img src={cat.product.product_image} alt='' className='cartBg '/>
                 <div className='flex flex-col gap-10'>
-                  <p className='text-xl'>Oil Tinctures</p>
-                  <p className='text-[#1F451A] text-xl bg-[#8aa287] rounded-md p-2'>£50.00</p>
+                  <p className='text-xl'>{cat.product.label}</p>
+                  <p className='text-[#1F451A] text-xl bg-[#8aa287] rounded-md p-2'>{cat.product.price}</p>
                 </div>
                 <div className='items-end text-end flex flex-col gap-10 cursor-pointer'>
                   <AiOutlineDelete fontSize={38} className="text-red-500"/>
                   <div className='flex items-center justify-between gap-10  cursor-pointer'>
-                    <button
+                    {/* <button
                       onClick={() => {
-                        setItemCount(Math.max(itemCount - 1, 0));
+                        updateCartHandler(Math.max(cat.quantity - 1, 0));
                       }}
                       className="text-[#2D2D2D]">
                       {' '}
                       <IoIosRemoveCircleOutline fontSize={38} className='text-[#2D2D2D]'/>
                     </button>
-                    <div className='text-xl'>{itemCount}</div>
+                    <div className='text-xl'>{cat.quantity}</div>
                     <button
                       onClick={() => {
-                        setItemCount(itemCount + 1);
+                        updateCartHandler(cat.quantity + 1);
                       }}
                       className="text-[#2D2D2D]">
                       {' '}
                       <IoIosAddCircleOutline fontSize={38} className='text-[#2D2D2D]'/>
-                    </button>
-
+                    </button> */}
+                       <select
+                                  value={cat.quantity}
+                                  onChange={(e) =>
+                                  updateCartHandler(cat, e.target.value)
+                                                    }
+                                                    >
+                                 {[...Array(cat.product.quantity).keys()].map((x) => (
+                                  <option key={x + 1} value={x + 1}>
+                                      {x + 1}
+                                   </option>
+                             ))}
+                       </select>
                   </div>
                 </div>
               </div>
+              ))}
+              <button className=' text-center bg-[#1F451A] text-white mt-8 cursor-pointer rounded-md p-4 w-full'>
+                Delete
+              </button>
+              </div>
+            )}
             </div>
           </div>
           <div className='w-full h-full bg-white rounded-lg border flex flex-col  p-10  border-gray-200 shadow-md'>

@@ -7,6 +7,7 @@ import { Carts, Categories, CheckOut, ComingSoon, Error, Home, Orders, ProductDe
 import { useStateContext } from './contexts/ContextProvider';
 import { GetCategories } from './apis/api';
 import ScrollToTop from "react-scroll-to-top";
+import { SnackbarProvider } from 'notistack';
 
 
 function App() {
@@ -43,6 +44,9 @@ function App() {
           <Navbar/>
           </header>
           <main ref={scrollRef}>
+          <SnackbarProvider
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
             <Routes>
               <Route exact path="/" element={(<Home />)} />
               <Route exact path="/shop" element={(<Shop/>)} />
@@ -63,6 +67,7 @@ function App() {
               <Route path="/billing" element={<BillingDetails/>} />
               <Route path="/payment" element={<PaymentDetails/>} />
             </Routes>
+            </SnackbarProvider>
           </main>
           <Footer/>
     </div>

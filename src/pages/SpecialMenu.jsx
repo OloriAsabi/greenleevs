@@ -16,14 +16,12 @@ import { useStateContext } from '../contexts/ContextProvider';
 
 import 'swiper/css';
 
-
-
 const SpecialMenu = () => {
   const history = useNavigate();
   const [special, setSpecial] = useState([]);
   const [popular, setPopular] = useState([]);
-  const { state } = useStateContext();
-  const { user, cart,  } = state;
+  const { state, dispatch } = useStateContext();
+  const { cart,  } = state;
 
   const product = popular.map((product) => console.log(product));
   const [isLoading, setIsLoading] = useState(false)
@@ -66,32 +64,43 @@ const SpecialMenu = () => {
   useEffect(() => {
     getPopularProducts();
     getSpecialProducts();
-  },[]);
+  },[])
 
-  console.log('Special',special);
-
-  const addToCartHandler = async () => {
-    const existItem = cart.cartItems.find((x) => x._id === product._id);
+  const addToCartHandler = async (e) => {
+    const existItem = cart.cartItems.find((x) => x._id === e.product_id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
-    const id = user.id
-        if (product.countInStock < quantity) {
+        if (e.countinStock < quantity) {
       enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
       return;
     }
     const body = {
-      product_id: product.product_id,
+      product_id: e.product_id,
       quantity: quantity,
-      // countInStock: product.countInStock,
     }
-    PostCart(id, body)
-    .then((res) => {
-      console.log(res);
-      // res.status
-      enqueueSnackbar(`${product.label} added to the cart`, {
-        variant: 'success', 
-      });
-      // history('/cart')
-    })
+    PostCart(body)
+      .then((res) => {
+        console.log(res);
+        dispatch({
+          type: 'CART_ADD_ITEM',
+          payload: {
+            _key: e.product_id,
+            name: e.label,
+            countInStock: e.countinStock,
+            slug: e.slug,
+            price: e.price,
+            image: e.product_image,
+            quantity,
+          },
+        });
+        if(res.data.status === 'success'){
+           enqueueSnackbar(`${product.label} added to the cart`, {
+          variant: res.status, 
+        });
+              // history('/carts')
+        }else{
+          enqueueSnackbar(res.data.message, { variant: res.data.status });
+        }
+      })
   };
 
   return (
@@ -107,10 +116,10 @@ const SpecialMenu = () => {
                   <p className='text-14 text-[#1F451A]'>{cat.brand?.label}</p>
                   <div className='text-2xl text-start capitalize text-[#1F451A] font-normal'>{cat.label}</div>
                   <div className=''>$ {cat.price}</div>
-                  <div onClick={() => history('/carts')} className='' >
+                  <div className='' >
                     <button 
                     className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
-                    onClick={() => addToCartHandler()}
+                    onClick={() => addToCartHandler(cat)}
                     >
                       <BsCart fontSize={28}/> Add to cart
                     </button>
@@ -139,11 +148,7 @@ const SpecialMenu = () => {
                 768:{
                   width: 768,
                   slidesPerView: 2
-                },
-                //   1400:{
-                //       width: 1400,
-                //       slidesPerView: 3
-                //   },
+                }
               }}
               modules={Mousewheel}
               className="mySwiper">
@@ -153,10 +158,9 @@ const SpecialMenu = () => {
                     <div className='w-full h-full bg-white rounded-lg border flex flex-col justify-between p-5 space-y-10 hover:shadow-md'>
                       <img src={pop.product_image} alt="" className='rounded-md w-auto h-auto' />
                       <div className='text-2xl text-start text-[#1F451A] font-normal'>{pop.label}</div>
-                      {/* <button className='bg-[#1F451A] text-white p-3 cursor-pointer rounded-md text-xl'> <BsCart fontSize={28}/> Add to cart</button> */}
-                      <div onClick={() => history('/carts')} className='' >
+                      <div className='' >
                         <button className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
-                          onClick={() => addToCartHandler()}>
+                          onClick={() => addToCartHandler(pop)}>
                           <BsCart fontSize={28}/> Add to cart
                         </button>
                       </div>

@@ -1,12 +1,10 @@
 import React, { useEffect, useState,  useCallback  } from 'react';
 /* eslint-disable */
 import { useNavigate, useParams } from 'react-router-dom';
-import { category, extracts } from '../data/data';
 import {AiOutlineLeftCircle} from 'react-icons/ai';
 import {IoIosRemoveCircleOutline, IoIosAddCircleOutline} from 'react-icons/io';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import {BsCart} from 'react-icons/bs';
-// import { Link } from 'react-router-dom'
 import visa from '../assests/Vector (1).png';
 import master from '../assests/master.png';
 import american from '../assests/american.png';
@@ -49,9 +47,8 @@ const ProductDetails = () => {
           setProduct(data)
           setIsLoading(false)
       }else{
-        console.log(res.statusText);
-        enqueueSnackbar(res.statusText, { variant: res.status });
-      }
+        enqueueSnackbar(res.data.message, { variant: res.data.status });
+            }
           }).catch((e) => {
           console.log(e);
           });
@@ -82,8 +79,7 @@ const ProductDetails = () => {
         setRecent(data)
         setIsLoading(false)
     }else{
-      console.log(res.statusText);
-      enqueueSnackbar(res.statusText, { variant: res.status });
+      enqueueSnackbar(res.data.message, { variant: res.data.status });
     };
     }).catch((e) => {
       console.log(e);
@@ -96,14 +92,14 @@ const ProductDetails = () => {
    getRecentlyView();
   }, [id]);
 
-  const addToCartHandler = async () => {
+  const addToCartHandler = async (e) => {
+    console.log("e", e);
     const existItem = cart.cartItems.find((x) => x._id === product.product_id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
-    // const id = user.id
-        // if (product.countInStock < quantity) {
-    //   enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
-    //   return;
-    // }
+    if (product.countinStock < quantity) {
+      enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
+      return;
+    }
     const body = {
       product_id: product.product_id,
       quantity: quantity,
@@ -116,20 +112,62 @@ const ProductDetails = () => {
         payload: {
           _key: product.product_id,
           name: product.label,
-          countInStock: product.countInStock,
+          countInStock: product.countinStock,
           slug: product.slug,
           price: product.price,
           image: product.product_image,
           quantity,
         },
       });
-      // res.status
-      // enqueueSnackbar(`${product.label} added to the cart`, {
-      //   variant: res.status, 
-      // });
-      history('/carts')
+      if(res.data.status === 200){
+        enqueueSnackbar(`${product.label} added to the cart`, {
+        variant: res.status, 
+      });
+            // history('/carts')
+      }else{
+        enqueueSnackbar(res.data.message, { variant: res.data.status });
+      }
     })
   }
+
+  const addToCartHandlerProduct = async (e) => {
+    console.log("e", e);
+    const existItem = cart.cartItems.find((x) => x._id === e.product_id);
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+        if (e.countinStock < quantity) {
+      enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
+      return;
+    }
+    const body = {
+      product_id: e.product_id,
+      quantity: quantity,
+    }
+    PostCart( body)
+    .then((res) => {
+      console.log(res);
+      dispatch({
+        type: 'CART_ADD_ITEM',
+        payload: {
+          _key: e.product_id,
+          name: e.label,
+          countInStock: e.countinStock,
+          slug: e.slug,
+          price: e.price,
+          image: e.product_image,
+          quantity,
+        },
+      });
+      if(res.data.status === 'success'){
+        enqueueSnackbar(`${e.label} added to the cart`, {
+        variant: res.data.status, 
+      });
+            // history('/carts')
+      }else{
+        enqueueSnackbar(res.data.message, { variant: res.data.status });
+      }
+    })
+  }
+
 
   return (
     <div>
@@ -148,9 +186,6 @@ const ProductDetails = () => {
             <img src={product.product_image} alt='' className='productDetailsImg1'/>
             <div className='flex pt-5 w-full justify-start gap-10 items-center' >
             <img src={product.product_images} alt="" className='productDetailsImg rounded-md' />   
-            {/* {product.product_images?.map((pic) => {
-              <img src={pic} alt="" className='productDetailsImg rounded-md' />    
-            })}         */}
             </div>
           </div>
           <div className='flex flex-col text-start space-y-10  w-full items-start'>
@@ -231,10 +266,6 @@ const ProductDetails = () => {
                   width: 768,
                   slidesPerView: 2
                 },
-                //   1400:{
-                //       width: 1400,
-                //       slidesPerView: 3
-                //   },
               }}
               modules={Mousewheel}
               className="mySwiper">
@@ -243,13 +274,10 @@ const ProductDetails = () => {
                   <div className='w-full h-full bg-white rounded-lg border flex flex-col justify-between p-5 space-y-10 hover:shadow-md'>
                     <img src={cat.product_image} alt="" className='rounded-md w-auto h-auto' />
                     <div className='text-2xl text-start text-[#1F451A] font-normal'>{cat.label}</div>
-                    {/* <button className='bg-[#1F451A] text-white p-3 cursor-pointer rounded-md text-xl'> <BsCart fontSize={28}/> Add to cart</button> */}
-                    <a href='/carts' className='' >
                       <button className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
-                        onClick={() => addToCartHandler()}>
+                        onClick={() =>  addToCartHandlerProduct(cat)}>
                         <BsCart fontSize={28}/> Add to cart
                       </button>
-                    </a>
                   </div>                
                 </SwiperSlide>     
               )) }
@@ -290,7 +318,7 @@ const ProductDetails = () => {
                     <div className='text-2xl text-start text-[#1F451A] font-normal'>{r.label}</div>
                     <p className='text-center ' >
                       <button className='flex justify-center text-center items-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
-                      onClick={() => addToCartHandler()}>
+                      onClick={() =>  addToCartHandlerProduct(r)}>
                         <BsCart fontSize={28}/> Add to cart
                       </button>
                     </p>

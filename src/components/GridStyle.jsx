@@ -1,3 +1,4 @@
+import { useSnackbar } from 'notistack';
 import React from 'react';
 import { BsCart } from 'react-icons/bs';
 import { Link, useNavigate } from 'react-router-dom';
@@ -10,33 +11,47 @@ const GridStyle = ({ isLoading, filteredProducts }) => {
   const history = useNavigate();
   console.log("Category : ", filteredProducts);
 
-  const { state } = useStateContext();
+  const { state, dispatch } = useStateContext();
   const { cart } = state;
+  const { enqueueSnackbar } = useSnackbar();
 
-  const addToCartHandler = async () => {
-    const product = filteredProducts.map((filtered) => filtered)
-    const existItem = cart.cartItems.find((x) => x._id === product.product_id);
+  const addToCartHandler = async (e) => {
+    const existItem = cart.cartItems.find((x) => x._id === e.product_id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
-    // const id = user.id
-        // if (product.countInStock < quantity) {
-    //   enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
-    //   return;
-    // }
+        if (e.countinStock < quantity) {
+      enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
+      return;
+    }
     const body = {
-      // product_id: product.product_id,
+      product_id: e.product_id,
       quantity: quantity,
-      // countInStock: product.countInStock,
     }
     PostCart(body)
-    .then((res) => {
-      console.log(res);
-      // res.status
-      enqueueSnackbar(`${product.label} added to the cart`, {
-        variant: 'success', 
-      });
-      // history('/cart')
-    })
+      .then((res) => {
+        console.log(res);
+        dispatch({
+          type: 'CART_ADD_ITEM',
+          payload: {
+            _key: e.product_id,
+            name: e.label,
+            countInStock: e.countinStock,
+            slug: e.slug,
+            price: e.price,
+            image: e.product_image,
+            quantity,
+          },
+        });
+        if(res.data.status === 'success'){
+           enqueueSnackbar(`${product.label} added to the cart`, {
+          variant: res.status, 
+        });
+              // history('/carts')
+        }else{
+          enqueueSnackbar(res.data.message, { variant: res.data.status });
+        }
+      })
   };
+
   return (
     <div>
        {isLoading
@@ -51,11 +66,12 @@ const GridStyle = ({ isLoading, filteredProducts }) => {
                <p className='text-xl bg-[#1F451A] rounded-md  gap-2 p-3 w-24 text-white'>{cat.brand?.label}</p>
               <div className='text-2xl text-start capitalize text-[#1F451A] font-normal'>{cat.label}</div>
               <div className=''>$ {cat.price}</div>
-              <div onClick={() => history('/carts')} className='' >
-                <button className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'>
+              <div className='p-5' >
+                <button className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
+                 onClick={() => addToCartHandler(cat)}>
                   <BsCart fontSize={28}/> Add to cart
                 </button>
-              </div>
+                </div>
             </div>     
           </Link>
         ))}

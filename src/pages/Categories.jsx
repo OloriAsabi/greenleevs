@@ -13,7 +13,7 @@ import { Mousewheel } from 'swiper';
 import { FlexStyle, GridStyle, SidebarCat, Spinner } from '../components';
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
-import { FilterProducts, GetBrands, GetProductsByCategoryId, GetPopularByCategory } from '../apis/api';
+import { FilterProducts, GetBrands, GetProductsByCategoryId, GetPopularByCategory, PostCart } from '../apis/api';
 import { useCallback } from 'react';
 import { useSnackbar } from 'notistack';
 import { useStateContext } from '../contexts/ContextProvider';
@@ -24,8 +24,8 @@ const Categories = () => {
   const [popular, setPopular] = useState([])
   const [isGrid, setIsGrid] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
-  const { state } = useStateContext();
-  const { user, cart } = state;
+  const { state, dispatch } = useStateContext();
+  const { cart } = state;
   const [products, setProducts] = useState([]);
 
   const [brands, setBrands] = useState([]);
@@ -112,7 +112,6 @@ const Categories = () => {
   }, []);
   
   const handleFilterSubmit = async (formValues) => {
-    // console.log("Results", e);
     await FilterProducts(id, formValues['plant'], formValues['brand'], potency, formValues['outOfStock'], formValues['sort']).then((res) => {
       if (res && res.status === 200) {
         console.log(res);
@@ -130,43 +129,50 @@ const Categories = () => {
 
   useEffect(() => {
     const subscription = watch((value, { name, type }) => {
-
       handleFilterSubmit(value);
-
-      /*
-        you can see the details by enabling the log below
-      console.log(value, name, type);
-
-      */
     });
 
 
     return () => subscription.unsubscribe();
   }, [watch]);
 
-  const addToCartHandler = async () => {
-    const existItem = cart.cartItems.find((x) => x._id === product._id);
+  const addToCartHandler = async (e) => {
+    const existItem = cart.cartItems.find((x) => x._id === e.product_id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
-    const id = user.id
-        // if (product.countInStock < quantity) {
-    //   enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
-    //   return;
-    // }
+        if (e.countinStock < quantity) {
+      enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
+      return;
+    }
     const body = {
-      // product_id: product.product_id,
+      product_id: e.product_id,
       quantity: quantity,
-      // countInStock: product.countInStock,
     }
     PostCart(body)
-    .then((res) => {
-      console.log(res);
-      // res.status
-      enqueueSnackbar(`${product.label} added to the cart`, {
-        variant: 'success', 
-      });
-      // history('/cart')
-    })
+      .then((res) => {
+        console.log(res);
+        dispatch({
+          type: 'CART_ADD_ITEM',
+          payload: {
+            _key: e.product_id,
+            name: e.label,
+            countInStock: e.countinStock,
+            slug: e.slug,
+            price: e.price,
+            image: e.product_image,
+            quantity,
+          },
+        });
+        if(res.data.status === 'success'){
+           enqueueSnackbar(`${product.label} added to the cart`, {
+          variant: res.status, 
+        });
+              // history('/carts')
+        }else{
+          enqueueSnackbar(res.data.message, { variant: res.data.status });
+        }
+      })
   };
+
 console.log(products);
   
 return (
@@ -359,7 +365,7 @@ return (
                   <div className='text-2xl text-start text-[#1F451A] font-normal'>{pop.label}</div>
                   <div className='' >
                     <button className='flex text-center items-center justify-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
-                      onClick={() => addToCartHandler()}>
+                      onClick={() => addToCartHandler(pop)}>
                       <BsCart fontSize={28}/> Add to cart
                     </button>
                   </div>

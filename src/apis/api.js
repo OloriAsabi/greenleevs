@@ -300,6 +300,76 @@ export const PostCart = async (body) => {
           cancelToken.cancel();
         };
 }
+export const UpdateCart = async (body) => {
+  try {
+      const data = await axios.post(`${process.env.REACT_APP_BASEURL}/user/cart/update`, 
+      body,
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+            cancelToken: cancelToken.token,
+          })
+        console.log("Update cart",data);
+         return data; 
+        } catch (err) {
+          if (axios.isCancel(err)) {
+            console.log("Request canceled!");
+          } else {
+            console.log(err);
+          }
+        }
+        return () => {
+          cancelToken.cancel();
+        };
+}
+export const DeleteProductFromCart = async (id) => {
+  try {
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/user/cart/${id}/delete`, 
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+            cancelToken: cancelToken.token,
+          })
+        console.log("Delete from cart",data);
+         return data; 
+        } catch (err) {
+          if (axios.isCancel(err)) {
+            console.log("Request canceled!");
+          } else {
+            console.log(err);
+          }
+        }
+        return () => {
+          cancelToken.cancel();
+        };
+}
+export const WipeCart = async () => {
+  try {
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/user/cart/wipe`, 
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+            cancelToken: cancelToken.token,
+          })
+        console.log("Wipe cart",data);
+         return data; 
+        } catch (err) {
+          if (axios.isCancel(err)) {
+            console.log("Request canceled!");
+          } else {
+            console.log(err);
+          }
+        }
+        return () => {
+          cancelToken.cancel();
+        };
+}
 
 
 export const GetPopularByCategory = async (slug) => {
