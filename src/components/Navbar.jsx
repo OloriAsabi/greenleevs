@@ -22,6 +22,8 @@ const Navbar = () => {
   const [showModal, setShowModal] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
   const [wordEntered, setWordEntered] = useState("");
+  const { state } = useStateContext();
+  const { cart } = state;
 
   const {
     register,
@@ -225,9 +227,22 @@ const Navbar = () => {
     
                 <a href="/carts"
                    className=" block text-md px-4  ml-2 py-2 rounded text-white font-bold cursor-pointer hover:scale-x-105 hover:text-[#ededed]  lg:mt-0">
-                     <button className='flex bg-white text-[#1F451A] rounded gap-2 p-3 w-24'>
+                     {/* <button className='flex bg-white text-[#1F451A] rounded gap-2 p-3 w-24'>
+                    <BsCart fontSize={28}/> Cart
+                  </button> */}
+                    <span className="relative inline-block">
+                    <button className='flex bg-white text-[#1F451A] rounded gap-2 p-3 w-24'>
                     <BsCart fontSize={28}/> Cart
                   </button>
+                  {cart.cartItems.length > 0 ? (
+                    <span
+                    className="absolute top-0 right-0 px-2 py-1 font-bold text-xs leading-none text-red-100 transform bg-red-600 rounded-full">
+                      {cart.cartItems.length}
+                    </span>
+                    ) : (
+                      ''
+                    )}
+                  </span>
                    </a>
             </div>           
         </div>

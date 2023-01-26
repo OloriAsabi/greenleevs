@@ -1,12 +1,42 @@
 import React from 'react';
 import { BsCart } from 'react-icons/bs';
 import { Link, useNavigate } from 'react-router-dom';
+import { PostCart } from '../apis/api';
+import { useStateContext } from '../contexts/ContextProvider';
 import Spinner from './Spinner';
 /* eslint-disable */
 
 const GridStyle = ({ isLoading, filteredProducts }) => {
   const history = useNavigate();
   console.log("Category : ", filteredProducts);
+
+  const { state } = useStateContext();
+  const { cart } = state;
+
+  const addToCartHandler = async () => {
+    const product = filteredProducts.map((filtered) => filtered)
+    const existItem = cart.cartItems.find((x) => x._id === product.product_id);
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+    // const id = user.id
+        // if (product.countInStock < quantity) {
+    //   enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
+    //   return;
+    // }
+    const body = {
+      // product_id: product.product_id,
+      quantity: quantity,
+      // countInStock: product.countInStock,
+    }
+    PostCart(body)
+    .then((res) => {
+      console.log(res);
+      // res.status
+      enqueueSnackbar(`${product.label} added to the cart`, {
+        variant: 'success', 
+      });
+      // history('/cart')
+    })
+  };
   return (
     <div>
        {isLoading

@@ -72,7 +72,7 @@ const Shop = () => {
   const addToCartHandler = async () => {
     const existItem = cart.cartItems.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
-    const id = user.id
+    // const id = user.id
         // if (product.countInStock < quantity) {
     //   enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
     //   return;
@@ -82,7 +82,7 @@ const Shop = () => {
       quantity: quantity,
       // countInStock: product.countInStock,
     }
-    PostCart(id, body)
+    PostCart(body)
     .then((res) => {
       console.log(res);
       // res.status

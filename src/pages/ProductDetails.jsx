@@ -20,7 +20,7 @@ import { useStateContext } from '../contexts/ContextProvider';
 
 const ProductDetails = () => {
   const { id } = useParams();
-  const { state } = useStateContext();
+  const { state, dispatch } = useStateContext();
   const { user, cart } = state;
   const history = useNavigate();
 
@@ -34,6 +34,7 @@ const ProductDetails = () => {
   
   const [product, setProduct] = useState({});
   const [recent, setRecent] = useState([]);
+  const [related, setRelated] = useState([]);
   const [itemCount, setItemCount] = useState(1);
   const [isLoading, setIsLoading] = useState(false)
 
@@ -62,7 +63,9 @@ const ProductDetails = () => {
     GetRelatedProducts(id)
     .then((res) => {
       console.log("Related Products",res);
-
+      const data = res.data.data
+      setRelated(data)
+      setIsLoading(false)
     }).catch((e) => {
       console.log(e);
       });
@@ -94,9 +97,9 @@ const ProductDetails = () => {
   }, [id]);
 
   const addToCartHandler = async () => {
-    const existItem = cart.cartItems.find((x) => x._id === product._id);
+    const existItem = cart.cartItems.find((x) => x._id === product.product_id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
-    const id = user.id
+    // const id = user.id
         // if (product.countInStock < quantity) {
     //   enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
     //   return;
@@ -104,16 +107,27 @@ const ProductDetails = () => {
     const body = {
       product_id: product.product_id,
       quantity: quantity,
-      // countInStock: product.countInStock,
     }
-    PostCart(id, body)
+    PostCart( body)
     .then((res) => {
       console.log(res);
-      // res.status
-      enqueueSnackbar(`${product.label} added to the cart`, {
-        variant: res.status, 
+      dispatch({
+        type: 'CART_ADD_ITEM',
+        payload: {
+          _key: product.product_id,
+          name: product.label,
+          countInStock: product.countInStock,
+          slug: product.slug,
+          price: product.price,
+          image: product.product_image,
+          quantity,
+        },
       });
-      // history('/cart')
+      // res.status
+      // enqueueSnackbar(`${product.label} added to the cart`, {
+      //   variant: res.status, 
+      // });
+      history('/carts')
     })
   }
 
@@ -201,6 +215,10 @@ const ProductDetails = () => {
         <div className='pt-10'>
           <h1 className=' text-3xl font-normal mb-10 text-[#2D2D2D] shopText'>Related Products</h1>
           <div className='p-10'>
+          {isLoading
+                  ? 
+                  <Spinner /> 
+                  :
             <Swiper
               mousewheel={true}
               spaceBetween={50}
@@ -220,11 +238,11 @@ const ProductDetails = () => {
               }}
               modules={Mousewheel}
               className="mySwiper">
-              {category.map(cat => (
-                <SwiperSlide key={cat.id}>
+              {related.map(cat => (
+                <SwiperSlide key={cat.product_id}>
                   <div className='w-full h-full bg-white rounded-lg border flex flex-col justify-between p-5 space-y-10 hover:shadow-md'>
-                    <img src={cat.img} alt="" className='rounded-md w-auto h-auto' />
-                    <div className='text-2xl text-start text-[#1F451A] font-normal'>{cat.title}</div>
+                    <img src={cat.product_image} alt="" className='rounded-md w-auto h-auto' />
+                    <div className='text-2xl text-start text-[#1F451A] font-normal'>{cat.label}</div>
                     {/* <button className='bg-[#1F451A] text-white p-3 cursor-pointer rounded-md text-xl'> <BsCart fontSize={28}/> Add to cart</button> */}
                     <a href='/carts' className='' >
                       <button className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
@@ -236,6 +254,7 @@ const ProductDetails = () => {
                 </SwiperSlide>     
               )) }
             </Swiper>
+}
           </div>
         </div>
 

@@ -276,9 +276,9 @@ export const GetCart = async () => {
         };
 }
 
-export const PostCart = async (user, body) => {
+export const PostCart = async (body) => {
   try {
-      const data = await axios.post(`${process.env.REACT_APP_BASEURL}/${user}/cart`, 
+      const data = await axios.post(`${process.env.REACT_APP_BASEURL}/user/cart`, 
       body,
           {
             headers: { 
@@ -483,11 +483,6 @@ export const FilterProducts = async (slug, plant, brand, potency, outOfStock, so
     let queryParams = "";
     if (plant) {
       const f = _first(plant);
-      /**
-       * f.length == 0 is to check if there was an error gettin the first plant type
-       * queryParams += `?plant_type=${ f.length == 0 || plant == 'all' ? 'all' : f}`;
-
-        */
       if (f.length > 0 && plant != 'all') {
         queryParams += `?plant_type=${f}`;
       }
