@@ -14,7 +14,7 @@ import { Mousewheel } from 'swiper';
 import { FlexStyle, GridStyle, SidebarCat, Spinner } from '../components';
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
-import { FilterProducts, GetBrands, GetCategoriesById, GetPopularByCategory } from '../apis/api';
+import { FilterProducts, GetBrands, GetProductsByCategoryId, GetPopularByCategory } from '../apis/api';
 import { useCallback } from 'react';
 import { useSnackbar } from 'notistack';
 import { useStateContext } from '../contexts/ContextProvider';
@@ -22,7 +22,7 @@ import { useStateContext } from '../contexts/ContextProvider';
 const Categories = () => {
   const [openNav, setOpenNav] = useState(false);
   const { id }  = useParams();
-  const [category, setCategory] = useState(null);
+  // const [category, setCategory] = useState(null);
   const [popular, setPopular] = useState([])
   const [isGrid, setIsGrid] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
@@ -33,8 +33,6 @@ const Categories = () => {
   const [toggleBtn, setToggleBtn] = useState(false);
   const [brands, setBrands] = useState([]);
   const [potency, setPotency] = useState('');
-  const [outOfStock, setOutOfStock] = useState(false);
-
   const { enqueueSnackbar } = useSnackbar();
   const {
     watch,
@@ -42,10 +40,13 @@ const Categories = () => {
     handleSubmit,
     formState: { errors },
   } = useForm({
-      defaultValues: {
-        sort: 'default',
-      }
-    });
+    defaultValues: {
+      sort: 'default',
+      outofstock: false
+    }
+  });
+
+  // const watchOutOfStock = watch("outofstock", false);
 
   const submitSort = (data) => {
     console.log(data);
@@ -65,6 +66,7 @@ const Categories = () => {
           });
   },
   []);
+
   const getBrands =  useCallback(() => {
     GetBrands()
     .then((res) => {
@@ -81,13 +83,14 @@ const Categories = () => {
           });
   },
   []);
+
   const getDataCategoryById = useCallback(() => {
     setIsLoading(true);
-    GetCategoriesById(id)
+    GetProductsByCategoryId(id)
       .then((res) => {
         if (res.status === 200) {
           const data = res.data.data;
-          setCategory(data);
+          setProducts(data);
           setIsLoading(false);
         } else {
           console.log(res.statusText);
@@ -115,34 +118,37 @@ const Categories = () => {
   
   const handleFilterSubmit = async (formValues) => {
     // console.log("Results", e);
-    await FilterProducts(id, formValues['plant'], formValues['brand'], potency, outOfStock, formValues['sort']).then((res) => {
-      if (res && res.status === 'success') {
+    await FilterProducts(id, formValues['plant'], formValues['brand'], potency, formValues['outOfStock'], formValues['sort']).then((res) => {
+      if (res && res.status === 200) {
         console.log(res);
-        setProducts(res.data);
+        if (res.data != null && res.data != undefined && typeof res.data == "object") {
+          setProducts(res.data.data);
+        } else {
+          // alert error if we so choose to
+        }
       } else {
         // console.log(res.statusText);
       }
     });
   };
 
-useEffect(() => {
-  const subscription = watch((value, { name, type }) => {
 
-    handleFilterSubmit(value);
+  useEffect(() => {
+    const subscription = watch((value, { name, type }) => {
 
-    /*
-      you can see the details by enabling the log below
+      handleFilterSubmit(value);
 
+      /*
+        you can see the details by enabling the log below
       console.log(value, name, type);
-    */
-  });
+
+      */
+    });
 
 
-  return () => subscription.unsubscribe();
-}, [watch]);
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
-const filteredProducts = products.length > 0 ? products : category;
-  
   const addToCartHandler = async () => {
     const existItem = cart.cartItems.find((x) => x._id === product._id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
@@ -234,7 +240,12 @@ return (
         </div>
         <div className='flex flex-col pt-5 w-full'>
         <p className='pb-5'>Select THC Potency</p>
-               <select name="potency" onChange={(e) => setPotency(e.target.value)}>
+               {/* <select name="potency" onChange={(e) => setPotency(e.target.value)}> */}
+               <select
+               name="potency"
+               {...register('potency')}
+               >
+                
                    <option value="default">All</option>
                    {thcContents.map((thc) => (
                            <option value={thc.name} id={thc.id}>{thc.name}</option>
@@ -242,7 +253,10 @@ return (
           </select>
 
           <p className='pb-5'>Select CBD Potency</p>
-               <select name="potency" onChange={(e) => setPotency(e.target.value)}>
+            <select
+               name="potency"
+               {...register('potency')}
+               >
                    <option value="default">All</option>
                    {cbdContents.map((cbd) => (
                            <option value={cbd.name} id={cbd.id}>{cbd.name}</option>
@@ -250,16 +264,28 @@ return (
           </select>
         </div>      
 
-          <div className='flex justify-between pt-10 pb-5'>
+          <div id='outofstock' className='flex justify-between pt-10 pb-5'>
             <p className='pb-5 text-[#2D2D2D] text-sm'>Out of Stock</p>
-            <button onClick={(event) => { event.preventDefault(); setToggleBtn(!toggleBtn); setOutOfStock(!outOfStock); } } 
+
+
+            <label class="relative inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              class="sr-only peer"
+              {...register('outofstock')}
+            />
+            <div class="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
+            {/* <span class="ml-3 text-sm font-medium text-gray-900 dark:text-gray-300">Out of stock</span> */}
+          </label>
+
+            {/* <button onClick={(event) => { event.preventDefault(); setToggleBtn(!toggleBtn); setOutOfStock(!outOfStock); } }
             onChange={() => setOutOfStock(!outOfStock)} >
               {toggleBtn ?  
                 <BsToggle2On fontSize={28} className="cursor-pointer scroll-smooth transition ease-linear text-[#1F451A]"/> 
                 :
                 <BsToggle2Off fontSize={28} className="cursor-pointer text-[#1F451A]"/> 
               }
-            </button>  
+            </button>   */}
             </div>
     </form>
     </div>
@@ -316,8 +342,8 @@ return (
           </div>
         </div>
         {isGrid ?   
-            <FlexStyle filteredProducts={filteredProducts} isLoading={isLoading} /> :
-             <GridStyle filteredProducts={filteredProducts} isLoading={isLoading} /> }
+            <FlexStyle filteredProducts={products} isLoading={isLoading} /> :
+             <GridStyle filteredProducts={products} isLoading={isLoading} /> }
         <hr />
       </div>
     </div>
