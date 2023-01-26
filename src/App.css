@@ -187,3 +187,8 @@ border-radius: 5px;
   width: 170px;
 height: 120px;
 }
+
+#outofstock div.after\:top-0\.5::after {
+  content: var(--tw-content);
+  top: 0.625rem;
+}

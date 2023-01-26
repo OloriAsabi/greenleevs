@@ -205,7 +205,7 @@ export const GetCategories = async () => {
           cancelToken.cancel();
         };
 }
-export const GetCategoriesById = async (id) => {
+export const GetProductsByCategoryId = async (id) => {
   try {
       const data = await axios.get(`${process.env.REACT_APP_BASEURL}/categories/${id}`, 
           {
@@ -483,8 +483,14 @@ export const FilterProducts = async (slug, plant, brand, potency, outOfStock, so
     let queryParams = "";
     if (plant) {
       const f = _first(plant);
-      /** f.length == 0 is to check if there was an error gettin the first plant type */
-      queryParams += `?plan_type=${ f.length == 0 || plant == 'all' ? 'all' : f}`;
+      /**
+       * f.length == 0 is to check if there was an error gettin the first plant type
+       * queryParams += `?plant_type=${ f.length == 0 || plant == 'all' ? 'all' : f}`;
+
+        */
+      if (f.length > 0 && plant != 'all') {
+        queryParams += `?plant_type=${f}`;
+      }
     }
 
     if (brand) {
@@ -510,7 +516,7 @@ export const FilterProducts = async (slug, plant, brand, potency, outOfStock, so
       }
     }
 
-    const data = await axios.get(`${process.env.REACT_APP_BASEURL}/categories/${slug}${queryParams}}`, {
+    const data = await axios.get(`${process.env.REACT_APP_BASEURL}/categories/${slug}${queryParams}`, {
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${token}`
