@@ -22,9 +22,6 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
   
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [files, setFiles] = useState([]);
-  const [image, setImage] = useState();
-
-  console.log("Images: ",image);
 
    
   const { enqueueSnackbar } = useSnackbar();
@@ -52,7 +49,7 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
 
     /** TODO: need to catch and let users know about the error!!! */
     UploadFiles(formData).then( (res) => {
-      console.log(res);
+      console.log("Response: ",res);
       if ( res !== undefined && res !== null && res.data !== undefined && res.data !== null) {
         setUploadedFiles(
           [
@@ -61,7 +58,9 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
           ]
         );
       }
-    } );
+    } ).catch( (error) => {
+      console.log(error)
+    });
 
     // let ImagesArray = Object.entries(e.target.files).map((e) =>
     //   URL.createObjectURL(e[1])
