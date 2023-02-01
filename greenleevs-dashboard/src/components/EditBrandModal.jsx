@@ -3,60 +3,52 @@ import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaTimes } from 'react-icons/fa'
 import { MdDelete } from 'react-icons/md';
-import { EditCategories, UploadFiles } from '../apis/api';
+import { EditBrand, UploadFiles } from '../apis/api';
 
-const EditCategoryModal = ({ showModal, setShowModal, category, id }) => {
-    const [currentCategory, setCurrentCategory] = useState({
-        id: '',
-    });
+const EditBrandModal = ({ showModal, setShowModal, id }) => {
+
     const { enqueueSnackbar } = useSnackbar();
     const [files, setFiles] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState([]);
 
 
-console.log("Products: ", currentCategory);
-
-useEffect(() => {
-  setCurrentCategory({
-    id:  category.id
-  })
-  }, [category.id]);
-
-  function uploadSingleFile(e) {
-    const selectedFiles = Array.from(e.target.files);
-    setFiles(
-      [
-        ...files,
-        ...selectedFiles
-      ]
-    );
-    console.log(selectedFiles);
-    const formData = new FormData();
-    selectedFiles.forEach( (file) => {
-      formData.append("files[]", file, file.name);
-    });
-
-    /** TODO: need to catch and let users know about the error!!! */
-    UploadFiles(formData).then( (res) => {
-      console.log("Response: ",res);
-      if ( res !== undefined && res !== null && res.data !== undefined && res.data !== null) {
-        setUploadedFiles(
+    function uploadSingleFile(e) {
+        const selectedFiles = Array.from(e.target.files);
+        setFiles(
           [
-            ...uploadedFiles,
-            ...res.data.data
+            ...files,
+            ...selectedFiles
           ]
         );
+        console.log(selectedFiles);
+        const formData = new FormData();
+        selectedFiles.forEach( (file) => {
+          formData.append("files[]", file, file.name);
+        });
+    
+        /** TODO: need to catch and let users know about the error!!! */
+        UploadFiles(formData).then( (res) => {
+          console.log("Response: ",res);
+          if ( res !== undefined && res !== null && res.data !== undefined && res.data !== null) {
+            setUploadedFiles(
+              [
+                ...uploadedFiles,
+                ...res.data.data
+              ]
+            );
+          }
+        } ).catch( (error) => {
+          console.log(error)
+        });
       }
-    } ).catch( (error) => {
-      console.log(error)
-    });
-  }
+    
+      function deleteFile(e) {
+        const s = files.filter((item, index) => index !== e);
+        setFiles(s);
+        console.log(s);
+      }
+    
 
-  function deleteFile(e) {
-    const s = files.filter((item, index) => index !== e);
-    setFiles(s);
-    console.log(s);
-  }
 
   const {
     register,
@@ -67,31 +59,32 @@ useEffect(() => {
 
 
 const submitHandler = async (data) => {
-    console.log("Data Product Modal", data);
+    console.log("Data Brand Modal", data);
 
     const body = {
         label: data.title,
         slug: data.slug,
-        category_image: uploadedFiles[0]['file_url'],
+        description: data.description,
+       logo: uploadedFiles[0]['file_url'],
     }
 
     console.log('Body',body);
     try {
-        EditCategories(id,body)
+        EditBrand(id,body)
         .then(response => {
           console.log(response);
           const responseStatus = response.data.status
   
           if (responseStatus) {
-            enqueueSnackbar('Category Edit Successful', { variant: responseStatus });
+            enqueueSnackbar('Brand Edit Successful', { variant: responseStatus });
           } else {
-            enqueueSnackbar("Category Edit failed" , { variant: responseStatus });
+            enqueueSnackbar("Brand Edit failed" , { variant: responseStatus });
           }
             
           console.log("responseStatus ",responseStatus);
         })    
       } catch (error) {
-      enqueueSnackbar("Category Edit Failed", { variant: 'error' });
+      enqueueSnackbar("Products Edit Failed", { variant: 'error' });
       console.log(error);
     }
 }
@@ -113,7 +106,7 @@ const submitHandler = async (data) => {
         <article
         className='relative w-screen max mb-5 pb-10 grid grid-rows space-y-6 h-auto overflow-y-scroll'>
         <div className='flex justify-between m-10'>
-        <header className="p-4 font-bold text-lg">Edit Your Category</header>
+        <header className="p-4 font-bold text-lg">Edit Your Brand</header>
         <FaTimes
         className="mr-5 mt-4 cursor-pointer text-red-500"
         onClick={() => {
@@ -155,17 +148,16 @@ const submitHandler = async (data) => {
           <div className="">
           <div className='space-y-5'>
 
-            <div className='flex space-x-5'>
+            <div className='flex space-x-5 mt-10'>
             <label htmlFor='title'
             className={`block pb-3 text-sm 2 ${
             errors.title ? "text-red-400" : "text-gray-700 "} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}
-            >Category Title : </label>
+            >Brand Title : </label>
               <input 
                 name="title" 
                 id="title" 
                 type="text" 
                 placeholder=''
-                // value={products.label}
                 className={`block w-full ${
                   errors.title ? "text-red-400 border-red-400" : "text-gray-700 "} px-3 py-1 mb-2 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
                   {...register("title", { 
@@ -183,10 +175,36 @@ const submitHandler = async (data) => {
                 )}
             </div>
             <div className='flex space-x-5'>
+            <label htmlFor='description'
+            className={`block pb-3 text-sm 2 ${
+            errors.description ? "text-red-400" : "text-gray-700 "} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}
+            >Brand Description : </label>
+              <input 
+                name="description" 
+                id="description" 
+                type="text" 
+                placeholder=''
+                className={`block w-full ${
+                  errors.description ? "text-red-400 border-red-400" : "text-gray-700 "} px-3 py-1 mb-2 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
+                  {...register("description", { 
+                    required: "description is Required!!!" ,
+                   })}
+                   onKeyUp={() => {
+                     trigger("description");
+                   }}
+                  required={true}
+                  />
+                   {errors.description && (
+                  <p className="text-red-500 text-sm mt-2">
+                    description is Required!!!
+                  </p>
+                )}
+            </div>
+            <div className='flex space-x-5'>
             <label htmlFor='slug'
             className={`block pb-3 text-sm 2 ${
             errors.slug ? "text-red-400" : "text-gray-700 "} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}
-            >Category Slug : </label>
+            >Brand Slug : </label>
               <input 
                 name="slug" 
                 id="slug" 
@@ -215,7 +233,7 @@ const submitHandler = async (data) => {
                   type="submit"
                   className="bg-[#1F451A] text-white hover: cursor-pointer p-4 rounded"
                 >
-                Edit Category
+                Edit Brand
                 </button>
               </div>
               </div>
@@ -228,4 +246,4 @@ const submitHandler = async (data) => {
   )
 }
 
-export default EditCategoryModal
+export default EditBrandModal

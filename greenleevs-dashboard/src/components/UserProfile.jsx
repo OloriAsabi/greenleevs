@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 
 import { Button } from '.';
 import { LogoutUser } from '../apis/api';
-import { userProfileData } from '../data/data';
 
 const UserProfile = ({ userInfo }) => {
   const navigate = useNavigate()

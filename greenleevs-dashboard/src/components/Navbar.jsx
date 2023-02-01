@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
 import { AiOutlineMenu } from 'react-icons/ai';
-import { RiNotification3Line } from 'react-icons/ri';
-import { Notifications, UserProfile } from '.';
+import { UserProfile } from '.';
 import { MdKeyboardArrowDown } from 'react-icons/md';
 
 import { useStateContext } from '../contexts/ContextProvider';

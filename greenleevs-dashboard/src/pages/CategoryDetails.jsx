@@ -27,6 +27,9 @@ const CategoryDetails = () => {
     {category 
     ? 
     <div className='flex md:flex-row flex-col small justify-between p-10'  key={category.id}>
+      <div className='w-screen'>
+     <img src={category.image} className="w-full object-cover " alt="CategoryImage"/>
+    </div>
       <div className='w-full h-full p-5'>
       {isLoading && (
         <Spinner />

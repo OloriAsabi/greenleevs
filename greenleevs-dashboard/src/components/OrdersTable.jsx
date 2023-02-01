@@ -6,12 +6,14 @@ import { useTable,
    useFilters
 } from "react-table";
 import {DOTS, useCustomPagination} from './useCustomPagination';
-import { ordersData } from '../data/data';
 import { classNames } from '../utils/utils';
-import { TbCloudDownload } from 'react-icons/tb';
 import { Button, PageButton } from '../utils/Button';
-import { GetOrders } from '../apis/api';
+import { DeleteOrders, GetOrderById, GetOrders } from '../apis/api';
 import { useNavigate } from 'react-router-dom';
+import { useSnackbar } from 'notistack';
+import { FaSearchPlus } from 'react-icons/fa';
+import { AiFillDelete } from 'react-icons/ai';
+import Spinner from './Spinner';
 
 
 
@@ -59,8 +61,6 @@ export function GlobalFilter({
   export function SelectColumnFilter({
     column: { filterValue, setFilter, preFilteredRows, id },
   }) {
-    // Calculate the options for filtering
-    // using the preFilteredRows
     const options = React.useMemo(() => {
       const options = new Set();
       preFilteredRows.forEach((row) => {
@@ -68,8 +68,6 @@ export function GlobalFilter({
       });
       return [...options.values()];
     }, [id, preFilteredRows]);
-  
-    // Render a multi-select box
     return (
       <select
         name={id}
@@ -93,15 +91,16 @@ export function GlobalFilter({
   }
 
 const OrdersTable = () => {
-  const [toggleMenu, setToggleMenu] = useState(false);
   const [orders, setOrders] = useState([]);
-  // const data =  useMemo(() => [...products], [products])
+  const data =  useMemo(() => [...orders], [orders])
   const [isLoading, setIsLoading] = useState(false)
   const ordersRef = useRef();
   const navigate = useNavigate();
 
+  const { enqueueSnackbar } = useSnackbar();
+  console.log("Datas", data);
+
   ordersRef.current = orders;
-  // console.log("Datas", data);
      
   useEffect(() => {
     setIsLoading(true)
@@ -110,67 +109,100 @@ const OrdersTable = () => {
     .then((response) => {
       console.log(response);
 
-    // const data = response.data.data
+    const data = response.data.data
       
-    // setCustomers(data)
-    // setIsLoading(true)
-    // localStorage.clear();
+    setOrders(data)
+    setIsLoading(false)
     }).catch((e) => {
     console.log(e);
     });
   },[]);
 
-const data = useMemo(() => ordersData(), []);
+const ordersId = (rowIndex) => {
+  const id = ordersRef.current[rowIndex].id;
+  
+  GetOrderById(id)
+  navigate("/orders/" + id);
+};
 
+const handleDelete = (rowIndex) => {
+  const id = ordersRef.current[rowIndex].id;
+  DeleteOrders(id).then(() => {
+    navigate('/orders')
+
+    let newOrders = [...ordersRef.current];
+    newOrders.splice(rowIndex, 1)
+
+    setOrders(newOrders);
+    enqueueSnackbar('Orders Deleted Successful', { variant: 'success' });
+  })
+  .catch((e) => {
+    console.log(e);
+    enqueueSnackbar('Orders delete Failed', { variant: 'error' });
+  });
+}
 const columns = useMemo(() => [
     {
       Header: "ID",
-      accessor: "OrderID",
+      accessor: "id",
     },
     {
       Header: "TIME",
-      accessor: "time",
+      accessor: "created_at",
     },
     {
         Header: "Shipping Address",
-        accessor: "Location",
+        accessor: "shipping_address",
     },
     {
         Header: "PHONE",
-        accessor: "phone",
+        accessor: "phone_number",
     },
     {
         Header: "Method",
-        accessor: "method",
+        accessor: "pay_method",
     },
     {
         Header: "Amount",
-        accessor: "TotalAmount",
+        accessor: "amount",
+        Cell:({value}) => (
+          <div>
+            ${value}
+          </div>
+      )
     },
     {
       Header: "Status",
-      accessor: "Status",
+      accessor: "status",
       Cell: StatusPill,
       Filter: SelectColumnFilter,  // new
       filter: 'includes',  // new  
     },
     {
       Header: "Actions",
-      accessor: "actions",
-      Cell: ({ value }) => (
-          <div>
-            <button className='ml-4' onClick={() => (value)}>{value.delete}</button>
+      Cell: (props) => {
+        const rowIdx = props.row.id; 
+        return (
+          <div className='flex gap-5'>
+            <span onClick={() =>handleDelete(rowIdx)}>
+            <AiFillDelete/>
+            </span>
           </div>
-        ),
+        );
+      },
     },    
     {
       Header: "Invoice",
-      accessor: "invoice",
-      Cell:({value}) => (
+      Cell: (props) => {
+        const rowIdx = props.row.id;
+        return (
           <div>
-              <a href='/' >{value}</a>
+             <div onClick={() => ordersId(rowIdx)}>
+              <FaSearchPlus/>
+             </div>
           </div>
       )
+    },
     },
 ], []);
 
@@ -235,6 +267,9 @@ const {
             <div className="-my-2 overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">
               <div  className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                 <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+                {isLoading
+                  ? <Spinner/> 
+                  :
                     <table {...getTableProps()} className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-10">
                       {headerGroups.map((headerGroup) => (
@@ -263,6 +298,7 @@ const {
                       })}
                   </tbody>
                     </table>
+                  }
                 </div>
               </div>
           </div>

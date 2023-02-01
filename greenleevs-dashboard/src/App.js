@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './App.css';
-import { Brands, Categories, Coupons, CategoryDetails, Customers, Home, Orders, Products, Settings  } from "./pages";
+import { Brands, Categories, Coupons,CategoryDetails, Customers, Home, Orders, Products, Settings, OrdersDetails, BrandsDetails  } from "./pages";
 import { Routes, Route, useNavigate  } from 'react-router-dom';
 
 import { useStateContext } from './contexts/ContextProvider';
 import { Sidebar, Navbar } from './components';
 import Productdetails from './pages/ProductDetails';
+// import ErrorPage from './pages/404';
 
 function App() {
   const [userInfo, setUserInfo] = useState();
@@ -66,7 +67,9 @@ function App() {
               <Route path="/categories/:id" element={(<CategoryDetails />)} />
               <Route path="/customers" element={(<Customers />)} />
               <Route path="/orders" element={(<Orders />)} />
+              <Route path="/orders/:id" element={(<OrdersDetails />)} />
               <Route path='/brands' element={(<Brands />)} />
+              <Route path='/brands/:id' element={(<BrandsDetails />)} />
               {/* <Route path="/coupons" element={(<Coupons />)} /> */}
               <Route path="/settings" element={(<Settings  />)} />
             </Routes>

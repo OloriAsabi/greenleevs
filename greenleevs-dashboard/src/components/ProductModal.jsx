@@ -6,7 +6,7 @@ import { useStateContext } from '../contexts/ContextProvider';
 import { useSnackbar } from 'notistack';
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
-import { effect, strain, thcContents, weights, cbdContents } from "../data/data"
+import { strain, thcContents, cbdContents, Status } from "../data/data"
 import { CreateProducts, UploadFiles } from '../apis/api';
 
 const ProductModal = ({ toggleMenu, setToggleMenu }) => {
@@ -14,11 +14,11 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
   const navigate = useNavigate()
 
   const [tags, setTags] = useState([]);
+  const [effectTags, setEffectTags] = useState([]);
   const [strains, setStrains] = useState(strain);
-  const [weight, setWeight] = useState(weights);
+  const [status, setStatus] = useState(Status);
   const [thcContent, setThcContent] = useState(thcContents);
   const [cbdContent, setCbdContent] = useState(cbdContents);
-  const [effects, setEffects] = useState(effect);
   
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [files, setFiles] = useState([]);
@@ -31,7 +31,11 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
     handleSubmit,
     formState: { errors },
     trigger
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      special: false
+    }
+  });
 
   function uploadSingleFile(e) {
     const selectedFiles = Array.from(e.target.files);
@@ -57,18 +61,11 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
             ...res.data.data
           ]
         );
+        enqueueSnackbar('Image Added Successfully', { variant: res.data.status });
       }
     } ).catch( (error) => {
       console.log(error)
     });
-
-    // let ImagesArray = Object.entries(e.target.files).map((e) =>
-    //   URL.createObjectURL(e[1])
-    // );
-    // console.log(ImagesArray);
-    // setFiles([...file, ...ImagesArray]);
-    // setImage(URL.createObjectURL(selectedFile))
-    // console.log("file", file);
   }
 
   function deleteFile(e) {
@@ -82,6 +79,7 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
     console.log(newTags)
 
     setTags(newTags);
+    setEffectTags(newTags)
   };
 
 
@@ -89,45 +87,6 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
   const submitHandler = async (data) => {
     console.log("Data Product Modal", data);
 
-/*
-    const formData = new FormData();
-    formData.append('tags', tags);
-    formData.append('category_id', 2);
-    formData.append('price', data.price);
-    formData.append('label', data.title);
-    formData.append('product_image', "");
-    formData.append('product_images', files);
-    formData.append('quantity', data.quantity);
-    formData.append('description', data.description);
-    formData.append('sale_price', data.salePrice);
-
-    formData.append('product_meta', JSON.stringify([
-      {
-        option: "weight",
-        values: data.weight
-      },
-      {
-        option: "strain",
-        values: data.strain
-      },
-      {
-        option: "thc",
-        values: data.thcContent
-      },
-      {
-        option: "cbd",
-        values: data.cbdContent
-      },
-      {
-        option: "effects",
-        values: data.effects
-      }
-    ]));
-
-    files.forEach( (_file) => {
-      formData.append("files[]", _file, _file.name);
-    });
-*/
     const body = {
       label: data.title,
       product_image: uploadedFiles[0]['file_url'],
@@ -135,9 +94,10 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
       quantity: data.quantity,
       description: data.description,
       price: data.price,
-      category_id: 2,
+      // category_id: 2,
       sale_price: data.salePrice,
       tags: tags,
+      status: data.status,
       product_meta: [
         {
           option: "weight",
@@ -157,9 +117,10 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
         },
         {
           option: "effects",
-          values: data.effects
+          values: effectTags
         }
-      ]
+      ],
+      special: data['special'],
     };
     console.log('Body',body);
 
@@ -305,10 +266,6 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
                       id="tags"
                       autoComplete="off"
                       required={true}
-                      // {...register('tags', {
-                      //   required: 'Please Enter the tags!!!',
-                      // validate: v => console.log(v)
-                      // })}
                       placeholder="Enter Tags"
                       maxTags={10}
                       value={tags}
@@ -319,14 +276,6 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
                     />
                     {errors.tags && <p className="mt-2 text-sm text-red-500">Please Enter the tags!!!</p>}
             </div>
-            {/* <div className='flex space-x-5'>
-            <label>Unit(kg/pc/lb/ml/g...etc):</label>
-            <input
-              type="number"
-              placeholder=""
-              className="w-full border border-gray-200 p-2"
-            />
-            </div> */}
             <div className='flex space-x-5'>
             <label
              htmlFor='quantity'
@@ -405,25 +354,32 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
                   </p>
                 )}
             </div>
-            <div className='flex space-x-5 mb-5'>
-                <label className="text-sm font-normal">Product Weight:</label>
-                <select
-                 id="weight"  
-                 className={` ${
-                errors.weight ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
-                {...register('weight')}
-                  onChange={(e) => {
-                    setWeight(e.target.value);
-                  }}
-                >
-                  <option value="others" className="sm:text-bg bg-white">Select Weight</option>
-                  {weights.map((item) => (
-                  <option className="text-base border-0 outline-none capitalize bg-white text-black " value={item.name}  key={item.id}>
-                    {item.name}
-                  </option>
-                      ))}
-                </select>
-              </div>
+            <div className='flex space-x-5'>
+            <label htmlFor='weight'
+            className={`block pb-3 text-sm 2 ${
+            errors.weight ? "text-red-400" : "text-gray-700 "} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}
+            >Product Weight : </label>
+              <input 
+                name="weight" 
+                id="weight" 
+                type="text" 
+                placeholder=''
+                className={`block w-full ${
+                  errors.weight ? "text-red-400 border-red-400" : "text-gray-700 "} px-3 py-1 mb-2 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
+                  {...register("weight", { 
+                    required: "Weight is Required!!!" ,
+                   })}
+                   onKeyUp={() => {
+                     trigger("weight");
+                   }}
+                  required={true}
+                  />
+                   {errors.weight && (
+                  <p className="text-red-500 text-sm mt-2">
+                    Weight is Required!!!
+                  </p>
+                )}
+            </div>
               <div className='flex space-x-5 mb-5'>
                 <label className="text-sm font-normal">Product Strain:</label>
                 <select
@@ -483,25 +439,53 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
               </div>
               <div className='flex space-x-5 mb-3'>
                 <label>Product Effects:</label>
-                <select
-                  // className="outline-none w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer"
+                <TagsInput
+                      name="effectTags"
+                      id="effectTags"
+                      autoComplete="off"
+                      required={true}
+                      placeholder="Enter Tags"
+                      maxTags={10}
+                      value={effectTags}
+                      onChange={handleTagsChange}
+                      className="block w-full px-3 py-1 text-sm
+                      h-32 focus:outline-none leading-5 rounded-md tag-box react-tagsinput focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#0F1926] border p-2 bg-gray-100 border-transparent focus:bg-white"
+                      type="text"
+                    />
+                    {errors.effectTags && <p className="mt-2 text-sm text-red-500">Please Enter the  Effects tags!!!</p>}
+              </div>
+              <div className='flex space-x-5'>
+            <label className="text-sm font-normal">Product Status: </label>
+                 <select
+                 id="status"  
+                 className={` ${
+                errors.status ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
+                {...register('status')}
                   onChange={(e) => {
-                    setEffects(e.target.value);
+                    setStatus(e.target.value);
                   }}
-                  id="effects"  
-                  className={` ${
-                    errors.effects ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
-                  {...register('effects')}
                 >
-                  <option value="others" className="sm:text-bg bg-white">Select Effects</option>
-                  {effects.map((item) => (
-                  <option className="text-base border-0 outline-none capitalize bg-white text-black " value={item.name} key={item.id}>
+                  <option value="others" className="sm:text-bg bg-white">Select Product Status</option>
+                  {Status?.map((item) => (
+                  <option className="text-base border-0 outline-none capitalize bg-white text-black " value={item.name}  key={item.id}>
                     {item.name}
                   </option>
                       ))}
                 </select>
-              </div>
+            </div>
+              <div id='special' className='flex justify-between pt-10 pb-5'>
+              <p className='pb-5 text-[#2D2D2D] text-sm'>Special product</p>
 
+
+              <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                {...register('Special')}
+              />
+              <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-[#546052] dark:peer-focus:ring-[#1F451A] dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:[#1F451A]"></div>
+            </label>
+              </div>
               <div className="flex justify-end items-end mt-5">
                 <button
                   type="submit"

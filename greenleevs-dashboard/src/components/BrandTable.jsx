@@ -12,7 +12,7 @@ import { FaSearchPlus } from 'react-icons/fa';
 import { AiFillDelete } from 'react-icons/ai';
 import { useSnackbar } from 'notistack';
 import Spinner from './Spinner';
-import { DeleteBrands, GetBrands } from '../apis/api';
+import { DeleteBrands, GetBrandById, GetBrands } from '../apis/api';
 import BrandModal from './BrandModal';
 
 
@@ -71,16 +71,16 @@ const BrandTable = () => {
   
     console.log("Categories",brands);
 
-    // const categoryId = (rowIndex) => {
-    //     const id = categoriesRef.current[rowIndex].slug;
-    //     console.log(id);
+    const brandId = (rowIndex) => {
+        const id = brandsRef.current[rowIndex].id;
+        console.log(id);
         
-    //     GetCategoryById(id)
-    //     navigate("/categories/" + id);
-    //   };
+        GetBrandById(id)
+        navigate("/brands/" + id);
+      };
        
     const handleDelete = (rowIndex) => {
-        const id = brandsRef.current[rowIndex];
+        const id = brandsRef.current[rowIndex].id;
     
         DeleteBrands(id).then(() => {
           navigate('/brands')
@@ -126,19 +126,19 @@ const BrandTable = () => {
           Header: "Slug",
           accessor: "slug",
         },
-        // {
-        //     Header: "Details",
-        //     Cell: (props) => {
-        //       const rowIdx = props.row.id;
-        //       return (
-        //         <div>
-        //            <div onClick={() => brandId(rowIdx)}>
-        //             <FaSearchPlus/>
-        //            </div>
-        //         </div>
-        //     )
-        //   },
-        // },
+        {
+            Header: "Details",
+            Cell: (props) => {
+              const rowIdx = props.row.id;
+              return (
+                <div>
+                   <div onClick={() => brandId(rowIdx)}>
+                    <FaSearchPlus/>
+                   </div>
+                </div>
+            )
+          },
+        },
         {
           Header: "Actions",
           Cell: (props) => {

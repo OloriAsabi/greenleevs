@@ -111,13 +111,28 @@ export const UserResetPassword = async (body) => {
               console.log(error)  
           }
   }
-
+  export const GetOrderById = (id) => {
+    try {
+        const req = axios.get(`${process.env.REACT_APP_BASEURL}/admin/orders?id=${id}`,  {
+          headers: { 
+              "Content-Type": "application/json" ,
+              "Authorization": `Bearer ${token}`
+          },
+        });
+  
+        console.log("Details", req);
+        return req;
+    } catch (error) {
+        console.log(error)  
+    }
+  }
   export const UpdateOrderStatus = async (body) => {
     try {
         const data = await axios.post(`${process.env.REACT_APP_BASEURL}/admin/order`, body,
             {
               headers: { 
                   "Content-Type": "application/json" ,
+                  "Authorization": `Bearer ${token}`
               },
             })
           console.log("Update Order Status",data);
@@ -126,8 +141,7 @@ export const UserResetPassword = async (body) => {
               console.log(error)  
           }
   }
-
-  export const DeleteOrders = async (id) => {
+export const DeleteOrders = async (id) => {
     try {
       const data = await axios.get(`${process.env.REACT_APP_BASEURL}/admin/orders/${id}/delete`,
           {
@@ -142,7 +156,6 @@ export const UserResetPassword = async (body) => {
             console.log(error)  
         }
   }
-
   export const CreateProducts = async (body) => {
     try {
         const data = await axios.post(`${process.env.REACT_APP_BASEURL}/admin/product`, body,
@@ -158,7 +171,6 @@ export const UserResetPassword = async (body) => {
               console.log(error)  
           }
   }
-
   export const GetProducts = async () => {
     try {
         const data = await axios.get(`${process.env.REACT_APP_BASEURL}/admin/products`, 
@@ -174,8 +186,6 @@ export const UserResetPassword = async (body) => {
               console.log(error)  
           }
   }
-
-
 export const getProductId = (id) => {
   try {
       const req = axios.get(`${process.env.REACT_APP_BASEURL}/admin/product?sku=${id}`,  {
@@ -379,7 +389,7 @@ export const DeleteBrands = async (id) => {
 }
 export const PostBrand = async (body) => {
   try {
-      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/admin/marks`, body,
+      const data = await axios.post(`${process.env.REACT_APP_BASEURL}/admin/marks`, body,
           {
             headers: { 
                 "Content-Type": "application/json" ,
@@ -387,6 +397,36 @@ export const PostBrand = async (body) => {
             },
           })
         console.log("Post Brands",data);
+         return data; 
+        } catch (error) {
+            console.log(error)  
+        }
+}
+export const GetBrandById = async (id) => {
+  try {
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/admin/marks?id=${id}`, 
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+          })
+        console.log("Get brand by Id",data);
+         return data; 
+        } catch (error) {
+            console.log(error)  
+        }
+}
+export const EditBrand = async (id, body) => {
+  try {
+      const data = await axios.post(`${process.env.REACT_APP_BASEURL}/admin/marks/${id}/edit`, body,
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+          })
+        console.log("Edit Brands",data);
          return data; 
         } catch (error) {
             console.log(error)  

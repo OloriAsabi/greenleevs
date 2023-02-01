@@ -209,10 +209,6 @@ const columns = useMemo(() => [
     accessor: "status",
     Cell: StatusPill,
   },
-  // {
-  //   Header: "Discount",
-  //   accessor: "discount",
-  // },
   {
     Header: "Details",
     Cell: (props) => {

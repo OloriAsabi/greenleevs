@@ -1,3 +1,7 @@
 .max{
     max-width: 40rem;
 }
+#special div.after\:top-0\.5::after {
+    content: var(--tw-content);
+    top: 0.625rem;
+  }

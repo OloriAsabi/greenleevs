@@ -71,7 +71,7 @@ const Home = () => {
 
       <div className='mt-10'>
         <h1 className='text-2xl font-bold pt-3 pb-3'>Recent Order</h1>
-        <Table/>
+        {/* <Table/> */}
       </div>
       </div>
   )

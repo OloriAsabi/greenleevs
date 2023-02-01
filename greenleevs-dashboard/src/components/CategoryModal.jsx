@@ -5,17 +5,14 @@ import { MdDelete } from 'react-icons/md';
 import { useSnackbar } from 'notistack';
 import { useStateContext } from '../contexts/ContextProvider';
 import { useForm } from 'react-hook-form';
-import { PostCategories } from '../apis/api';
+import { PostCategories, UploadFiles } from '../apis/api';
 
 const CategoryModal = ({toggleMenu, setToggleMenu}) => {
   const { dispatch  } = useStateContext();
     const navigate = useNavigate();
 
-    const [file, setFile] = useState([]);
-    const [image, setImage] = useState();
-
-
-    console.log("Images: ",image);
+    const [files, setFiles] = useState([]);
+    const [uploadedFiles, setUploadedFiles] = useState([]);
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -26,20 +23,40 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
     trigger
   } = useForm();
 
+
   function uploadSingleFile(e) {
-    const selectedFile = e.target.files[0];
-    let ImagesArray = Object.entries(e.target.files).map((e) =>
-      URL.createObjectURL(e[1])
+    const selectedFiles = Array.from(e.target.files);
+    setFiles(
+      [
+        ...files,
+        ...selectedFiles
+      ]
     );
-    console.log(ImagesArray);
-    setFile([...file, ...ImagesArray]);
-    setImage(URL.createObjectURL(selectedFile))
-    console.log("file", file);
+    console.log(selectedFiles);
+    const formData = new FormData();
+    selectedFiles.forEach( (file) => {
+      formData.append("files[]", file, file.name);
+    });
+
+    /** TODO: need to catch and let users know about the error!!! */
+    UploadFiles(formData).then( (res) => {
+      console.log("Response: ",res);
+      if ( res !== undefined && res !== null && res.data !== undefined && res.data !== null) {
+        setUploadedFiles(
+          [
+            ...uploadedFiles,
+            ...res.data.data
+          ]
+        );
+      }
+    } ).catch( (error) => {
+      console.log(error)
+    });
   }
 
   function deleteFile(e) {
-    const s = file.filter((item, index) => index !== e);
-    setFile(s);
+    const s = files.filter((item, index) => index !== e);
+    setFiles(s);
     console.log(s);
   }
 
@@ -50,7 +67,7 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
     const body = {
       label: data.title ,
       slug: data.slug,
-      category_image: image,
+      category_image: uploadedFiles[0]['file_url'],
     };
 
     console.log('Body',body);
@@ -58,7 +75,7 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
     try {
       PostCategories(body)
       .then(response => {
-       console.log(response);
+       console.log("Post Cat",response);
       //  const responseStatus = response.data.status
       //  if (responseStatus) {
       //    enqueueSnackbar('Categories Added Successfully', { variant: responseStatus });
@@ -105,8 +122,8 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
         <div className="grid justify-center items-center bg-white lg:p-5 p-3 w-full">
           <div className="container">
           <div className="form-group preview">
-          {file.length > 0 &&
-            file.map((item, index) => {
+          {files.length > 0 &&
+            files.map((item, index) => {
               return (
                 <div key={item}>
                   <img src={item} alt="" />
@@ -121,7 +138,7 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
           <div className="form-group">
             <input
               type="file"
-              disabled={file.length === 5}
+              disabled={files.length === 5}
               className="form-control"
               onChange={uploadSingleFile}
               multiple

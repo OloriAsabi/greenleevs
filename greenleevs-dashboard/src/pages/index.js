@@ -10,6 +10,8 @@ export { default as Categories } from './Categories';
 export { default as CategoryDetails } from './CategoryDetails'
 export { default as Settings } from './Settings';
 export { default as Brands } from './Brands'
+export { default as BrandsDetails } from './BrandsDetails'
 export { default as Orders} from './Orders';
+export { default as OrdersDetails} from './OrdersDetails';
 export { default as ForgotPassword } from './ForgotPassword';
 export { default as ResetPassword } from './ResetPassword';
