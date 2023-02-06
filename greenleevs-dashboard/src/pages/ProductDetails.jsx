@@ -15,7 +15,6 @@ const Productdetails = () => {
     useEffect(() => {
         setIsLoading(true)
         getProductId(id).then((data) => {
-            console.log(data)
             const items = data.data
             setProduct(items.data);
             setIsLoading(false)
@@ -53,19 +52,6 @@ const Productdetails = () => {
             </div>
         </div>
         <p className='text-14 pt-5 capitalize'>{product.description}</p>
-        <div>
-            {/* {product.metas.map((meta) => (
-                    <div className='flex justify-between text-center' key={meta.id}>
-                    <h5 className='mt-2 pr-3 pt-3 pb-3 capitalize'>{meta?.option}: </h5>
-                    {meta?.values?.map((value, index) => (
-                    <div key={index}>
-                    <button className='text-[#1F451A] rounded p-3'>{value?.size  ? `size: ${value?.size}`  : value }</button>
-                    <button className='text-[#1F451A]  rounded p-3'>{value?.price ? `price:  $${value?.price}` : ""}</button>
-                    </div>
-                    ))}
-                </div>
-            ))} */}
-        </div>
         </div>
      </div> 
      : ""

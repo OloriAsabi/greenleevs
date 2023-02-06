@@ -58,6 +58,22 @@ export function GlobalFilter({
     );
   }
 
+  export function SpecialPill({ value }) {
+    const status = value ? value : "unknown";
+  
+    return (
+      <span
+        className={classNames(
+          "px-3 py-1 uppercase leading-wide font-bold text-xs rounded-full shadow-sm",
+          status.startsWith(true) ? "bg-green-100 text-green-700" : null,
+          status.startsWith(false) ? "bg-yellow-100 text-yellow-700" : null,
+          status.startsWith(null) ? "bg-red-100 text-red-700" : null
+        )}
+      >
+        {status}
+      </span>
+    );
+  }
 
   export function AvatarCell({ value, column, row }) {
     return (
@@ -208,6 +224,11 @@ const columns = useMemo(() => [
     Header: "Status",
     accessor: "status",
     Cell: StatusPill,
+  },
+  {
+    Header: "Special",
+    accessor: "special",
+    Cell: SpecialPill,
   },
   {
     Header: "Details",

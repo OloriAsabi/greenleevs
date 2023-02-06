@@ -81,11 +81,17 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
     setTags(newTags);
     setEffectTags(newTags)
   };
+  const handleEffectsTagsChange = (newTags) => {
+    console.log(effectTags)
+    console.log(newTags)
+
+    setEffectTags(newTags)
+  };
 
 
 
   const submitHandler = async (data) => {
-    console.log("Data Product Modal", data);
+    console.log("Data Product Modal", data.special);
 
     const body = {
       label: data.title,
@@ -94,7 +100,7 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
       quantity: data.quantity,
       description: data.description,
       price: data.price,
-      // category_id: 2,
+      category_id: 2,
       sale_price: data.salePrice,
       tags: tags,
       status: data.status,
@@ -120,7 +126,7 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
           values: effectTags
         }
       ],
-      special: data['special'],
+      special: data.special,
     };
     console.log('Body',body);
 
@@ -447,7 +453,7 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
                       placeholder="Enter Tags"
                       maxTags={10}
                       value={effectTags}
-                      onChange={handleTagsChange}
+                      onChange={handleEffectsTagsChange}
                       className="block w-full px-3 py-1 text-sm
                       h-32 focus:outline-none leading-5 rounded-md tag-box react-tagsinput focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#0F1926] border p-2 bg-gray-100 border-transparent focus:bg-white"
                       type="text"
@@ -481,7 +487,7 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
               <input
                 type="checkbox"
                 className="sr-only peer"
-                {...register('Special')}
+                {...register('special')}
               />
               <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-[#546052] dark:peer-focus:ring-[#1F451A] dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:[#1F451A]"></div>
             </label>

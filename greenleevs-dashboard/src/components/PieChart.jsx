@@ -1,19 +1,35 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Pie } from 'react-chartjs-2'
+import { GetBestSellingProducts } from '../apis/api';
 
 
 const PieChart = () => {
+
+  const [bestSellingProducts, setBestSellingProducts] = useState([]);
+  useEffect(() => {
+   
+
+    GetBestSellingProducts()
+    .then((response) => {
+      console.log("Weekly Sales",response);
+    const data = response.data    
+      setBestSellingProducts(data)
+    }).catch((e) => {
+    console.log(e);
+    });
+  },[]);
+
   return (
     <div className='rounded shadow shadow-gray bg-[#f5f5f5] p-10'>
     <h1 className='text-2xl font-bold pb-5'>Best Selling Products</h1>  
     <Pie
       data={{
         responsive: true,
-        labels: ['Tropical', 'CBD', 'THC', 'Extract'],
+        labels: bestSellingProducts?.map((label) => label.label),
         datasets: [
           {
             label: '# of votes',
-            data: [12, 19, 3, 5],
+            data:  bestSellingProducts?.map((label) => label.percentage),
             backgroundColor: [
               'rgba(255, 99, 132, 0.2)',
               'rgba(54, 162, 235, 0.2)',

@@ -1,9 +1,26 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Line } from 'react-chartjs-2';
 import { Chart as ChartJS, registerables } from 'chart.js';
+import { GetWeeklySales } from '../apis/api';
 ChartJS.register(...registerables);
 
 const LineChart = () => {
+
+
+  const [weeklySales, setWeeklySales] = useState([]);
+  useEffect(() => {
+   
+
+    GetWeeklySales()
+    .then((response) => {
+      console.log("Weekly Sales",response);
+    const data = response.data.data     
+      setWeeklySales(data)
+    }).catch((e) => {
+    console.log(e);
+    });
+  },[]);
+
 
   return (
     <div className='rounded shadow shadow-gray bg-[#f5f5f5] p-10'>
@@ -11,12 +28,11 @@ const LineChart = () => {
     <Line
       data={{
         responsive: true,
-        labels:  ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'], // Step 2: rename to labelsArray
+        labels: weeklySales?.map((days) => days.day),
         datasets: [
-          // Step 5: Add all datasets
           {
             label: 'Sales',
-            data: [12, 19, 3, 5, 2, 3],
+            data:  weeklySales?.map((days) => days.sales),
             backgroundColor: 'rgba(0, 179, 25, 0.2)',
             borderColor: 'rgba(0, 179, 25, 1)',
             fill: true,
@@ -24,7 +40,7 @@ const LineChart = () => {
           },
           {
             label: 'Orders',
-            data: [12, 19, 3, 5, 2, 3],
+            data: weeklySales?.map((days) => days.orders),
             backgroundColor: 'rgba(255, 99, 132, 0.2)',
             borderColor: 'rgba(255, 99, 132, 1)',
             fill: true,
@@ -35,14 +51,17 @@ const LineChart = () => {
       height={400}
       width={600}
       options={{
+        // maintainAspectRatio: false,
         scales: {
-        //   yAxes: [
-        //     {
-        //       ticks: {
-        //         beginAtZero: true,
-        //       },
-        //     },
-        //   ],
+          // yAxes: [
+          //   {
+          //     ticks: {
+          //       beginAtZero: true,
+          //       min: 0,
+          //       stepSize: 2,
+          //     },
+          //   },
+          // ],
         },
         legend: {
           labels: {

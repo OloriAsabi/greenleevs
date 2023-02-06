@@ -111,6 +111,21 @@ export const UserResetPassword = async (body) => {
               console.log(error)  
           }
   }
+  export const GetRecentOrder = async () => {
+    try {
+        const data = await axios.get(`${process.env.REACT_APP_BASEURL}/admin/orders/recent`,
+            {
+              headers: { 
+                  "Content-Type": "application/json" ,
+                  "Authorization": `Bearer ${token}`
+              },
+            })
+          console.log("Get Orders",data);
+           return data; 
+          } catch (error) {
+              console.log(error)  
+          }
+  }
   export const GetOrderById = (id) => {
     try {
         const req = axios.get(`${process.env.REACT_APP_BASEURL}/admin/orders?id=${id}`,  {
@@ -427,6 +442,55 @@ export const EditBrand = async (id, body) => {
             },
           })
         console.log("Edit Brands",data);
+         return data; 
+        } catch (error) {
+            console.log(error)  
+        }
+}
+
+export const GetRequestOptions = async () => {
+  try {
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/admin`, 
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+          })
+        console.log("Get RequestOptions",data);
+
+         return data; 
+        } catch (error) {
+            console.log(error)  
+        }
+}
+export const GetWeeklySales = async () => {
+  try {
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/admin/statistics?type=weekly_sales`, 
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+          })
+        console.log("Get RequestOptions",data);
+
+         return data; 
+        } catch (error) {
+            console.log(error)  
+        }
+}
+export const GetBestSellingProducts = async () => {
+  try {
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/admin/statistics?type=best_selling_products`, 
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+          })
+        console.log("Get Best Selling Products",data);
+
          return data; 
         } catch (error) {
             console.log(error)  

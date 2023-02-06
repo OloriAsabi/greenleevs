@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { FaTimes } from 'react-icons/fa'
 import { EditProduct } from '../apis/api';
-import { cbdContents, contents, effect, strain, thcContents, weights } from "../data/data"
+import { cbdContents, contents, effect, Status, strain, thcContents, weights } from "../data/data"
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
 
@@ -14,10 +14,10 @@ const [currentProduct, setCurrentProduct] = useState({
 const { enqueueSnackbar } = useSnackbar();
 const [tags, setTags] = useState([]);
 const [strains, setStrains] = useState(strain);
-const [weight, setWeight] = useState(weights);
 const [thcContent, setThcContent] = useState(thcContents);
 const [cbdContent, setCbdContent] = useState(cbdContents);
-const [effects, setEffects] = useState(effect);
+const [status, setStatus] = useState(Status);
+const [effectTags, setEffectTags] = useState([]);
 
 const [file, setFile] = useState([]);
 const [image, setImage] = useState();
@@ -68,6 +68,7 @@ useEffect(() => {
     console.log(newTags)
 
     setTags(newTags);
+    setEffectTags(newTags)
   };
 
 const submitHandler = async (data) => {
@@ -185,10 +186,8 @@ const submitHandler = async (data) => {
           </div>
 
           <form 
+          className="grid p-10 gap-6 lg:pl-5 mt-5 w-full" 
           onSubmit={handleSubmit(submitHandler)}>
-          <div className="">
-          <div className='space-y-5'>
-
             <div className='flex space-x-5'>
             <label htmlFor='title'
             className={`block pb-3 text-sm 2 ${
@@ -199,7 +198,6 @@ const submitHandler = async (data) => {
                 id="title" 
                 type="text" 
                 placeholder=''
-                // value={products.label}
                 className={`block w-full ${
                   errors.email ? "text-red-400 border-red-400" : "text-gray-700 "} px-3 py-1 mb-2 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
                   {...register("title", { 
@@ -223,7 +221,6 @@ const submitHandler = async (data) => {
               errors.description ? "text-red-400" : "text-gray-700 "} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}>Product Description:</label>
            <input 
                 name="description" 
-                // value={products.description}
                 id="description" 
                 type="text" 
                 placeholder=''
@@ -242,9 +239,7 @@ const submitHandler = async (data) => {
                     Description is Required!!!
                   </p>
                 )}
-            </div> 
             </div>
-            <div className='space-y-5'>
             <div className='flex space-x-5'>
             <label
               htmlFor="tags"
@@ -294,7 +289,7 @@ const submitHandler = async (data) => {
                     quantity is Required!!!
                   </p>
                 )}
-            </div>            
+            </div>
             <div className='flex space-x-5'>
             <label
               htmlFor='price'
@@ -347,27 +342,32 @@ const submitHandler = async (data) => {
                   </p>
                 )}
             </div>
-        </div> 
-          <div className='space-y-5'>
-            <div className='flex space-x-5 mb-5'>
-                <label className="text-sm font-normal">Product Weight:</label>
-                <select
-                 id="weight"  
-                 className={` ${
-                errors.weight ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
-                {...register('weight')}
-                  onChange={(e) => {
-                    setWeight(e.target.value);
-                  }}
-                >
-                  <option value="others" className="sm:text-bg bg-white">Select Weight</option>
-                  {weights.map((item) => (
-                  <option className="text-base border-0 outline-none capitalize bg-white text-black " value={item.name}  key={item.id}>
-                    {item.name}
-                  </option>
-                      ))}
-                </select>
-              </div>
+            <div className='flex space-x-5'>
+            <label htmlFor='weight'
+            className={`block pb-3 text-sm 2 ${
+            errors.weight ? "text-red-400" : "text-gray-700 "} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}
+            >Product Weight : </label>
+              <input 
+                name="weight" 
+                id="weight" 
+                type="text" 
+                placeholder=''
+                className={`block w-full ${
+                  errors.weight ? "text-red-400 border-red-400" : "text-gray-700 "} px-3 py-1 mb-2 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
+                  {...register("weight", { 
+                    required: "Weight is Required!!!" ,
+                   })}
+                   onKeyUp={() => {
+                     trigger("weight");
+                   }}
+                  required={true}
+                  />
+                   {errors.weight && (
+                  <p className="text-red-500 text-sm mt-2">
+                    Weight is Required!!!
+                  </p>
+                )}
+            </div>
               <div className='flex space-x-5 mb-5'>
                 <label className="text-sm font-normal">Product Strain:</label>
                 <select
@@ -395,7 +395,7 @@ const submitHandler = async (data) => {
                   }}
                   id="content"  
                   className={` ${
-                    errors.content ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
+                    errors.thcContent ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
                     {...register('thcContent')}
                 >
                   <option value="others" className="sm:text-bg bg-white">Select Content</option>
@@ -414,7 +414,7 @@ const submitHandler = async (data) => {
                   }}
                   id="content"  
                   className={` ${
-                    errors.cbdContent ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
+                    errors.content ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
                     {...register('cbdContent')}
                 >
                   <option value="others" className="sm:text-bg bg-white">Select Content</option>
@@ -427,33 +427,61 @@ const submitHandler = async (data) => {
               </div>
               <div className='flex space-x-5 mb-3'>
                 <label>Product Effects:</label>
-                <select
-                  // className="outline-none w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer"
+                <TagsInput
+                      name="effectTags"
+                      id="effectTags"
+                      autoComplete="off"
+                      required={true}
+                      placeholder="Enter Tags"
+                      maxTags={10}
+                      value={effectTags}
+                      onChange={handleTagsChange}
+                      className="block w-full px-3 py-1 text-sm
+                      h-32 focus:outline-none leading-5 rounded-md tag-box react-tagsinput focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#0F1926] border p-2 bg-gray-100 border-transparent focus:bg-white"
+                      type="text"
+                    />
+                    {errors.effectTags && <p className="mt-2 text-sm text-red-500">Please Enter the  Effects tags!!!</p>}
+              </div>
+              <div className='flex space-x-5'>
+            <label className="text-sm font-normal">Product Status: </label>
+                 <select
+                 id="status"  
+                 className={` ${
+                errors.status ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
+                {...register('status')}
                   onChange={(e) => {
-                    setEffects(e.target.value);
+                    setStatus(e.target.value);
                   }}
-                  id="effects"  
-                  className={` ${
-                    errors.effects ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
-                  {...register('effects')}
                 >
-                  <option value="others" className="sm:text-bg bg-white">Select Effects</option>
-                  {effects.map((item) => (
-                  <option className="text-base border-0 outline-none capitalize bg-white text-black " value={item.name} key={item.id}>
+                  <option value="others" className="sm:text-bg bg-white">Select Product Status</option>
+                  {Status?.map((item) => (
+                  <option className="text-base border-0 outline-none capitalize bg-white text-black " value={item.name}  key={item.id}>
                     {item.name}
                   </option>
                       ))}
                 </select>
-              </div>
             </div>
+              <div id='special' className='flex justify-between pt-10 pb-5'>
+              <p className='pb-5 text-[#2D2D2D] text-sm'>Special product</p>
+
+
+              <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="sr-only peer"
+                {...register('Special')}
+              />
+              <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-[#546052] dark:peer-focus:ring-[#1F451A] dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:[#1F451A]"></div>
+            </label>
+              </div>
               <div className="flex justify-end items-end mt-5">
                 <button
                   type="submit"
                   className="bg-[#1F451A] text-white hover: cursor-pointer p-4 rounded"
+                   
                 >
-                Edit Products
+                Add Products
                 </button>
-              </div>
               </div>
           </form>
         </div>
