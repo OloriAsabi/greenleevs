@@ -15,7 +15,7 @@ const initialState = {
 };
 
 function reducer(state, action) {
-  console.log(action.payload);
+  // console.log(action.payload);
   switch (action.type) {
     case 'USER_LOGIN':
         return { ...state, user: action.payload };

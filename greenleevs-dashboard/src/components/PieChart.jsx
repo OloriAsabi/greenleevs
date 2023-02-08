@@ -11,7 +11,7 @@ const PieChart = () => {
 
     GetBestSellingProducts()
     .then((response) => {
-      console.log("Weekly Sales",response);
+      // console.log("Weekly Sales",response);
     const data = response.data    
       setBestSellingProducts(data)
     }).catch((e) => {

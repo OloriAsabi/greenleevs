@@ -1,5 +1,5 @@
 import { useSnackbar } from 'notistack';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaTimes } from 'react-icons/fa'
 import { MdDelete } from 'react-icons/md';
@@ -20,7 +20,7 @@ const EditBrandModal = ({ showModal, setShowModal, id }) => {
             ...selectedFiles
           ]
         );
-        console.log(selectedFiles);
+        // console.log(selectedFiles);
         const formData = new FormData();
         selectedFiles.forEach( (file) => {
           formData.append("files[]", file, file.name);
@@ -28,7 +28,7 @@ const EditBrandModal = ({ showModal, setShowModal, id }) => {
     
         /** TODO: need to catch and let users know about the error!!! */
         UploadFiles(formData).then( (res) => {
-          console.log("Response: ",res);
+          // console.log("Response: ",res);
           if ( res !== undefined && res !== null && res.data !== undefined && res.data !== null) {
             setUploadedFiles(
               [
@@ -59,7 +59,7 @@ const EditBrandModal = ({ showModal, setShowModal, id }) => {
 
 
 const submitHandler = async (data) => {
-    console.log("Data Brand Modal", data);
+    // console.log("Data Brand Modal", data);
 
     const body = {
         label: data.title,
@@ -72,16 +72,16 @@ const submitHandler = async (data) => {
     try {
         EditBrand(id,body)
         .then(response => {
-          console.log(response);
+          // console.log(response);
           const responseStatus = response.data.status
   
-          if (responseStatus) {
-            enqueueSnackbar('Brand Edit Successful', { variant: responseStatus });
+          if (responseStatus === "success") {
+            enqueueSnackbar('Brand Edited Successful', { variant: responseStatus });
           } else {
-            enqueueSnackbar("Brand Edit failed" , { variant: responseStatus });
+            enqueueSnackbar("Brand Edited failed" , { variant: responseStatus });
           }
             
-          console.log("responseStatus ",responseStatus);
+          // console.log("responseStatus ",responseStatus);
         })    
       } catch (error) {
       enqueueSnackbar("Products Edit Failed", { variant: 'error' });

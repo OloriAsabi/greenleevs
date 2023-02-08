@@ -37,7 +37,7 @@ export const RegisterUser = async (body) => {
                 "Content-Type": "application/json" ,
             },
           })
-        console.log("Register Data",data);
+        // console.log("Register Data",data);
          return data; 
         } catch (error) {
             console.log(error)  
@@ -89,7 +89,7 @@ export const UserResetPassword = async (body) => {
                 "Content-Type": "application/json" ,
             },
           })
-        console.log("Register Data",data);
+        // console.log("Register Data",data);
          return data; 
         } catch (error) {
             console.log(error)  
@@ -105,7 +105,7 @@ export const UserResetPassword = async (body) => {
                   "Authorization": `Bearer ${token}`
               },
             })
-          console.log("Get Orders",data);
+          // console.log("Get Orders",data);
            return data; 
           } catch (error) {
               console.log(error)  
@@ -120,7 +120,7 @@ export const UserResetPassword = async (body) => {
                   "Authorization": `Bearer ${token}`
               },
             })
-          console.log("Get Orders",data);
+          // console.log("Get Orders",data);
            return data; 
           } catch (error) {
               console.log(error)  
@@ -135,7 +135,7 @@ export const UserResetPassword = async (body) => {
           },
         });
   
-        console.log("Details", req);
+        // console.log("Details", req);
         return req;
     } catch (error) {
         console.log(error)  
@@ -150,7 +150,7 @@ export const UserResetPassword = async (body) => {
                   "Authorization": `Bearer ${token}`
               },
             })
-          console.log("Update Order Status",data);
+          // console.log("Update Order Status",data);
            return data; 
           } catch (error) {
               console.log(error)  
@@ -165,7 +165,7 @@ export const DeleteOrders = async (id) => {
                 "Authorization": `Bearer ${token}`
             },
           })
-        console.log("Edit Product",data);
+        // console.log("Edit Product",data);
          return data; 
         } catch (error) {
             console.log(error)  
@@ -180,7 +180,7 @@ export const DeleteOrders = async (id) => {
                   "Authorization": `Bearer ${token}`
               },
             })
-          console.log("Create Products",data);
+          // console.log("Create Products",data);
            return data; 
           } catch (error) {
               console.log(error)  
@@ -195,7 +195,7 @@ export const DeleteOrders = async (id) => {
                   "Authorization": `Bearer ${token}`
               },
             })
-          console.log("Get Products",data);
+          // console.log("Get Products",data);
            return data; 
           } catch (error) {
               console.log(error)  
@@ -210,7 +210,7 @@ export const getProductId = (id) => {
         },
       });
 
-      console.log("Details", req);
+      // console.log("Details", req);
       return req;
   } catch (error) {
       console.log(error)  
@@ -226,7 +226,7 @@ export const EditProduct = async (id, body) => {
                   "Authorization": `Bearer ${token}`
               },
             })
-          console.log("Edit Product",data);
+          // console.log("Edit Product",data);
            return data; 
           } catch (error) {
               console.log(error)  
@@ -242,7 +242,7 @@ export const EditProduct = async (id, body) => {
                   "Authorization": `Bearer ${token}`
               },
             })
-          console.log("Edit Product",data);
+          // console.log("Edit Product",data);
            return data; 
           } catch (error) {
               console.log(error)  
@@ -259,7 +259,7 @@ export const EditProduct = async (id, body) => {
                   "Authorization": `Bearer ${token}`
               },
             })
-          console.log("Get Customers",data);
+          // console.log("Get Customers",data);
 
            return data; 
           } catch (error) {
@@ -276,7 +276,7 @@ export const EditProduct = async (id, body) => {
                   "Authorization": `Bearer ${token}`
               },
             })
-          console.log("Create Products",data);
+          // console.log("Create Products",data);
            return data; 
           } catch (error) {
               console.log(error)  
@@ -291,7 +291,7 @@ export const EditProduct = async (id, body) => {
                   "Authorization": `Bearer ${token}`
               },
             })
-          console.log("Delete Customer", data);
+          // console.log("Delete Customer", data);
            return data; 
           } catch (error) {
               console.log(error)  
@@ -306,7 +306,7 @@ export const EditProduct = async (id, body) => {
                   "Authorization": `Bearer ${token}`
               },
             })
-          console.log("Get categories",data);
+          // console.log("Get categories",data);
            return data; 
           } catch (error) {
               console.log(error)  
@@ -321,7 +321,7 @@ export const EditProduct = async (id, body) => {
                   "Authorization": `Bearer ${token}`
               },
             })
-          console.log("Get categories by Id",data);
+          // console.log("Get categories by Id",data);
            return data; 
           } catch (error) {
               console.log(error)  
@@ -329,14 +329,13 @@ export const EditProduct = async (id, body) => {
   }
   export const PostCategories = async (body) => {
     try {
-        const data = await axios.get(`${process.env.REACT_APP_BASEURL}/admin/categories`, body,
+        const data = await axios.post(`${process.env.REACT_APP_BASEURL}/admin/categories`, body,
             {
               headers: { 
                   "Content-Type": "application/json" ,
                   "Authorization": `Bearer ${token}`
               },
             })
-          console.log("Post categories",data);
            return data; 
           } catch (error) {
               console.log(error)  
@@ -351,7 +350,7 @@ export const EditCategories = async (id, body) => {
                 "Authorization": `Bearer ${token}`
             },
           })
-        console.log("Edit Categories",data);
+        // console.log("Edit Categories",data);
          return data; 
         } catch (error) {
             console.log(error)  
@@ -366,7 +365,7 @@ export const DeleteCategories = async (id) => {
                 "Authorization": `Bearer ${token}`
             },
           });
-        console.log("Delete Categories", data);
+        // console.log("Delete Categories", data);
          return data; 
         } catch (error) {
             console.log(error);
@@ -381,7 +380,7 @@ export const GetBrands = async () => {
                 "Authorization": `Bearer ${token}`
             },
           })
-        console.log("Get Brands",data);
+        // console.log("Get Brands",data);
          return data; 
         } catch (error) {
             console.log(error)  
@@ -396,7 +395,7 @@ export const DeleteBrands = async (id) => {
                 "Authorization": `Bearer ${token}`
             },
           });
-        console.log("Delete Brands", data);
+        // console.log("Delete Brands", data);
          return data; 
         } catch (error) {
             console.log(error);
@@ -411,7 +410,7 @@ export const PostBrand = async (body) => {
                 "Authorization": `Bearer ${token}`
             },
           })
-        console.log("Post Brands",data);
+        // console.log("Post Brands",data);
          return data; 
         } catch (error) {
             console.log(error)  
@@ -426,7 +425,7 @@ export const GetBrandById = async (id) => {
                 "Authorization": `Bearer ${token}`
             },
           })
-        console.log("Get brand by Id",data);
+        // console.log("Get brand by Id",data);
          return data; 
         } catch (error) {
             console.log(error)  
@@ -441,7 +440,7 @@ export const EditBrand = async (id, body) => {
                 "Authorization": `Bearer ${token}`
             },
           })
-        console.log("Edit Brands",data);
+        // console.log("Edit Brands",data);
          return data; 
         } catch (error) {
             console.log(error)  
@@ -457,7 +456,7 @@ export const GetRequestOptions = async () => {
                 "Authorization": `Bearer ${token}`
             },
           })
-        console.log("Get RequestOptions",data);
+        // console.log("Get RequestOptions",data);
 
          return data; 
         } catch (error) {
@@ -473,7 +472,7 @@ export const GetWeeklySales = async () => {
                 "Authorization": `Bearer ${token}`
             },
           })
-        console.log("Get RequestOptions",data);
+        // console.log("Get RequestOptions",data);
 
          return data; 
         } catch (error) {
@@ -489,7 +488,7 @@ export const GetBestSellingProducts = async () => {
                 "Authorization": `Bearer ${token}`
             },
           })
-        console.log("Get Best Selling Products",data);
+        // console.log("Get Best Selling Products",data);
 
          return data; 
         } catch (error) {

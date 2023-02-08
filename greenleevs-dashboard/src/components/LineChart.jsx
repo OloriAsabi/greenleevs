@@ -13,7 +13,7 @@ const LineChart = () => {
 
     GetWeeklySales()
     .then((response) => {
-      console.log("Weekly Sales",response);
+      // console.log("Weekly Sales",response);
     const data = response.data.data     
       setWeeklySales(data)
     }).catch((e) => {

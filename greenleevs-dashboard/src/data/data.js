@@ -19,17 +19,17 @@ export const links = [
           href: 'home'
         },
         {
-            id: 2,  
-            name: 'Products',
-            icon: <FiShoppingBag />,
-            href: 'products'
-        },
-        {
-          id: 3,  
+          id: 2,  
           name: 'Categories',
           icon: <BiCategory/>,
           href: 'categories'
       },
+      {
+        id: 3,  
+        name: 'Products',
+        icon: <FiShoppingBag />,
+        href: 'products'
+    },
         {
             id: 4,  
             name: 'Customers',
@@ -1156,6 +1156,20 @@ export const Status = [
   { id: 3,
     name: "Sold"
   }
+];
+export const orderStatus = [
+  { id: 1,
+    name: "pending"
+  },
+  { id: 2,
+    name: "shipped"
+  },
+  { id: 3,
+    name: "processing"
+  },
+  { id: 4,
+    name: "delivered"
+  },
 ];
 export const thcContents = [
   {

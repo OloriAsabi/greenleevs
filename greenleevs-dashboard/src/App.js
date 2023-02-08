@@ -6,6 +6,7 @@ import { Routes, Route, useNavigate  } from 'react-router-dom';
 import { useStateContext } from './contexts/ContextProvider';
 import { Sidebar, Navbar } from './components';
 import Productdetails from './pages/ProductDetails';
+import { SnackbarProvider } from 'notistack';
 // import ErrorPage from './pages/404';
 
 function App() {
@@ -57,6 +58,9 @@ function App() {
             <Navbar  userInfo={userInfo} />
           </div>
           <div ref={scrollRef}>
+          <SnackbarProvider
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        >
             <Routes>
               <Route exact path="/" element={(<Home />)} />
               <Route path="/home" element={(<Home/>)} />
@@ -73,6 +77,7 @@ function App() {
               {/* <Route path="/coupons" element={(<Coupons />)} /> */}
               <Route path="/settings" element={(<Settings  />)} />
             </Routes>
+            </SnackbarProvider>
           </div>
         </div>
     </div>

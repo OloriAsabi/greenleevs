@@ -1,26 +1,16 @@
 import { useSnackbar } from 'notistack';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaTimes } from 'react-icons/fa'
 import { MdDelete } from 'react-icons/md';
 import { EditCategories, UploadFiles } from '../apis/api';
 
-const EditCategoryModal = ({ showModal, setShowModal, category, id }) => {
-    const [currentCategory, setCurrentCategory] = useState({
-        id: '',
-    });
+const EditCategoryModal = ({ showModal, setShowModal, category }) => {
     const { enqueueSnackbar } = useSnackbar();
     const [files, setFiles] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState([]);
+    
 
-
-console.log("Products: ", currentCategory);
-
-useEffect(() => {
-  setCurrentCategory({
-    id:  category.id
-  })
-  }, [category.id]);
 
   function uploadSingleFile(e) {
     const selectedFiles = Array.from(e.target.files);
@@ -46,6 +36,7 @@ useEffect(() => {
             ...res.data.data
           ]
         );
+       enqueueSnackbar('Image Added Successfully', { variant: res.data.status });
       }
     } ).catch( (error) => {
       console.log(error)
@@ -72,17 +63,17 @@ const submitHandler = async (data) => {
     const body = {
         label: data.title,
         slug: data.slug,
-        category_image: uploadedFiles[0]['file_url'],
+        image: uploadedFiles[0]['file_url'],
     }
 
-    console.log('Body',body);
+    // console.log('Body',body);
     try {
-        EditCategories(id,body)
+        EditCategories(category.id ,body)
         .then(response => {
           console.log(response);
           const responseStatus = response.data.status
   
-          if (responseStatus) {
+          if (responseStatus === "success") {
             enqueueSnackbar('Category Edit Successful', { variant: responseStatus });
           } else {
             enqueueSnackbar("Category Edit failed" , { variant: responseStatus });
@@ -96,6 +87,7 @@ const submitHandler = async (data) => {
     }
 }
 
+// console.log(category);
   return (
     <main
     className={
@@ -124,7 +116,7 @@ const submitHandler = async (data) => {
        </div>
         <div className="flex w-full text-center justify-center items-center pr-10 pl-10">
         <div className="grid justify-center items-center bg-white lg:p-5 p-3 w-full">
-        <div className="container">
+        <div className="container mb-6">
           <div className="form-group preview">
           {files.length > 0 &&
             files.map((item, index) => {
@@ -165,7 +157,6 @@ const submitHandler = async (data) => {
                 id="title" 
                 type="text" 
                 placeholder=''
-                // value={products.label}
                 className={`block w-full ${
                   errors.title ? "text-red-400 border-red-400" : "text-gray-700 "} px-3 py-1 mb-2 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
                   {...register("title", { 

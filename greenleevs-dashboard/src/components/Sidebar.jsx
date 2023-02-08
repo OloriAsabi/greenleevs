@@ -46,7 +46,7 @@ const Sidebar = () => {
                     key={link.id}
                     to={`/${link.href}`}
                     onClick={handleCloseSideBar}
-                    className={({ isActive }) => (isActive ? activeLink : normalLink)}
+                 className={({ isActive }) => (isActive ? activeLink : normalLink)}
                   >
                     {link.icon}
                     <span className="capitalize active:bg-slate-600" >{link.name}</span>

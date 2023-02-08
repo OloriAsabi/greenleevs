@@ -49,8 +49,6 @@ const CustomersTable = () => {
 
   customerRef.current = customers;
 
-
-  console.log("Customers",customers);
      
   useEffect(() => {
    

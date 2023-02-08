@@ -2,46 +2,43 @@ import { useSnackbar } from 'notistack';
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { FaTimes } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
 import { UpdateOrderStatus } from '../apis/api';
-import { Status } from '../data/data';
+import { orderStatus } from '../data/data';
 
 const OrdersModal = ({ showModal, setShowModal, id }) => {
-    const navigate = useNavigate();
-    const [status, setStatus] = useState(Status);
+    const [status, setStatus] = useState(orderStatus);
     const { enqueueSnackbar } = useSnackbar();
 
     const {
         register,
         handleSubmit,
         formState: { errors },
-        trigger
       } = useForm();
 
       const submitHandler = async (data) => {
-        console.log("Orders Product Modal", data);
+        // console.log("Orders Product Modal", data);
 
         const body = {
             order_id: id,
             status: data.status
         }
-        console.log('Body',body);
+        // console.log('Body',body);
         try {
             UpdateOrderStatus(body)
             .then(response => {
-              console.log(response);
+              // console.log(response);
               const responseStatus = response.status
       
-              if (responseStatus) {
-                enqueueSnackbar('Order Status Successful', { variant: responseStatus });
+              if (responseStatus  === "success" || 200) {
+                alert('Order Status Successful', { variant: responseStatus });
               } else {
-                enqueueSnackbar("Order Status failed" , { variant: responseStatus });
+                alert("Order Status failed" , { variant: responseStatus });
               }
                 
-              console.log("responseStatus ",responseStatus);
+              // console.log("responseStatus ",responseStatus);
             })    
           } catch (error) {
-          enqueueSnackbar("Products Edit Failed", { variant: 'error' });
+          alert("Order Status  Failed", { variant: 'error' });
           console.log(error);
             
         }
@@ -91,7 +88,7 @@ const OrdersModal = ({ showModal, setShowModal, id }) => {
                   }}
                 >
                   <option value="others" className="sm:text-bg bg-white">Select Order's Status</option>
-                  {Status?.map((item) => (
+                  {orderStatus?.map((item) => (
                   <option className="text-base border-0 outline-none capitalize bg-white text-black " value={item.name}  key={item.id}>
                     {item.name}
                   </option>
@@ -103,7 +100,7 @@ const OrdersModal = ({ showModal, setShowModal, id }) => {
                   type="submit"
                   className="bg-[#1F451A] text-white hover: cursor-pointer p-4 rounded"
                 >
-                Add Orders
+                Update Orders
                 </button>
               </div>
           </form>

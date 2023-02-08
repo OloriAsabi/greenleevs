@@ -15,14 +15,14 @@ const BrandsDetails = () => {
     useEffect(() => {
         setIsLoading(true)
         GetBrandById(id).then((data) => {
-            console.log(data)
+            // console.log(data)
             const items = data.data
             setBrand(items.data);
             setIsLoading(false)
         })
     },[id]);
 
-    console.log(brand);
+    // console.log(brand);
   return (
     <div className='container'>
         {brand 
@@ -48,7 +48,7 @@ const BrandsDetails = () => {
     >
     Edit
     </button>
-    <button className='text-white w-20 bg-[#1F451A] rounded items-center cursor-pointer text-center text-xl p-2 font-extrabold m-3 ' onClick={() => history('/products')}>
+    <button className='text-white w-20 bg-[#1F451A] rounded items-center cursor-pointer text-center text-xl p-2 font-extrabold m-3 ' onClick={() => history('/brands')}>
     Back
     </button>
     </div>

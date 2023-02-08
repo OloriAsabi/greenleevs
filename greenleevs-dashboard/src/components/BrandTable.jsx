@@ -69,11 +69,11 @@ const BrandTable = () => {
     brandsRef.current = brands;
   
   
-    console.log("Categories",brands);
+    // console.log("Categories",brands);
 
     const brandId = (rowIndex) => {
         const id = brandsRef.current[rowIndex].id;
-        console.log(id);
+        // console.log(id);
         
         GetBrandById(id)
         navigate("/brands/" + id);
@@ -85,15 +85,15 @@ const BrandTable = () => {
         DeleteBrands(id).then(() => {
           navigate('/brands')
     
-          let newBrands = [...brands.current];
+          let newBrands = [...brandsRef.current];
           newBrands.splice(rowIndex, 1)
     
           setBrands(newBrands);
-          enqueueSnackbar('Categories Deleted Successful', { variant: 'success' });
+          enqueueSnackbar('Brand Deleted Successful', { variant: 'success' });
         })
         .catch((e) => {
           console.log(e);
-          enqueueSnackbar('Categories delete Failed', { variant: 'error' });
+          enqueueSnackbar('Brand delete Failed', { variant: 'error' });
         });
       }
 
@@ -101,7 +101,7 @@ const BrandTable = () => {
         setIsLoading(true)
         GetBrands()
         .then((response) => {
-        console.log(response);
+        // console.log(response);
         const data = response.data.data
           
         setBrands(data)

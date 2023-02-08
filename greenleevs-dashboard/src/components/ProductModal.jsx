@@ -10,13 +10,15 @@ import { strain, thcContents, cbdContents, Status } from "../data/data"
 import { CreateProducts, UploadFiles } from '../apis/api';
 
 const ProductModal = ({ toggleMenu, setToggleMenu }) => {
-  const { dispatch  } = useStateContext();
+  const { dispatch, state  } = useStateContext();
+  const { categories } = state
   const navigate = useNavigate()
 
   const [tags, setTags] = useState([]);
   const [effectTags, setEffectTags] = useState([]);
   const [strains, setStrains] = useState(strain);
   const [status, setStatus] = useState(Status);
+  const [category, setCategory] = useState(categories);
   const [thcContent, setThcContent] = useState(thcContents);
   const [cbdContent, setCbdContent] = useState(cbdContents);
   
@@ -45,7 +47,6 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
         ...selectedFiles
       ]
     );
-    console.log(selectedFiles);
     const formData = new FormData();
     selectedFiles.forEach( (file) => {
       formData.append("files[]", file, file.name);
@@ -53,7 +54,6 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
 
     /** TODO: need to catch and let users know about the error!!! */
     UploadFiles(formData).then( (res) => {
-      console.log("Response: ",res);
       if ( res !== undefined && res !== null && res.data !== undefined && res.data !== null) {
         setUploadedFiles(
           [
@@ -75,23 +75,16 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
   }
 
   const handleTagsChange = (newTags) => {
-    console.log(tags)
-    console.log(newTags)
-
     setTags(newTags);
-    setEffectTags(newTags)
   };
   const handleEffectsTagsChange = (newTags) => {
-    console.log(effectTags)
-    console.log(newTags)
-
     setEffectTags(newTags)
   };
 
-
+// console.log(categories);
 
   const submitHandler = async (data) => {
-    console.log("Data Product Modal", data.special);
+    // console.log("Data Product Modal", data.special);
 
     const body = {
       label: data.title,
@@ -100,7 +93,7 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
       quantity: data.quantity,
       description: data.description,
       price: data.price,
-      category_id: 2,
+      category_id: data.categoryId,
       sale_price: data.salePrice,
       tags: tags,
       status: data.status,
@@ -133,9 +126,9 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
     try {
       CreateProducts(body)
        .then(response => {
-        console.log(response);
+        // console.log(response);
         const responseStatus = response.data.status
-        if (responseStatus) {
+        if (responseStatus  === "success") {
           enqueueSnackbar('Products Added Successfully', { variant: responseStatus });
         } else {
           enqueueSnackbar("Products Upload failed" , { variant: responseStatus });
@@ -475,6 +468,25 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
                   {Status?.map((item) => (
                   <option className="text-base border-0 outline-none capitalize bg-white text-black " value={item.name}  key={item.id}>
                     {item.name}
+                  </option>
+                      ))}
+                </select>
+            </div>
+            <div className='flex space-x-5'>
+            <label className="text-sm font-normal">Choose Category Id: </label>
+                 <select
+                 id="categoryId"  
+                 className={` ${
+                errors.categoryId ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
+                {...register('categoryId')}
+                  onChange={(e) => {
+                    setCategory(e.target.value);
+                  }}
+                >
+                  <option value="others" className="sm:text-bg bg-white">Select Category Id</option>
+                  {categories?.map((item) => (
+                  <option className="text-base border-0 outline-none capitalize bg-white text-black " value={item.id}  key={item.id}>
+                    {item.slug}
                   </option>
                       ))}
                 </select>

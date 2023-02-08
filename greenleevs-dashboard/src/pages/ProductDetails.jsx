@@ -69,10 +69,10 @@ const Productdetails = () => {
     </div>
     {showModal ? 
           <EditProductModal
-          id={id}
+            id={id}
            showModal={showModal} 
            setShowModal={setShowModal}
-           products={product} /> 
+           product={product} /> 
     : ''}
 </div>
   )

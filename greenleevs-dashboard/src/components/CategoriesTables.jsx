@@ -14,6 +14,8 @@ import { AiFillDelete } from 'react-icons/ai';
 import { useSnackbar } from 'notistack';
 import Spinner from './Spinner';
 import CategoryModal from './CategoryModal';
+import { useStateContext } from '../contexts/ContextProvider';
+import EditCategoryModal from './EditCategoryModal';
 
 export function GlobalFilter({
     globalFilter,
@@ -56,35 +58,33 @@ export function GlobalFilter({
   }
 const CategoriesTables = () => {
     const [toggleMenu, setToggleMenu] = useState(false);
+    const [showModal, setShowModal] = useState(false);
     const [categories, setCategories] = useState([])
     const [isLoading, setIsLoading] = useState(false);
     const data =  useMemo(() => [...categories], [categories]);
     const categoriesRef = useRef();
     const navigate = useNavigate();
+    const { dispatch  } = useStateContext();
 
 
     const { enqueueSnackbar } = useSnackbar();
 
     categoriesRef.current = categories;
-  
-  
-    console.log("Categories",categories);
 
     const categoryId = (rowIndex) => {
         const id = categoriesRef.current[rowIndex].slug;
-        console.log(id);
         
         GetCategoryById(id)
         navigate("/categories/" + id);
       };
        
     const handleDelete = (rowIndex) => {
-        const id = categoriesRef.current[rowIndex].parent_id;
+        const id = categoriesRef.current[rowIndex].id;
     
         DeleteCategories(id).then(() => {
           navigate('/categories')
     
-          let newCategories = [...categories.current];
+          let newCategories = [...categoriesRef.current];
           newCategories.splice(rowIndex, 1)
     
           setCategories(newCategories);
@@ -100,10 +100,12 @@ const CategoriesTables = () => {
         setIsLoading(true)
         GetCategories()
         .then((response) => {
-        console.log(response);
+        // console.log(response);
         const data = response.data.data
           
         setCategories(data)
+        dispatch({ type: 'ADD_CATEGORIES', payload: data});
+        localStorage.setItem('categories', JSON.stringify(data));
         setIsLoading(false)
         }).catch((e) => {
         console.log(e);
@@ -113,7 +115,7 @@ const CategoriesTables = () => {
       const columns = useMemo(() => [
         {
           Header: "ID",
-          accessor: "parent_id",
+          accessor: "id",
         },
         {
           Header: "Category Name",
@@ -134,6 +136,30 @@ const CategoriesTables = () => {
             )
           },
         },
+      //   {
+      //     Header: "Edit",
+      //     Cell: (props) => {
+      //       const rowIdx = props.row.id;
+      //       return (
+      //         <div>
+      //            <div>
+      //            <button className='text-[#1F451A] rounded items-center cursor-pointer text-center text-xl p-2 font-extrabold m-3'
+      //             onClick={() => setShowModal(true)}
+      //             >
+      //             Edit
+      //             </button>
+      //             {showModal ? 
+      //             <EditCategoryModal
+      //             id={rowIdx}
+      //             showModal={showModal} 
+      //             setShowModal={setShowModal}
+      //          /> 
+      //           : ''}
+      //            </div>
+      //         </div>
+      //     )
+      //   },
+      // },
         {
           Header: "Actions",
           Cell: (props) => {
@@ -189,18 +215,18 @@ const CategoriesTables = () => {
 
   return (
     <div>
-        <div className='grid items-center text-center lg:grid-cols-2 md:grid-cols-2  sm:grid-cols-1 gap-5 p-5 mb-10 border-white shadow rounded-xl'>
+        <div className='grid items-center text-center lg:grid-cols-3 md:grid-cols-3  sm:grid-cols-1 gap-5 p-5 mb-10 border-white shadow rounded-xl'>
         <GlobalFilter
         preGlobalFilteredRows={preGlobalFilteredRows}
         globalFilter={state.globalFilter}
         setGlobalFilter={setGlobalFilter}
          />
-               <div className='w-4/8'>
+        <div className='w-4/8'>
         <button className='p-3 bg-[#1F451A] text-white text-center rounded cursor-pointer'
           onClick={() => setToggleMenu(true)}>
             + Add Categories
         </button> 
-        <CategoryModal toggleMenu={toggleMenu} setToggleMenu={setToggleMenu} />
+        <CategoryModal toggleMenu={toggleMenu} setToggleMenu={setToggleMenu} />   
         </div>
         </div>
       
@@ -208,9 +234,9 @@ const CategoriesTables = () => {
             <div className="-my-2 overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">
               <div  className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                 <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-  {isLoading 
-       ? <Spinner />  
-          :               
+       {isLoading 
+            ? <Spinner />  
+                :               
                     <table {...getTableProps()} className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-10">
                       {headerGroups.map((headerGroup) => (
@@ -222,7 +248,7 @@ const CategoriesTables = () => {
                                     {column.render("Header")}
                                     </th>
                               ))}
-                          </tr>
+                          </tr>           
                       ))}
                   </thead>
                   <tbody {...getTableBodyProps()}

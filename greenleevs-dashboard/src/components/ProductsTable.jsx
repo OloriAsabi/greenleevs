@@ -137,7 +137,7 @@ const ProductsTable = () => {
     const navigate = useNavigate();
 
     productRef.current = products;
-    console.log("Datas", data);
+    // console.log("Datas", data);
     const { enqueueSnackbar } = useSnackbar();
    
   useEffect(() => {

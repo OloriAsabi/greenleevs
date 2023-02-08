@@ -48,6 +48,7 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
             ...res.data.data
           ]
         );
+        enqueueSnackbar('Image Added Successfully', { variant: res.data.status });
       }
     } ).catch( (error) => {
       console.log(error)
@@ -67,7 +68,7 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
     const body = {
       label: data.title ,
       slug: data.slug,
-      category_image: uploadedFiles[0]['file_url'],
+      image: uploadedFiles[0]['file_url'],
     };
 
     console.log('Body',body);
@@ -76,12 +77,12 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
       PostCategories(body)
       .then(response => {
        console.log("Post Cat",response);
-      //  const responseStatus = response.data.status
-      //  if (responseStatus) {
-      //    enqueueSnackbar('Categories Added Successfully', { variant: responseStatus });
-      //  } else {
-      //    enqueueSnackbar("Categories Upload failed" , { variant: responseStatus });
-      //  }
+       const responseStatus = response.data.status
+       if (responseStatus) {
+         enqueueSnackbar('Categories Added Successfully', { variant: responseStatus });
+       } else {
+         enqueueSnackbar("Categories Upload failed" , { variant: responseStatus });
+       }
      });
      dispatch({ type: 'ADD_CATEGORIES', payload: body});
      localStorage.setItem('categories', JSON.stringify(body));

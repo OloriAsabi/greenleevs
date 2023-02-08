@@ -34,7 +34,7 @@ const Table = () => {
     
         GetRecentOrder()
         .then((response) => {
-        console.log('Recent', response);
+        // console.log('Recent', response);
         const data = response.data.data
           
         setRecent(data)

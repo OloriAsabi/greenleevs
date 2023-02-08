@@ -1,16 +1,13 @@
 import { useSnackbar } from 'notistack';
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { FaTimes } from 'react-icons/fa'
-import { EditProduct } from '../apis/api';
-import { cbdContents, contents, effect, Status, strain, thcContents, weights } from "../data/data"
+import { EditProduct,  UploadFiles } from '../apis/api';
+import { cbdContents, Status, strain, thcContents } from "../data/data"
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
 
-const EditProductModal = ({ showModal, setShowModal, products, id }) => {
-const [currentProduct, setCurrentProduct] = useState({
-    id: '',
-});
+const EditProductModal = ({ showModal, setShowModal, id, product }) => {
 const { enqueueSnackbar } = useSnackbar();
 const [tags, setTags] = useState([]);
 const [strains, setStrains] = useState(strain);
@@ -19,43 +16,45 @@ const [cbdContent, setCbdContent] = useState(cbdContents);
 const [status, setStatus] = useState(Status);
 const [effectTags, setEffectTags] = useState([]);
 
-const [file, setFile] = useState([]);
-const [image, setImage] = useState();
+const [uploadedFiles, setUploadedFiles] = useState([]);
+const [files, setFiles] = useState([]);
 
-console.log("Images: ",image);
+function uploadSingleFile(e) {
+  const selectedFiles = Array.from(e.target.files);
+  setFiles(
+    [
+      ...files,
+      ...selectedFiles
+    ]
+  );
+  console.log(selectedFiles);
+  const formData = new FormData();
+  selectedFiles.forEach( (file) => {
+    formData.append("files[]", file, file.name);
+  });
 
-console.log("Products: ", currentProduct);
+  /** TODO: need to catch and let users know about the error!!! */
+  UploadFiles(formData).then( (res) => {
+    console.log("Response: ",res);
+    if ( res !== undefined && res !== null && res.data !== undefined && res.data !== null) {
+      setUploadedFiles(
+        [
+          ...uploadedFiles,
+          ...res.data.data
+        ]
+      );
+      enqueueSnackbar('Image Added Successfully', { variant: res.data.status });
+    }
+  } ).catch( (error) => {
+    console.log(error)
+  });
+}
 
-useEffect(() => {
-  setCurrentProduct({
-    id: products.product_id,
-  })
-  }, [products]);
-
-  function uploadSingleFile(e) {
-    const selectedFile = e.target.files[0];
-    let ImagesArray = Object.entries(e.target.files).map((e) =>
-      URL.createObjectURL(e[1])
-    );
-    console.log(ImagesArray);
-    setFile([...file, ...ImagesArray]);
-    setImage(URL.createObjectURL(selectedFile))
-    console.log("file", file);
-  }
-
-  console.log("Images: ",image);
-
-  function deleteFile(e) {
-    const s = file.filter((item, index) => index !== e);
-    setFile(s);
-    console.log(s);
-  }
-
-  const handleInputChange = event => {
-    const { name, value } = event.target;
-    setCurrentProduct({ ...currentProduct, [name]: value });
-  };
-
+function deleteFile(e) {
+  const s = files.filter((item, index) => index !== e);
+  setFiles(s);
+  console.log(s);
+}
   const {
     register,
     handleSubmit,
@@ -64,20 +63,18 @@ useEffect(() => {
   } = useForm();
 
   const handleTagsChange = (newTags) => {
-    console.log(tags)
-    console.log(newTags)
 
     setTags(newTags);
+  };
+  const handleEffectsTagsChange = (newTags) => {
     setEffectTags(newTags)
   };
 
 const submitHandler = async (data) => {
-  console.log("Data Product Modal", data);
-
   const body = {
     label: data.title,
-    product_image: image,
-    product_images: file, 
+    product_image: uploadedFiles[0]['file_url'],
+    product_images: uploadedFiles.map((file) => file['file_url']),
     quantity: data.quantity,
     description: data.description,
     price: data.price,
@@ -108,27 +105,25 @@ const submitHandler = async (data) => {
     ]
   };
 
-  console.log('Body',body);
-  console.log(id);
   try {
-    EditProduct(id,body)
+    EditProduct(product.product_id ,body)
       .then(response => {
-        console.log(response);
+         console.log(response);
         const responseStatus = response.data.status
 
-        if (responseStatus) {
+        if (responseStatus  === "success") {
           enqueueSnackbar('Product Edit Successful', { variant: responseStatus });
         } else {
           enqueueSnackbar("Product Edit failed" , { variant: responseStatus });
         }
           
-        console.log("responseStatus ",responseStatus);
+        // console.log("responseStatus ",responseStatus);
       })    
     } catch (error) {
     enqueueSnackbar("Products Edit Failed", { variant: 'error' });
-    console.log(error);
     }
 }
+console.log(product);
 
 
   return (
@@ -159,12 +154,12 @@ const submitHandler = async (data) => {
        </div>
         <div className="flex w-full text-center justify-center items-center pr-10 pl-10">
         <div className="grid justify-center items-center bg-white lg:p-5 p-3 w-full">
-          <div className="container mb-5">
+        <div className="container">
           <div className="form-group preview">
-          {file.length > 0 &&
-            file.map((item, index) => {
+          {files.length > 0 &&
+            files.map((item, index) => {
               return (
-                <div key={item}>
+                <div key={index}>
                   <img src={item} alt="" />
                   <button type="button" className='bg-red-500 text-white p-2 rounded m-5 cursor-pointer' onClick={() => deleteFile(index)}>
                     delete
@@ -177,7 +172,7 @@ const submitHandler = async (data) => {
           <div className="form-group">
             <input
               type="file"
-              disabled={file.length === 5}
+              disabled={files.length === 5}
               className="form-control"
               onChange={uploadSingleFile}
               multiple
@@ -435,7 +430,7 @@ const submitHandler = async (data) => {
                       placeholder="Enter Tags"
                       maxTags={10}
                       value={effectTags}
-                      onChange={handleTagsChange}
+                      onChange={handleEffectsTagsChange}
                       className="block w-full px-3 py-1 text-sm
                       h-32 focus:outline-none leading-5 rounded-md tag-box react-tagsinput focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#0F1926] border p-2 bg-gray-100 border-transparent focus:bg-white"
                       type="text"
@@ -480,7 +475,7 @@ const submitHandler = async (data) => {
                   className="bg-[#1F451A] text-white hover: cursor-pointer p-4 rounded"
                    
                 >
-                Add Products
+                Edit Products
                 </button>
               </div>
           </form>
