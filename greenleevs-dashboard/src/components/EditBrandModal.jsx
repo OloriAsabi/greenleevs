@@ -59,8 +59,6 @@ const EditBrandModal = ({ showModal, setShowModal, id }) => {
 
 
 const submitHandler = async (data) => {
-    // console.log("Data Brand Modal", data);
-
     const body = {
         label: data.title,
         slug: data.slug,
@@ -72,7 +70,6 @@ const submitHandler = async (data) => {
     try {
         EditBrand(id,body)
         .then(response => {
-          // console.log(response);
           const responseStatus = response.data.status
   
           if (responseStatus === "success") {
@@ -80,8 +77,6 @@ const submitHandler = async (data) => {
           } else {
             enqueueSnackbar("Brand Edited failed" , { variant: responseStatus });
           }
-            
-          // console.log("responseStatus ",responseStatus);
         })    
       } catch (error) {
       enqueueSnackbar("Products Edit Failed", { variant: 'error' });

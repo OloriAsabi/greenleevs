@@ -52,6 +52,27 @@ const Productdetails = () => {
             </div>
         </div>
         <p className='text-14 pt-5 capitalize'>{product.description}</p>
+        <ul className='space-y-5'>
+                <li className='flex justify-between text-justify gap-20 items-center'>
+                  <span className='text-black text-2xl font-normal'>Brand </span>
+                    {product?.brand?.label}
+                </li>
+                <li className='flex justify-between text-justify items-center'>
+                  <span className='text-black text-2xl font-normal'>Brand Logo </span>
+                  <img src={product?.brand?.logo} className="rounded-full object-cover w-auto h-32"  alt='' />
+                </li>
+                {/* {product.metas?.map((meta) => (
+                      <li className='flex justify-between text-justify gap-20 items-center' key={meta.id}>
+                      <span className='text-black text-2xl capitalize font-normal'>{meta.option}; </span>
+                            {meta?.values?.map((value, index) => (
+                           <div key={index} className="ml-8 mt-2">
+                                <button className='text-[#1F451A] text-xl rounded p-3'>{value?.size  ? `size: ${value?.size}`  : value }</button>
+                                <button className='text-[#1F451A] text-xl rounded p-3'>{value?.price ? `price:  $${value?.price}` : ""}</button>
+                              </div>
+                            ))}
+                    </li>
+                      ))}  */}
+              </ul>
         </div>
      </div> 
      : ""

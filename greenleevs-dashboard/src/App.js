@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import './App.css';
-import { Brands, Categories, Coupons,CategoryDetails, Customers, Home, Orders, Products, Settings, OrdersDetails, BrandsDetails  } from "./pages";
+import { Brands, Categories, CategoryDetails, Customers, Home, Orders, Products, Settings, OrdersDetails, BrandsDetails  } from "./pages";
 import { Routes, Route, useNavigate  } from 'react-router-dom';
 
 import { useStateContext } from './contexts/ContextProvider';
@@ -74,7 +74,6 @@ function App() {
               <Route path="/orders/:id" element={(<OrdersDetails />)} />
               <Route path='/brands' element={(<Brands />)} />
               <Route path='/brands/:id' element={(<BrandsDetails />)} />
-              {/* <Route path="/coupons" element={(<Coupons />)} /> */}
               <Route path="/settings" element={(<Settings  />)} />
             </Routes>
             </SnackbarProvider>

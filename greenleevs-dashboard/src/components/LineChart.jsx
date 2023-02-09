@@ -5,15 +5,10 @@ import { GetWeeklySales } from '../apis/api';
 ChartJS.register(...registerables);
 
 const LineChart = () => {
-
-
   const [weeklySales, setWeeklySales] = useState([]);
   useEffect(() => {
-   
-
     GetWeeklySales()
     .then((response) => {
-      // console.log("Weekly Sales",response);
     const data = response.data.data     
       setWeeklySales(data)
     }).catch((e) => {
@@ -51,18 +46,6 @@ const LineChart = () => {
       height={400}
       width={600}
       options={{
-        // maintainAspectRatio: false,
-        scales: {
-          // yAxes: [
-          //   {
-          //     ticks: {
-          //       beginAtZero: true,
-          //       min: 0,
-          //       stepSize: 2,
-          //     },
-          //   },
-          // ],
-        },
         legend: {
           labels: {
             fontSize: 40,

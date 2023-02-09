@@ -16,7 +16,6 @@ export { default as Spinner} from "./Spinner";
 export { default as CustomersTable } from './CustomersTable';
 export { default as OrdersTable } from './OrdersTable';
 export { default as OrdersModal } from './OrdersModal';
-export { default as CouponTable } from './CouponTable';
 export { default as EditProductModal } from './EditProductModal'
 export { default as EditBrandModal } from './EditBrandModal'
 export { default as EditCategoryModal } from './EditCategoryModal'

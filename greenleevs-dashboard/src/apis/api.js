@@ -388,7 +388,7 @@ export const GetBrands = async () => {
 }
 export const DeleteBrands = async (id) => {
   try {
-      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/admin//marks/${id}/delete`,
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/admin/marks/${id}/delete`,
           {
             headers: { 
                 "Content-Type": "application/json" ,

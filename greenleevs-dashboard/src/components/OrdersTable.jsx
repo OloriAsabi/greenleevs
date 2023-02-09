@@ -98,7 +98,6 @@ const OrdersTable = () => {
   const navigate = useNavigate();
 
   const { enqueueSnackbar } = useSnackbar();
-  // console.log("Datas", data);
 
   ordersRef.current = orders;
      
@@ -107,8 +106,6 @@ const OrdersTable = () => {
 
     GetOrders()
     .then((response) => {
-      // console.log(response);
-
     const data = response.data.data
       
     setOrders(data)

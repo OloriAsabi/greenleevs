@@ -81,11 +81,7 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
     setEffectTags(newTags)
   };
 
-// console.log(categories);
-
   const submitHandler = async (data) => {
-    // console.log("Data Product Modal", data.special);
-
     const body = {
       label: data.title,
       product_image: uploadedFiles[0]['file_url'],

@@ -15,7 +15,6 @@ import { useSnackbar } from 'notistack';
 import Spinner from './Spinner';
 import CategoryModal from './CategoryModal';
 import { useStateContext } from '../contexts/ContextProvider';
-import EditCategoryModal from './EditCategoryModal';
 
 export function GlobalFilter({
     globalFilter,
@@ -58,7 +57,6 @@ export function GlobalFilter({
   }
 const CategoriesTables = () => {
     const [toggleMenu, setToggleMenu] = useState(false);
-    const [showModal, setShowModal] = useState(false);
     const [categories, setCategories] = useState([])
     const [isLoading, setIsLoading] = useState(false);
     const data =  useMemo(() => [...categories], [categories]);
@@ -100,9 +98,7 @@ const CategoriesTables = () => {
         setIsLoading(true)
         GetCategories()
         .then((response) => {
-        // console.log(response);
-        const data = response.data.data
-          
+        const data = response.data.data         
         setCategories(data)
         dispatch({ type: 'ADD_CATEGORIES', payload: data});
         localStorage.setItem('categories', JSON.stringify(data));
@@ -110,7 +106,7 @@ const CategoriesTables = () => {
         }).catch((e) => {
         console.log(e);
         });
-      },[]);
+      },[dispatch]);
 
       const columns = useMemo(() => [
         {
@@ -136,30 +132,6 @@ const CategoriesTables = () => {
             )
           },
         },
-      //   {
-      //     Header: "Edit",
-      //     Cell: (props) => {
-      //       const rowIdx = props.row.id;
-      //       return (
-      //         <div>
-      //            <div>
-      //            <button className='text-[#1F451A] rounded items-center cursor-pointer text-center text-xl p-2 font-extrabold m-3'
-      //             onClick={() => setShowModal(true)}
-      //             >
-      //             Edit
-      //             </button>
-      //             {showModal ? 
-      //             <EditCategoryModal
-      //             id={rowIdx}
-      //             showModal={showModal} 
-      //             setShowModal={setShowModal}
-      //          /> 
-      //           : ''}
-      //            </div>
-      //         </div>
-      //     )
-      //   },
-      // },
         {
           Header: "Actions",
           Cell: (props) => {

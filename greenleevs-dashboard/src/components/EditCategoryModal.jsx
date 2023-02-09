@@ -65,8 +65,6 @@ const submitHandler = async (data) => {
         slug: data.slug,
         image: uploadedFiles[0]['file_url'],
     }
-
-    // console.log('Body',body);
     try {
         EditCategories(category.id ,body)
         .then(response => {
@@ -87,7 +85,6 @@ const submitHandler = async (data) => {
     }
 }
 
-// console.log(category);
   return (
     <main
     className={

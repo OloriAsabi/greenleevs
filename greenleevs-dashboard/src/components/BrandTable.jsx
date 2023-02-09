@@ -67,14 +67,10 @@ const BrandTable = () => {
     const { enqueueSnackbar } = useSnackbar();
 
     brandsRef.current = brands;
-  
-  
-    // console.log("Categories",brands);
+
 
     const brandId = (rowIndex) => {
         const id = brandsRef.current[rowIndex].id;
-        // console.log(id);
-        
         GetBrandById(id)
         navigate("/brands/" + id);
       };

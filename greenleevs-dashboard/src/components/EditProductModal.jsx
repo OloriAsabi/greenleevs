@@ -7,7 +7,7 @@ import { cbdContents, Status, strain, thcContents } from "../data/data"
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
 
-const EditProductModal = ({ showModal, setShowModal, id, product }) => {
+const EditProductModal = ({ showModal, setShowModal,product }) => {
 const { enqueueSnackbar } = useSnackbar();
 const [tags, setTags] = useState([]);
 const [strains, setStrains] = useState(strain);
@@ -27,7 +27,6 @@ function uploadSingleFile(e) {
       ...selectedFiles
     ]
   );
-  console.log(selectedFiles);
   const formData = new FormData();
   selectedFiles.forEach( (file) => {
     formData.append("files[]", file, file.name);
@@ -35,7 +34,6 @@ function uploadSingleFile(e) {
 
   /** TODO: need to catch and let users know about the error!!! */
   UploadFiles(formData).then( (res) => {
-    console.log("Response: ",res);
     if ( res !== undefined && res !== null && res.data !== undefined && res.data !== null) {
       setUploadedFiles(
         [
@@ -108,7 +106,6 @@ const submitHandler = async (data) => {
   try {
     EditProduct(product.product_id ,body)
       .then(response => {
-         console.log(response);
         const responseStatus = response.data.status
 
         if (responseStatus  === "success") {
@@ -116,15 +113,11 @@ const submitHandler = async (data) => {
         } else {
           enqueueSnackbar("Product Edit failed" , { variant: responseStatus });
         }
-          
-        // console.log("responseStatus ",responseStatus);
       })    
     } catch (error) {
     enqueueSnackbar("Products Edit Failed", { variant: 'error' });
     }
 }
-console.log(product);
-
 
   return (
     <main

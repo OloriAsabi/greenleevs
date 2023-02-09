@@ -1,4 +1,4 @@
-import { useSnackbar } from 'notistack';
+// import { useSnackbar } from 'notistack';
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { FaTimes } from 'react-icons/fa';
@@ -7,7 +7,7 @@ import { orderStatus } from '../data/data';
 
 const OrdersModal = ({ showModal, setShowModal, id }) => {
     const [status, setStatus] = useState(orderStatus);
-    const { enqueueSnackbar } = useSnackbar();
+    // const { enqueueSnackbar } = useSnackbar();
 
     const {
         register,
@@ -16,17 +16,13 @@ const OrdersModal = ({ showModal, setShowModal, id }) => {
       } = useForm();
 
       const submitHandler = async (data) => {
-        // console.log("Orders Product Modal", data);
-
         const body = {
             order_id: id,
             status: data.status
         }
-        // console.log('Body',body);
         try {
             UpdateOrderStatus(body)
             .then(response => {
-              // console.log(response);
               const responseStatus = response.status
       
               if (responseStatus  === "success" || 200) {
@@ -34,8 +30,6 @@ const OrdersModal = ({ showModal, setShowModal, id }) => {
               } else {
                 alert("Order Status failed" , { variant: responseStatus });
               }
-                
-              // console.log("responseStatus ",responseStatus);
             })    
           } catch (error) {
           alert("Order Status  Failed", { variant: 'error' });

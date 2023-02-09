@@ -10,9 +10,7 @@ import { CreateCustomers } from '../apis/api';
 const CustomerModal = ({ toggleMenu, setToggleMenu }) => {
   const { dispatch  } = useStateContext();
   const navigate = useNavigate()
-
   const { enqueueSnackbar } = useSnackbar();
-
   const {
     register,
     handleSubmit,
