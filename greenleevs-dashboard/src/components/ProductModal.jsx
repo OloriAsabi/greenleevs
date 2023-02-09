@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MdOutlineCancel } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
@@ -8,18 +8,16 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
 import { strain, thcContents, cbdContents, Status } from "../data/data"
-import { CreateProducts, UploadFiles } from '../apis/api';
+import { CreateProducts, GetBrands, GetCategories, UploadFiles } from '../apis/api';
 
 const ProductModal = ({ toggleMenu, setToggleMenu }) => {
-  const { dispatch, state  } = useStateContext();
-  const { categories } = state
+  const { dispatch } = useStateContext();
   const navigate = useNavigate()
 
   const [tags, setTags] = useState([]);
   const [effectTags, setEffectTags] = useState([]);
-  const [strains, setStrains] = useState(strain);
-  const [status, setStatus] = useState(Status);
-  const [category, setCategory] = useState(categories);
+  const [categories, setCategories] = useState([]);
+  const [brands, setBrands] = useState([]);
   const [thcContent, setThcContent] = useState(thcContents);
   const [cbdContent, setCbdContent] = useState(cbdContents);
   
@@ -36,6 +34,25 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
       special: false
     }
   });
+
+  useEffect(() => {
+    GetBrands()
+    .then((response) => {
+    const data = response.data.data   
+    setBrands(data)
+    }).catch((e) => {
+    console.log(e);
+    });
+  },[]);
+  useEffect(() => {
+    GetCategories()
+    .then((response) => {
+    const data = response.data.data         
+    setCategories(data)
+    }).catch((e) => {
+    console.log(e);
+    });
+  },[]);
 
   function uploadSingleFile(e) {
     const selectedFiles = Array.from(e.target.files);
@@ -88,6 +105,7 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
       description: data.description,
       price: data.price,
       category_id: data.categoryId,
+      mark_id: data.brand,
       sale_price: data.salePrice,
       tags: tags,
       status: data.status,
@@ -379,9 +397,6 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
                  className={` ${
                 errors.strain ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
                 {...register('strain')}
-                  onChange={(e) => {
-                    setStrains(e.target.value);
-                  }}
                 >
                   <option value="others" className="sm:text-bg bg-white">Select Strain</option>
                   {strain.map((item) => (
@@ -453,9 +468,6 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
                  className={` ${
                 errors.status ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
                 {...register('status')}
-                  onChange={(e) => {
-                    setStatus(e.target.value);
-                  }}
                 >
                   <option value="others" className="sm:text-bg bg-white">Select Product Status</option>
                   {Status?.map((item) => (
@@ -466,20 +478,33 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
                 </select>
             </div>
             <div className='flex space-x-5'>
-            <label className="text-sm font-normal">Choose Category Id: </label>
+            <label className="text-sm font-normal">Choose Category: </label>
                  <select
                  id="categoryId"  
                  className={` ${
                 errors.categoryId ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
                 {...register('categoryId')}
-                  onChange={(e) => {
-                    setCategory(e.target.value);
-                  }}
                 >
-                  <option value="others" className="sm:text-bg bg-white">Select Category Id</option>
+                  <option value="others" className="sm:text-bg bg-white">Select Category</option>
                   {categories?.map((item) => (
                   <option className="text-base border-0 outline-none capitalize bg-white text-black " value={item.id}  key={item.id}>
                     {item.slug}
+                  </option>
+                      ))}
+                </select>
+            </div>
+            <div className='flex space-x-5'>
+            <label className="text-sm font-normal">Choose Brand: </label>
+                 <select
+                 id="brand"  
+                 className={` ${
+                errors.brand ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
+                {...register('brand')}
+                >
+                  <option value="others" className="sm:text-bg bg-white">Select Brand</option>
+                  {brands?.map((item) => (
+                  <option className="text-base border-0 outline-none capitalize bg-white text-black " value={item.id}  key={item.id}>
+                    {item.label}
                   </option>
                       ))}
                 </select>

@@ -48,7 +48,7 @@ const ResetPassword = () => {
         }
           
         localStorage.setItem('token', token);
-        console.log(localStorage.getItem(token));
+        dispatch({type : 'ADD_TOKEN', payload: token});
       });
       dispatch({ type: 'USER_RESET_PASSWORD', payload: bodyData});
       localStorage.setItem('user', JSON.stringify(bodyData));

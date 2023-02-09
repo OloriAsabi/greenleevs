@@ -15,6 +15,7 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import Spinner from './Spinner';
 import { DeleteBrands, GetBrandById, GetBrands } from '../apis/api';
 import BrandModal from './BrandModal';
+import { useStateContext } from '../contexts/ContextProvider';
 
 
 export function GlobalFilter({
@@ -64,6 +65,7 @@ const BrandTable = () => {
     const data =  useMemo(() => [...brands], [brands]);
     const brandsRef = useRef();
     const navigate = useNavigate();
+    const { dispatch  } = useStateContext();
 
     brandsRef.current = brands;
 
@@ -100,6 +102,7 @@ const BrandTable = () => {
         const data = response.data.data
           
         setBrands(data)
+        dispatch({ type: 'ADD_BRANDS', payload: data});
         setIsLoading(false)
         }).catch((e) => {
         console.log(e);

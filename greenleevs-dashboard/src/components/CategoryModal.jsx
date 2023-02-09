@@ -4,12 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { MdDelete } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
-import { useStateContext } from '../contexts/ContextProvider';
+// import { useStateContext } from '../contexts/ContextProvider';
 import { useForm } from 'react-hook-form';
 import { PostCategories, UploadFiles } from '../apis/api';
 
 const CategoryModal = ({toggleMenu, setToggleMenu}) => {
-  const { dispatch  } = useStateContext();
+  // const { dispatch  } = useStateContext();
     const navigate = useNavigate();
 
     const [files, setFiles] = useState([]);
@@ -83,7 +83,7 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
         toast("Categories Upload failed" , { type: 'error',   theme: "colored" });
        }
      });
-     dispatch({ type: 'ADD_CATEGORIES', payload: body});
+    //  dispatch({ type: 'ADD_CATEGORIES', payload: body});
      localStorage.setItem('categories', JSON.stringify(body));
      navigate('/categories');
    } catch (error) {

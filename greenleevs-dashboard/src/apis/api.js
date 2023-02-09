@@ -1,4 +1,5 @@
 import axios from "axios";
+// import { useStateContext } from "../contexts/ContextProvider";
 
 const token =  localStorage.getItem("token");
 
@@ -6,6 +7,7 @@ export const UploadFiles = async (body) => {
   try {
     const data = await axios.post(`${process.env.REACT_APP_BASEURL}/admin/upload/files`, body, {
       headers: {
+        "Content-Type": "application/json" ,
         "Authorization": `Bearer ${token}`
       },
     });
@@ -19,8 +21,9 @@ export const UploadFiles = async (body) => {
 export const LoginUser = async (body) => {
     try {
     const data = await axios.post(`${process.env.REACT_APP_BASEURL}/login`, body,  {
-        headers: { 
-            "Content-Type": "application/json" ,
+        Headers: { 
+          "Content-Type": "application/json" ,
+          "Authorization": `Bearer ${token}`
         },
       })
      return data; 
@@ -33,8 +36,9 @@ export const RegisterUser = async (body) => {
     try {
       const data = await axios.post(`${process.env.REACT_APP_BASEURL}/register`, body,
           {
-            headers: { 
-                "Content-Type": "application/json" ,
+            Headers: { 
+              "Content-Type": "application/json" ,
+              "Authorization": `Bearer ${token}`
             },
           })
          return data; 
@@ -48,7 +52,8 @@ export const LogoutUser = async () => {
         const data = await axios.post(`${process.env.REACT_APP_BASEURL}/logout`,
           {
             Headers: {
-                authorization: token
+              "Content-Type": "application/json" ,
+              "Authorization": `Bearer ${token}`
             }
           })          
     return data; 
@@ -61,10 +66,10 @@ export const UpdateUser = async (body) => {
     try {
         const data = await axios.post(`${process.env.REACT_APP_BASEURL}/user`, body,
           {
-            Headers: {
+            headers: { 
               "Content-Type": "application/json" ,
-              authorization: token
-            }
+              "Authorization": `Bearer ${token}`
+          },
           })
     return data; 
         } catch (error) {

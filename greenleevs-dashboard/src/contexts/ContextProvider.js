@@ -7,6 +7,7 @@ const initialState = {
   user: localStorage.getItem('user')
   ? JSON.parse(localStorage.getItem('user'))
   : null,
+  token: localStorage.getItem('token'),
   products: [],
   customers: [],
   categories: [],
@@ -17,6 +18,16 @@ const initialState = {
 function reducer(state, action) {
   // console.log(action.payload);
   switch (action.type) {
+    case "ADD_TOKEN":
+      return {
+        ...state, token:
+        action.payload
+      } ;
+      case 'TOKEN_CLEARED':
+      return {
+          ...state,
+          token: null,
+        };
     case 'USER_LOGIN':
         return { ...state, user: action.payload };
         default:

@@ -1,6 +1,6 @@
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
-import React, { useState } from 'react'
+import React from 'react'
 import { useForm } from 'react-hook-form';
 import { FaTimes } from 'react-icons/fa';
 import { UpdateOrderStatus } from '../apis/api';
@@ -8,9 +8,6 @@ import { orderStatus } from '../data/data';
 import { useNavigate } from 'react-router-dom';
 
 const OrdersModal = ({ showModal, setShowModal, id }) => {
-    const [status, setStatus] = useState(orderStatus);
-    
-
     const navigate = useNavigate();
     const {
         register,
@@ -79,9 +76,6 @@ const OrdersModal = ({ showModal, setShowModal, id }) => {
                  className={` ${
                 errors.status ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
                 {...register('status')}
-                  onChange={(e) => {
-                    setStatus(e.target.value);
-                  }}
                 >
                   <option value="others" className="sm:text-bg bg-white">Select Order's Status</option>
                   {orderStatus?.map((item) => (

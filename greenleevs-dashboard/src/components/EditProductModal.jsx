@@ -11,10 +11,8 @@ import { useNavigate } from 'react-router-dom';
 
 const EditProductModal = ({ showModal, setShowModal,product }) => {
 const [tags, setTags] = useState([]);
-const [strains, setStrains] = useState(strain);
 const [thcContent, setThcContent] = useState(thcContents);
 const [cbdContent, setCbdContent] = useState(cbdContents);
-const [status, setStatus] = useState(Status);
 const [effectTags, setEffectTags] = useState([]);
 
     
@@ -369,9 +367,6 @@ const submitHandler = async (data) => {
                  className={` ${
                 errors.strain ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
                 {...register('strain')}
-                  onChange={(e) => {
-                    setStrains(e.target.value);
-                  }}
                 >
                   <option value="others" className="sm:text-bg bg-white">Select Strain</option>
                   {strain.map((item) => (
@@ -443,9 +438,6 @@ const submitHandler = async (data) => {
                  className={` ${
                 errors.status ? ' border-red-400' : ''} w-full text-base border border-gray-200 p-2 rounded-md cursor-pointer`}
                 {...register('status')}
-                  onChange={(e) => {
-                    setStatus(e.target.value);
-                  }}
                 >
                   <option value="others" className="sm:text-bg bg-white">Select Product Status</option>
                   {Status?.map((item) => (

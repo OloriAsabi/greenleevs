@@ -84,6 +84,7 @@ const Register = () => {
           toast("Registration failed" , { type: 'error', theme: "colored" });
         }
         localStorage.setItem('token', token);
+        dispatch({type : 'ADD_TOKEN', payload: token});
       });
       dispatch({ type: 'USER_LOGIN', payload: bodyData});
       localStorage.setItem('user', JSON.stringify(bodyData));

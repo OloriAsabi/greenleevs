@@ -14,6 +14,7 @@ export const links = [
           icon: <HiOutlineHome/>,
           href: 'home'
         },
+        
         {
           id: 2,  
           name: 'Categories',
@@ -21,29 +22,29 @@ export const links = [
           href: 'categories'
       },
       {
-        id: 3,  
+        id: 3,
+        name: "Brands",
+        icon: <TbBrandSlack />,
+        href: 'brands'
+      },
+      {
+        id: 4,  
         name: 'Products',
         icon: <FiShoppingBag />,
         href: 'products'
     },
         {
-            id: 4,  
+            id: 5,  
             name: 'Customers',
             icon: <IoIosPeople/>,
             href: 'customers'
         },
         {
-            id: 5,  
+            id: 6,  
             name: 'Orders',
             icon: <BsCardList/>,
             href: 'orders'
 
-        },
-        {
-          id: 6,
-          name: "Brands",
-          icon: <TbBrandSlack />,
-          href: 'brands'
         },
         {
             id: 7,  

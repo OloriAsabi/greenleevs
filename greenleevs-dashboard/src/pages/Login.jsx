@@ -81,6 +81,7 @@ const Login = () => {
         }
         const { token } = response.data
         localStorage.setItem('token', token);
+        dispatch({type : 'ADD_TOKEN', payload: token});
       });
       dispatch({ type: 'USER_LOGIN', payload: bodyData});
       localStorage.setItem('user', JSON.stringify(bodyData));

@@ -6,9 +6,11 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import { UserForgotPassword } from '../apis/api';
 import { getError } from '../utils/error';
+import { useStateContext } from '../contexts/ContextProvider';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
+  const { dispatch  } = useStateContext();
 
   const {
     handleSubmit,
@@ -35,6 +37,7 @@ const ForgotPassword = () => {
         }
         const { token } = response.data
         localStorage.setItem('token', token);
+        dispatch({type : 'ADD_TOKEN', payload: token});
       });
     } catch (error) {
       toast(getError(error), { type: 'error', theme: "colored" });

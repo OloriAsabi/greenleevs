@@ -33,7 +33,6 @@ const CustomerModal = ({ toggleMenu, setToggleMenu }) => {
     try {
       CreateCustomers(body)
        .then(response => {
-        // console.log(response);
         const responseStatus = response.data.status
 
         if (responseStatus === "success" || 200 || 201) {

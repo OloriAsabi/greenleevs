@@ -138,7 +138,6 @@ const ProductsTable = () => {
     const navigate = useNavigate();
 
     productRef.current = products;
-    // console.log("Datas", data);
 
   useEffect(() => {
     setIsLoading(true)

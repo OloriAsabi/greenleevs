@@ -15,7 +15,6 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import Spinner from './Spinner';
 import CategoryModal from './CategoryModal';
-import { useStateContext } from '../contexts/ContextProvider';
 
 export function GlobalFilter({
     globalFilter,
@@ -63,7 +62,6 @@ const CategoriesTables = () => {
     const data =  useMemo(() => [...categories], [categories]);
     const categoriesRef = useRef();
     const navigate = useNavigate();
-    const { dispatch  } = useStateContext();
 
     categoriesRef.current = categories;
 
@@ -98,13 +96,13 @@ const CategoriesTables = () => {
         .then((response) => {
         const data = response.data.data         
         setCategories(data)
-        dispatch({ type: 'ADD_CATEGORIES', payload: data});
+        // dispatch({ type: 'ADD_CATEGORIES', payload: data});
         localStorage.setItem('categories', JSON.stringify(data));
         setIsLoading(false)
         }).catch((e) => {
         console.log(e);
         });
-      },[dispatch]);
+      },[]);
 
       const columns = useMemo(() => [
         {
