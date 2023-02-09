@@ -7,9 +7,7 @@ import logo from "../data/logo.png"
 import { LogoutUser } from '../apis/api';
 
 const Sidebar = () => {
-    const { activeMenu, setActiveMenu, screenSize } = useStateContext();
-
-
+  const { activeMenu, setActiveMenu, screenSize } = useStateContext();
   const navigate = useNavigate()
     const handleCloseSideBar = () => {
         if (activeMenu !== undefined && screenSize <= 900) {
