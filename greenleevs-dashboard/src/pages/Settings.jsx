@@ -3,7 +3,8 @@ import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '../components'
 import { useStateContext } from '../contexts/ContextProvider';
-import { useSnackbar } from 'notistack';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import { UpdateUser } from '../apis/api';
 import { getError } from '../utils/error';
 
@@ -20,8 +21,6 @@ const Settings = () => {
     setValue('email', user.email);
   }, [navigate, user]);
 
-  const { enqueueSnackbar } = useSnackbar();
-
   const {
     handleSubmit,
     register,
@@ -36,12 +35,26 @@ const Settings = () => {
       email: data.email,
     }
     try {
-      UpdateUser(bodyData);
+      UpdateUser(bodyData)
+      .then(response => {
+        console.log(response);
+        const { token } = response.data
+        const responseStatus = response.status
+        const responseStatusOne = response.data.status
+    
+  
+        if (responseStatus || responseStatusOne === 'success' || 200 || 201) {
+          toast('Profile updated successfully' , { type: responseStatus });
+          navigate('/');
+        } else {
+          toast("Profile updated failed" , { type: responseStatus});
+        }       
+        localStorage.setItem('token', token);
+      });;
       dispatch({ type: 'USER_UPATE', payload: bodyData});
       localStorage.setItem('user', JSON.stringify(bodyData));    
-      enqueueSnackbar('Profile updated successfully', { variant: 'success' });
     } catch (error) {
-      enqueueSnackbar(getError(error), { variant: 'error' });
+      toast(getError(error), { type: 'error' });
     }
 
   }

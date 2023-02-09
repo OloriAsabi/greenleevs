@@ -3,14 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import logo from '../data/logo.png';
 import { useStateContext } from '../contexts/ContextProvider';
 import { useForm } from 'react-hook-form';
-import { useSnackbar } from 'notistack';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import { UserResetPassword } from '../apis/api';
 
 const ResetPassword = () => {
     const { dispatch  } = useStateContext();
     const navigate = useNavigate()
-   
-    const { enqueueSnackbar } = useSnackbar();
   
     const {
       register,
@@ -24,7 +23,7 @@ const ResetPassword = () => {
   const submitHandler = async (data) => {
     console.log("Data",  data );
     if (data.password !== data.confirmPassword) {
-      enqueueSnackbar("Passwords don't match", { variant: 'error' });
+      toast("Passwords don't match", { type: 'error' });
       return;
     }
     const bodyData =  {
@@ -38,15 +37,24 @@ const ResetPassword = () => {
       .then(response => {
         console.log(response);
         const { token } = response.data
+        const responseStatus = response.status
+        const responseStatusOne = response.data.status
+
+        if (responseStatus || responseStatusOne === 'success' || 200) {
+          toast('User Reset Password Successful', { type: 'success',  theme: "colored"  });
+          navigate('/login');
+        } else {
+          toast("User Reset Password failed", { type: 'error', theme: "colored"});
+        }
+          
         localStorage.setItem('token', token);
         console.log(localStorage.getItem(token));
       });
       dispatch({ type: 'USER_RESET_PASSWORD', payload: bodyData});
       localStorage.setItem('user', JSON.stringify(bodyData));
-      navigate('/');
-      enqueueSnackbar('Registered Successful', { variant: 'success' });
+      toast(' User Reset Password Successful', { type: 'success',  theme: "colored" });
     } catch (error) {
-      enqueueSnackbar("Registration failed", { variant: 'error' });
+      toast("User Reset Password failed", { type: 'error' , theme: "colored"});
     }
   }
 
@@ -60,7 +68,7 @@ const ResetPassword = () => {
 
   <div className='flex items-center justify-center p-6 sm:p-12 md:w-1/2'>
     <div className='w-full'>
-        <h1 className='mb-6 text-2xl font-semibold text-gray-700 dark:text-gray-200'>Register</h1>
+        <h1 className='mb-6 text-2xl font-semibold text-gray-700 dark:text-gray-200'>Reset Password</h1>
       <form onSubmit={handleSubmit(submitHandler)}>
         <div>
           <div>
@@ -163,12 +171,15 @@ const ResetPassword = () => {
           </div>
           <button 
           className="align-bottom inline-flex items-center justify-center cursor-pointer leading-5 transition-colors duration-150 font-medium focus:outline-none px-4 py-2 rounded-lg text-sm text-white bg-[#1F451A] border border-transparent  hover:bg-[#1F451A] focus:ring
-           focus:ring-purple-300 mt-4 h-12 w-full" type="submit" to="/">
-              Create account
+           focus:ring-purple-300 mt-4 h-12 w-full" type="submit">
+              Reset Password
             </button>
         </div>
     <hr className='my-10' />
     </form>
+    <p className="mt-1">
+      <a className="text-sm font-medium text-[#1F451A] hover:underline" href="/login">Already have an account? Login</a>
+      </p>
     </div>
     </div> 
     </div>

@@ -3,14 +3,14 @@ import { MdOutlineCancel } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useStateContext } from '../contexts/ContextProvider';
-import { useSnackbar } from 'notistack';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import 'react-tagsinput/react-tagsinput.css';
 import { CreateCustomers } from '../apis/api';
 
 const CustomerModal = ({ toggleMenu, setToggleMenu }) => {
   const { dispatch  } = useStateContext();
   const navigate = useNavigate()
-  const { enqueueSnackbar } = useSnackbar();
   const {
     register,
     handleSubmit,
@@ -33,13 +33,13 @@ const CustomerModal = ({ toggleMenu, setToggleMenu }) => {
     try {
       CreateCustomers(body)
        .then(response => {
-        console.log(response);
+        // console.log(response);
         const responseStatus = response.data.status
 
-        if (responseStatus) {
-          enqueueSnackbar('Customer created Successful', { variant: responseStatus });
+        if (responseStatus === "success" || 200 || 201) {
+          toast('Customer created Successful', { type:  'success', theme: "colored" });
         } else {
-          enqueueSnackbar("Customer creation failed" , { variant: responseStatus });
+          toast("Customer creation failed" , { type: 'error', theme: "colored"});
         }
           
         console.log("responseStatus ",responseStatus);
@@ -48,7 +48,7 @@ const CustomerModal = ({ toggleMenu, setToggleMenu }) => {
       localStorage.setItem('products', JSON.stringify(body));
       navigate('/customers');
     } catch (error) {
-      console.log(error);
+      toast("Customer creation failed" , { type: 'error',    theme: "colored"});
     }
   };
 

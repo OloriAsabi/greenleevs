@@ -10,7 +10,8 @@ import { classNames } from '../utils/utils';
 import { Button, PageButton } from '../utils/Button';
 import { DeleteOrders, GetOrderById, GetOrders } from '../apis/api';
 import { useNavigate } from 'react-router-dom';
-import { useSnackbar } from 'notistack';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import { FaSearchPlus } from 'react-icons/fa';
 import { AiFillDelete } from 'react-icons/ai';
 import Spinner from './Spinner';
@@ -97,8 +98,6 @@ const OrdersTable = () => {
   const ordersRef = useRef();
   const navigate = useNavigate();
 
-  const { enqueueSnackbar } = useSnackbar();
-
   ordersRef.current = orders;
      
   useEffect(() => {
@@ -131,11 +130,11 @@ const handleDelete = (rowIndex) => {
     newOrders.splice(rowIndex, 1)
 
     setOrders(newOrders);
-    enqueueSnackbar('Orders Deleted Successful', { variant: 'success' });
+    toast('Orders Deleted Successful', { type: 'success', theme: "colored" });
   })
   .catch((e) => {
     console.log(e);
-    enqueueSnackbar('Orders delete Failed', { variant: 'error' });
+    toast('Orders delete Failed', { type: 'error', theme: "colored" });
   });
 }
 const columns = useMemo(() => [

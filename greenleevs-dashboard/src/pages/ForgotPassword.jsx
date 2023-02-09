@@ -2,14 +2,13 @@ import logo from '../data/logo.png';
 import React from 'react'
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useSnackbar } from 'notistack';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import { UserForgotPassword } from '../apis/api';
 import { getError } from '../utils/error';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
-
-  const { enqueueSnackbar } = useSnackbar();
 
   const {
     handleSubmit,
@@ -18,16 +17,27 @@ const ForgotPassword = () => {
   } = useForm();
 
   const submitHandler = async (data) => {
-    console.log(data);
     const bodyData =  {
       email: data.email,
     }
     try {
-      UserForgotPassword(bodyData);
-      enqueueSnackbar('Reset Password Sent', { variant: 'success' });
-      navigate('/')
+      UserForgotPassword(bodyData)
+      .then(response => {
+        // console.log(response);
+        const responseStatus = response.status
+        const responseStatusOne = response.data.status
+
+        if (responseStatus || responseStatusOne === 'success' || 200) {
+          toast('Reset Password Sent', { type:  'success', theme: "colored"});
+          navigate('/resetPassword')
+        } else {
+          toast("Reset Password failed", { type: 'error', theme: "colored"});
+        }
+        const { token } = response.data
+        localStorage.setItem('token', token);
+      });
     } catch (error) {
-      enqueueSnackbar(getError(error), { variant: 'error' });
+      toast(getError(error), { type: 'error', theme: "colored" });
     }
   }
   return (
@@ -68,16 +78,14 @@ const ForgotPassword = () => {
           </div>
           <button 
           className="align-bottom inline-flex items-center justify-center cursor-pointer leading-5 transition-colors duration-150 font-medium focus:outline-none px-4 py-2 rounded-lg text-sm text-white bg-[#1F451A] border border-transparent active:bg-[#1F451A] hover:bg-[#1F451A] focus:ring focus:ring-purple-300 mt-4 h-12 w-full" type="submit">
-            <a href='/'>
              Recover Password
-            </a>
             </button>
         </div>
       </form>
 
     <hr className='my-10' /> 
     <p className="mt-1">
-      <a class="text-sm font-medium text-[#1F451A] hover:underline" href="/login">Already have an account? Login</a>
+      <a className="text-sm font-medium text-[#1F451A] hover:underline" href="/login">Already have an account? Login</a>
       </p>
     </div>
     </div> 

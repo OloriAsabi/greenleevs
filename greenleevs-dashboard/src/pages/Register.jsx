@@ -7,14 +7,14 @@ import { GoogleLogin } from '@react-oauth/google';
 import { useStateContext } from '../contexts/ContextProvider';
 import jwt_decode from "jwt-decode";
 import { useForm } from 'react-hook-form';
-import { useSnackbar } from 'notistack';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import { RegisterUser } from '../apis/api';
 
 const Register = () => {
   const { dispatch  } = useStateContext();
   const navigate = useNavigate()
  
-  const { enqueueSnackbar } = useSnackbar();
 
   const {
     register,
@@ -35,18 +35,33 @@ const Register = () => {
       sub: sub,
     }
     try {
-    RegisterUser(bodyData);
+    RegisterUser(bodyData)
+    .then(response => {
+      console.log(response);
+      const { token } = response.data
+      const responseStatus = response.status
+      const responseStatusOne = response.data.status
+  
+
+      if (responseStatus || responseStatusOne === 'success' || 200 || 201) {
+        toast('Registered Successful' , { type: 'success' });
+      } else {
+        toast("Registration failed" , { type: 'error'});
+      }       
+      localStorage.setItem('token', token);
+      navigate('/');
+    });
     dispatch({ type: 'USER_LOGIN', payload: bodyData });
     localStorage.setItem('user', JSON.stringify(bodyData));
     } catch (error) {
-      enqueueSnackbar("Registration failed", { variant: 'error' });
+      toast("Registration failed", { type: 'error' });
     }
   }
 
   const submitHandler = async (data) => {
     console.log("Data",  data );
     if (data.password !== data.confirmPassword) {
-      enqueueSnackbar("Passwords don't match", { variant: 'error' });
+      toast("Passwords don't match", { type: 'error' });
       return;
     }
     const bodyData =  {
@@ -58,25 +73,24 @@ const Register = () => {
     try {
       RegisterUser(bodyData)
       .then(response => {
+        console.log(response);
         const { token } = response.data
-        const responseStatus = response.data.status
+        const responseStatus = response.status
+        const responseStatusOne = response.data.status
 
-        if (responseStatus) {
-          enqueueSnackbar('Registered Successful', { variant: responseStatus });
+        if (responseStatus || responseStatusOne === 'success' || 200 || 201) {
+          toast('Registered Successful',{ type:  'success',  theme: "colored" });
         } else {
-          enqueueSnackbar("Registration failed" , { variant: responseStatus });
+          toast("Registration failed" , { type: 'error', theme: "colored" });
         }
-          
-        console.log("responseStatus ",responseStatus);
         localStorage.setItem('token', token);
-        console.log(localStorage.getItem(token));
       });
       dispatch({ type: 'USER_LOGIN', payload: bodyData});
       localStorage.setItem('user', JSON.stringify(bodyData));
       navigate('/');
-      enqueueSnackbar('Registered Successful', { variant: 'success' });
+      toast('Registered Successful', { type: 'success',   theme: "colored" });
     } catch (error) {
-      enqueueSnackbar("Registration failed", { variant: 'error' });
+      toast("Registration failed", { type: 'error',   theme: "colored" });
     }
   }
 
@@ -244,6 +258,8 @@ const Register = () => {
       </GoogleOAuthProvider>
     </div>    
     </form>
+    <p className="mt-1"><a className="text-sm font-medium text-[#1F451A] hover:underline" 
+        href="/login">Login</a></p>
     </div>
     </div> 
     </div>

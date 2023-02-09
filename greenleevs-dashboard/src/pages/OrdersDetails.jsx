@@ -16,7 +16,6 @@ const OrdersDetails = () => {
     useEffect(() => {
         setIsLoading(true)
         GetOrderById(id).then((data) => {
-            // console.log(data)
             const items = data.data
             setOrder(items.data);
             setIsLoading(false)

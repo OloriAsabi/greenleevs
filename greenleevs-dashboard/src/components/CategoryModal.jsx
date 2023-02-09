@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { MdOutlineCancel } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { MdDelete } from 'react-icons/md';
-import { useSnackbar } from 'notistack';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import { useStateContext } from '../contexts/ContextProvider';
 import { useForm } from 'react-hook-form';
 import { PostCategories, UploadFiles } from '../apis/api';
@@ -13,8 +14,6 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
 
     const [files, setFiles] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState([]);
-
-    const { enqueueSnackbar } = useSnackbar();
 
   const {
     register,
@@ -48,7 +47,7 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
             ...res.data.data
           ]
         );
-        enqueueSnackbar('Image Added Successfully', { variant: res.data.status });
+        toast('Image Added Successfully', { type: 'success' });
       }
     } ).catch( (error) => {
       console.log(error)
@@ -78,10 +77,10 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
       .then(response => {
        console.log("Post Cat",response);
        const responseStatus = response.data.status
-       if (responseStatus) {
-         enqueueSnackbar('Categories Added Successfully', { variant: responseStatus });
+       if (responseStatus === "success" || 200 || 201) {
+         toast('Categories Added Successfully', { type:  'success',  theme: "colored" });
        } else {
-         enqueueSnackbar("Categories Upload failed" , { variant: responseStatus });
+        toast("Categories Upload failed" , { type: 'error',   theme: "colored" });
        }
      });
      dispatch({ type: 'ADD_CATEGORIES', payload: body});
@@ -89,6 +88,7 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
      navigate('/categories');
    } catch (error) {
      console.log(error);
+     toast("Categories Upload failed" , { type: 'error',   theme: "colored" });
     }
 
   }

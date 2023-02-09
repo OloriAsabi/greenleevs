@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { MdOutlineCancel } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { MdDelete } from 'react-icons/md';
-import { useSnackbar } from 'notistack';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import { useStateContext } from '../contexts/ContextProvider';
 import { useForm } from 'react-hook-form';
 import { PostBrand, UploadFiles } from '../apis/api';
@@ -14,8 +15,6 @@ const BrandModal = ({toggleMenu, setToggleMenu}) => {
 
     const [files, setFiles] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState([]);
-
-    const { enqueueSnackbar } = useSnackbar();
 
   const {
     register,
@@ -48,7 +47,7 @@ const BrandModal = ({toggleMenu, setToggleMenu}) => {
             ...res.data.data
           ]
         );
-        enqueueSnackbar('Image Added Successfully', { variant: res.data.status });
+        toast('Image Added Successfully', { type: res.data.status });
       }
     } ).catch( (error) => {
       console.log(error)
@@ -63,7 +62,7 @@ const BrandModal = ({toggleMenu, setToggleMenu}) => {
   }
 
   const submitHandler = async (data) => {
-    console.log("Brands Product Modal", data);
+    // console.log("Brands Product Modal", data); 
     const body = {
         label: data.title ,
         slug: data.slug,
@@ -76,18 +75,17 @@ const BrandModal = ({toggleMenu, setToggleMenu}) => {
         .then(response => {
          console.log(response);
          const responseStatus = response.data.status
-         if (responseStatus) {
-           enqueueSnackbar('Brand Added Successfully', { variant: responseStatus });
+         if (responseStatus ===  "success" || 200 || 201) {
+           toast('Brand Added Successfully', { type: "success",   theme: "colored" });
          } else {
-           enqueueSnackbar("Brand Upload failed" , { variant: responseStatus });
+           toast("Brand Upload failed" , { type: "error",   theme: "colored" });
          }
        });
        dispatch({ type: 'ADD_BRANDS', payload: body});
        localStorage.setItem('brands', JSON.stringify(body));
        navigate('/brands');
      } catch (error) {
-       console.log(error);
-        
+      toast("Brand Upload failed" , { type: "error",   theme: "colored" });
       }
 
   }

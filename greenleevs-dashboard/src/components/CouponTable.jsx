@@ -1,19 +1,15 @@
-import React, {useMemo, useEffect, useState, useRef } from 'react'
+import React, {useMemo, useEffect, useState } from 'react'
 import { useTable,
    useGlobalFilter, 
    useAsyncDebounce,  
    usePagination,
-   useFilters
 } from "react-table";
 import {DOTS, useCustomPagination} from './useCustomPagination';
+import { couponData } from '../data/data';
+import { classNames } from '../utils/utils';
 import { Button, PageButton } from '../utils/Button';
-import { DeleteCustomers, GetCustomers } from '../apis/api';
-import { useNavigate } from 'react-router-dom';
-import { AiFillDelete } from 'react-icons/ai';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.min.css';
-import CustomerModal from './CustomerModal';
-import Spinner from './Spinner';
+
+
 
 export function GlobalFilter({
     globalFilter,
@@ -23,7 +19,7 @@ export function GlobalFilter({
     const onChange = useAsyncDebounce(value => {
       setGlobalFilter(value || undefined)
     }, 200)
-
+  
     return (
         <input
           value={value || ""}
@@ -33,92 +29,79 @@ export function GlobalFilter({
           }}
           className='w-full rounded-xl border p-4 text-gray-500 cursor-pointer' 
           type="search"  
-          placeholder="Search by name/email/phone"
+          placeholder="Search by phone"
         />
     )
   };  
 
-const CustomersTable = () => {
-  const [toggleMenu, setToggleMenu] = useState(false);
-  const [customers, setCustomers] = useState([]);
-  const data =  useMemo(() => [...customers], [customers]);
-  const [isLoading, setIsLoading] = useState(false)
-  const customerRef = useRef();
-  const navigate = useNavigate();
-
-  customerRef.current = customers;
-
-     
-  useEffect(() => {
-   
-    setIsLoading(true)
-
-    GetCustomers()
-    .then((response) => {
-    const data = response.data.data.data     
-    setCustomers(data)
-    setIsLoading(false)
-    }).catch((e) => {
-    console.log(e);
-    });
-  },[]);
-
-  const handleDelete = (rowIndex) => {
-    const id = customerRef.current[rowIndex].id;
-
-    DeleteCustomers(id).then(() => {
-      navigate('/customers')
-
-      let newCustomers = [...customerRef.current];
-      newCustomers.splice(rowIndex, 1)
-
-      setCustomers(newCustomers);
-      toast('Customer Deleted Successful', { type: 'success', theme: "colored" });
-    })
-    .catch((e) => {
-      console.log(e);
-      toast('Customer delete Failed', { type: 'error',  theme: "colored" });
-    });
+  export function StatusPill({ value }) {
+    const status = value ? value : "unknown";
+  
+    return (
+      <span
+        className={classNames(
+          "px-3 py-1 uppercase leading-wide font-bold text-xs rounded-full shadow-sm",
+          status.startsWith("Active") ? "bg-green-100 text-green-700" : null,
+          status.startsWith("Expired") ? "bg-red-100 text-red-700" : null
+        )}
+      >
+        {status}
+      </span>
+    );
   }
 
-    const columns = useMemo(() => [
-        {
-          Header: "ID",
-          accessor: "id",
-        },
-        {
-          Header: "Joining Date",
-          accessor: "created_at",
-        },
-        {
-          Header: "Name",
-          accessor: "username",
-        },
-        {
-          Header: "Email",
-          accessor: "email",
-        },
-        {
-          Header: "Phone",
-          accessor: "phone_number",
-        },
-        {
-          Header: "Actions",
-          Cell: (props) => {
-            const rowIdx = props.row.id;
-      
-            return (
-              <div className='flex gap-5'>
-                <span onClick={() =>handleDelete(rowIdx)}>
-                <AiFillDelete/>
-                </span>
-              </div>
-            );
-          },
-        },   
-  ], []);
 
-  const { 
+const CouponTable = () => {
+
+const data = useMemo(() => couponData(), []);
+
+const columns = useMemo(() => [
+    {
+      Header: "ID",
+      accessor: "id",
+    },
+    {
+      Header: "Start Date",
+      accessor: "startDate",
+    },
+    {
+        Header: "End Date",
+        accessor: "endDate",
+    },
+    {
+        Header: "Campaigns Name",
+        accessor: "campaign",
+    },
+    {
+        Header: "Code",
+        accessor: "code",
+    },
+    {
+        Header: "Percentage",
+        accessor: "percentage",
+    },
+    {
+        Header: "Product Type",
+        accessor: "productType",
+    },
+    {
+      Header: "Status",
+      accessor: "status",
+      Cell: StatusPill,
+    },
+    {
+      Header: "Actions",
+      accessor: "actions",
+      Cell: ({ value }) => (
+          <div>
+            <button onClick={() => (value)}>{value.edit}</button>
+            <button className='ml-4' onClick={() => (value)}>{value.delete}</button>
+          </div>
+        ),
+    },    
+], []);
+
+const { 
     getTableProps,
     getTableBodyProps, 
     headerGroups, 
@@ -141,7 +124,6 @@ const CustomersTable = () => {
     initialState: { pageIndex: 0, pageSize: 5},
     },
     useGlobalFilter,
-    useFilters, 
     usePagination, 
     );
     const {pageIndex} = state;
@@ -154,31 +136,26 @@ const CustomersTable = () => {
           setPageSize(5);
     }, [setPageSize]);
 
-
   return (
     <div>
-        <div className='grid items-center text-center lg:grid-cols-2 md:grid-cols-2  sm:grid-cols-1 gap-5 p-5 mb-10 border-white shadow rounded-xl'>
+           <div className='grid items-center text-center lg:grid-cols-2 md:grid-cols-1  sm:grid-cols-1 gap-5 p-5 mb-10 border-white shadow rounded-xl'>
         <GlobalFilter
         preGlobalFilteredRows={preGlobalFilteredRows}
         globalFilter={state.globalFilter}
         setGlobalFilter={setGlobalFilter}
          />
-               <div className='w-4/8'>
-        <button className='p-3 bg-[#1F451A] text-white text-center rounded cursor-pointer'
-          onClick={() => setToggleMenu(true)}>
-            + Add Customer
+
+        <div className='w-full'>
+        <button className='p-3 bg-[#1F451A] text-white text-center rounded cursor-pointer'>
+            + Add Coupon
         </button> 
-        <CustomerModal toggleMenu={toggleMenu} setToggleMenu={setToggleMenu} />
         </div>
         </div>
-      
-          <div className="mt-2 flex flex-col">
+
+        <div className="mt-2 flex flex-col">
             <div className="-my-2 overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">
               <div  className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
                 <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-  {isLoading 
-       ? <Spinner />  
-          :               
                     <table {...getTableProps()} className="min-w-full divide-y divide-gray-200">
                       <thead className="bg-gray-10">
                       {headerGroups.map((headerGroup) => (
@@ -207,12 +184,12 @@ const CustomersTable = () => {
                       })}
                   </tbody>
                     </table>
-                    }
                 </div>
               </div>
           </div>
          </div>
-       <div className="py-3 flex items-center text-end justify-end pt-10">
+
+        <div className="py-3 flex items-center text-end justify-end pt-10">
          <span>
           Page{' '}
           <strong>
@@ -256,4 +233,4 @@ const CustomersTable = () => {
   )
 }
 
-export default CustomersTable
+export default CouponTable

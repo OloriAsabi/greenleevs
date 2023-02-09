@@ -15,7 +15,8 @@ import { useRef } from 'react';
 import { AiFillDelete } from 'react-icons/ai';
 import Spinner from './Spinner';
 import { FaSearchPlus } from 'react-icons/fa';
-import { useSnackbar } from 'notistack';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 
 
 export function GlobalFilter({
@@ -138,8 +139,7 @@ const ProductsTable = () => {
 
     productRef.current = products;
     // console.log("Datas", data);
-    const { enqueueSnackbar } = useSnackbar();
-   
+
   useEffect(() => {
     setIsLoading(true)
 
@@ -172,11 +172,11 @@ const ProductsTable = () => {
       newProduct.splice(rowIndex, 1)
 
       setProducts(newProduct);
-      enqueueSnackbar('Products Deleted Successful', { variant: 'success' });
+      toast('Products Deleted Successful', { type: 'success' });
     })
     .catch((e) => {
       console.log(e);
-      enqueueSnackbar('Product delete Failed', { variant: 'error' });
+      toast('Product delete Failed', { type: 'error' });
     });
   }
   

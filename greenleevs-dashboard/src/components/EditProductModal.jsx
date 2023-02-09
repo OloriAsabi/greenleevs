@@ -1,4 +1,5 @@
-import { useSnackbar } from 'notistack';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { FaTimes } from 'react-icons/fa'
@@ -6,15 +7,18 @@ import { EditProduct,  UploadFiles } from '../apis/api';
 import { cbdContents, Status, strain, thcContents } from "../data/data"
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
+import { useNavigate } from 'react-router-dom';
 
 const EditProductModal = ({ showModal, setShowModal,product }) => {
-const { enqueueSnackbar } = useSnackbar();
 const [tags, setTags] = useState([]);
 const [strains, setStrains] = useState(strain);
 const [thcContent, setThcContent] = useState(thcContents);
 const [cbdContent, setCbdContent] = useState(cbdContents);
 const [status, setStatus] = useState(Status);
 const [effectTags, setEffectTags] = useState([]);
+
+    
+const navigate = useNavigate();
 
 const [uploadedFiles, setUploadedFiles] = useState([]);
 const [files, setFiles] = useState([]);
@@ -41,7 +45,7 @@ function uploadSingleFile(e) {
           ...res.data.data
         ]
       );
-      enqueueSnackbar('Image Added Successfully', { variant: res.data.status });
+      toast('Image Added Successfully', { type: 'success',    theme: "colored" });
     }
   } ).catch( (error) => {
     console.log(error)
@@ -109,13 +113,15 @@ const submitHandler = async (data) => {
         const responseStatus = response.data.status
 
         if (responseStatus  === "success") {
-          enqueueSnackbar('Product Edit Successful', { variant: responseStatus });
+          toast('Product Edit Successful', { type: "success" });
+          navigate('/product');
         } else {
-          enqueueSnackbar("Product Edit failed" , { variant: responseStatus });
+          toast("Product Edit failed" , { type: "error"});
         }
-      })    
+      })
+          
     } catch (error) {
-    enqueueSnackbar("Products Edit Failed", { variant: 'error' });
+    toast("Products Edit Failed", { type: 'error' });
     }
 }
 

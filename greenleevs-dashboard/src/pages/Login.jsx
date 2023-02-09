@@ -7,13 +7,14 @@ import { useStateContext } from '../contexts/ContextProvider';
 import jwt_decode from "jwt-decode";
 import { useForm } from 'react-hook-form';
 import { LoginUser } from '../apis/api';
-import { useSnackbar } from 'notistack';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const { dispatch  } = useStateContext();
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const {
     register,
@@ -30,24 +31,29 @@ const Login = () => {
       sub: sub,
     }
     try {
-      LoginUser(bodyData).then((response) => {
-        const responseStatus = response.data.status
+      LoginUser(bodyData)
+      .then(response => {
+        console.log(response);
+        const responseStatus = response.status
+        const responseStatusOne = response.data.status
 
-        if (responseStatus) {
-          enqueueSnackbar('Registered Successful', { variant: responseStatus });
+        if (responseStatus || responseStatusOne === 'success' || 200) {
+          toast('Login Successful', { type: 'success'});
+          navigate('/')
         } else {
-          enqueueSnackbar("Registration failed" , { variant: responseStatus });
+          toast("Login failed", { type: 'error' });
         }
           
         console.log("responseStatus ",responseStatus);
+        const { token } = response.data
+        localStorage.setItem('token', token);
       });
       dispatch({ type: 'USER_LOGIN', payload: bodyData });
       localStorage.setItem('user', JSON.stringify(bodyData));
     } catch (error) {
-      enqueueSnackbar('Login Unautorized', { variant: 'error' });
+      toast('Login Unautorized', { type: 'error' });
     }
   }
-  const { enqueueSnackbar } = useSnackbar();
  
   const submitHandler = async (data) => {
     console.log("Data", data );
@@ -59,24 +65,29 @@ const Login = () => {
     try {
     LoginUser(bodyData) 
       .then(response => {
-        const responseStatus = response.data.status
+        console.log(response);
+        const responseStatus = response.status
+        const responseStatusOne = response.data.status
 
-        if (responseStatus) {
-          enqueueSnackbar('Registered Successful', { variant: responseStatus });
+        if (responseStatus || responseStatusOne  === 'success' || 200) {
+          toast('Login Successful',
+            {type : 'success', 
+             closeOnClick: true,
+             theme: "colored"
+             });
+             navigate('/')
         } else {
-          enqueueSnackbar("Registration failed" , { variant: responseStatus });
+          toast("Login failed", { type: 'error',   theme: "colored"  });
         }
-          
-        console.log("responseStatus ",responseStatus);
         const { token } = response.data
         localStorage.setItem('token', token);
       });
       dispatch({ type: 'USER_LOGIN', payload: bodyData});
       localStorage.setItem('user', JSON.stringify(bodyData));
       navigate('/');
-      enqueueSnackbar('Login Successful', { variant: 'success' });
+      toast('Login Successful', { type: 'success',theme: "colored" });
     } catch (error) {
-      enqueueSnackbar('Invalid email or password', { variant: 'error' });
+      toast('Invalid email or password', { type: 'error', theme: "colored" });
     }
   };
 

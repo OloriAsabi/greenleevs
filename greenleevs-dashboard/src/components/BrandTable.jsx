@@ -10,7 +10,8 @@ import { Button, PageButton } from '../utils/Button';
 import { useNavigate } from 'react-router-dom';
 import { FaSearchPlus } from 'react-icons/fa';
 import { AiFillDelete } from 'react-icons/ai';
-import { useSnackbar } from 'notistack';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import Spinner from './Spinner';
 import { DeleteBrands, GetBrandById, GetBrands } from '../apis/api';
 import BrandModal from './BrandModal';
@@ -64,8 +65,6 @@ const BrandTable = () => {
     const brandsRef = useRef();
     const navigate = useNavigate();
 
-    const { enqueueSnackbar } = useSnackbar();
-
     brandsRef.current = brands;
 
 
@@ -85,11 +84,11 @@ const BrandTable = () => {
           newBrands.splice(rowIndex, 1)
     
           setBrands(newBrands);
-          enqueueSnackbar('Brand Deleted Successful', { variant: 'success' });
+          toast('Brand Deleted Successful', { type: 'success',   theme: "colored" });
         })
         .catch((e) => {
           console.log(e);
-          enqueueSnackbar('Brand delete Failed', { variant: 'error' });
+          toast('Brand delete Failed', { type: 'error',   theme: "colored" });
         });
       }
 

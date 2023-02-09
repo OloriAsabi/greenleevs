@@ -11,7 +11,8 @@ import { GetCategories, DeleteCategories, GetCategoryById } from '../apis/api';
 import { useNavigate } from 'react-router-dom';
 import { FaSearchPlus } from 'react-icons/fa';
 import { AiFillDelete } from 'react-icons/ai';
-import { useSnackbar } from 'notistack';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import Spinner from './Spinner';
 import CategoryModal from './CategoryModal';
 import { useStateContext } from '../contexts/ContextProvider';
@@ -64,9 +65,6 @@ const CategoriesTables = () => {
     const navigate = useNavigate();
     const { dispatch  } = useStateContext();
 
-
-    const { enqueueSnackbar } = useSnackbar();
-
     categoriesRef.current = categories;
 
     const categoryId = (rowIndex) => {
@@ -86,11 +84,11 @@ const CategoriesTables = () => {
           newCategories.splice(rowIndex, 1)
     
           setCategories(newCategories);
-          enqueueSnackbar('Categories Deleted Successful', { variant: 'success' });
+          toast('Categories Deleted Successful', { type: 'success',   theme: "colored" });
         })
         .catch((e) => {
           console.log(e);
-          enqueueSnackbar('Categories delete Failed', { variant: 'error' });
+          toast('Categories delete Failed', { type: 'error' ,   theme: "colored"});
         });
       }
 

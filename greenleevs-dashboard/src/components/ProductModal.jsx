@@ -3,7 +3,8 @@ import { MdOutlineCancel } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
 import { useStateContext } from '../contexts/ContextProvider';
-import { useSnackbar } from 'notistack';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
 import { strain, thcContents, cbdContents, Status } from "../data/data"
@@ -24,9 +25,6 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
   
   const [uploadedFiles, setUploadedFiles] = useState([]);
   const [files, setFiles] = useState([]);
-
-   
-  const { enqueueSnackbar } = useSnackbar();
 
   const {
     register,
@@ -61,7 +59,7 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
             ...res.data.data
           ]
         );
-        enqueueSnackbar('Image Added Successfully', { variant: res.data.status });
+        toast('Image Added Successfully', { type: res.data.status });
       }
     } ).catch( (error) => {
       console.log(error)
@@ -122,19 +120,18 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
     try {
       CreateProducts(body)
        .then(response => {
-        // console.log(response);
         const responseStatus = response.data.status
         if (responseStatus  === "success") {
-          enqueueSnackbar('Products Added Successfully', { variant: responseStatus });
+          toast('Products Added Successfully', { type: "success" });
+          navigate('/products');
         } else {
-          enqueueSnackbar("Products Upload failed" , { variant: responseStatus });
+          toast("Products Upload failed" , { type: 'error' });
         }
       });
       dispatch({ type: 'ADD_PRODUCTS', payload: body});
       localStorage.setItem('products', JSON.stringify(body));
-      navigate('/products');
     } catch (error) {
-      console.log(error);
+      toast("Products Upload failed" , { type: 'error' });
     }
   };
 

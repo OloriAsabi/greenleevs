@@ -1,15 +1,17 @@
-import { useSnackbar } from 'notistack';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaTimes } from 'react-icons/fa'
 import { MdDelete } from 'react-icons/md';
 import { EditBrand, UploadFiles } from '../apis/api';
+import { useNavigate } from 'react-router-dom';
 
 const EditBrandModal = ({ showModal, setShowModal, id }) => {
 
-    const { enqueueSnackbar } = useSnackbar();
     const [files, setFiles] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState([]);
+    const navigate = useNavigate();
 
 
     function uploadSingleFile(e) {
@@ -73,13 +75,14 @@ const submitHandler = async (data) => {
           const responseStatus = response.data.status
   
           if (responseStatus === "success") {
-            enqueueSnackbar('Brand Edited Successful', { variant: responseStatus });
+            toast('Brand Edited Successful', { type: 'success',  theme: "colored" });
+            navigate('/brands');
           } else {
-            enqueueSnackbar("Brand Edited failed" , { variant: responseStatus });
+            toast("Brand Edited failed" , { type: 'error',  theme: "colored"});
           }
         })    
       } catch (error) {
-      enqueueSnackbar("Products Edit Failed", { variant: 'error' });
+      toast("Products Edit Failed", { type: 'error', theme: "colored" });
       console.log(error);
     }
 }

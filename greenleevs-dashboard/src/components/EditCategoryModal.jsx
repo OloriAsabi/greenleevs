@@ -1,16 +1,17 @@
-import { useSnackbar } from 'notistack';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { FaTimes } from 'react-icons/fa'
 import { MdDelete } from 'react-icons/md';
 import { EditCategories, UploadFiles } from '../apis/api';
+import { useNavigate } from 'react-router-dom';
 
 const EditCategoryModal = ({ showModal, setShowModal, category }) => {
-    const { enqueueSnackbar } = useSnackbar();
     const [files, setFiles] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState([]);
     
-
+    const navigate = useNavigate();
 
   function uploadSingleFile(e) {
     const selectedFiles = Array.from(e.target.files);
@@ -36,7 +37,7 @@ const EditCategoryModal = ({ showModal, setShowModal, category }) => {
             ...res.data.data
           ]
         );
-       enqueueSnackbar('Image Added Successfully', { variant: res.data.status });
+       toast('Image Added Successfully', { type: res.data.status });
       }
     } ).catch( (error) => {
       console.log(error)
@@ -58,7 +59,7 @@ const EditCategoryModal = ({ showModal, setShowModal, category }) => {
 
 
 const submitHandler = async (data) => {
-    console.log("Data Product Modal", data);
+    // console.log("Data Product Modal", data);
 
     const body = {
         label: data.title,
@@ -72,15 +73,14 @@ const submitHandler = async (data) => {
           const responseStatus = response.data.status
   
           if (responseStatus === "success") {
-            enqueueSnackbar('Category Edit Successful', { variant: responseStatus });
+            toast('Category Edit Successful', { type: "success" });
+            navigate('/categories'); 
           } else {
-            enqueueSnackbar("Category Edit failed" , { variant: responseStatus });
+            toast("Category Edit failed" , { type: 'error'});
           }
-            
-          console.log("responseStatus ",responseStatus);
         })    
       } catch (error) {
-      enqueueSnackbar("Category Edit Failed", { variant: 'error' });
+      toast("Category Edit Failed", { type: 'error' });
       console.log(error);
     }
 }

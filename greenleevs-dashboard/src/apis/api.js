@@ -37,7 +37,6 @@ export const RegisterUser = async (body) => {
                 "Content-Type": "application/json" ,
             },
           })
-        // console.log("Register Data",data);
          return data; 
         } catch (error) {
             console.log(error)  
@@ -60,10 +59,11 @@ export const LogoutUser = async () => {
 
 export const UpdateUser = async (body) => {
     try {
-        const data = await axios.post(`${process.env.REACT_APP_BASEURL}/v1/user`, body,
+        const data = await axios.post(`${process.env.REACT_APP_BASEURL}/user`, body,
           {
             Headers: {
-                authorization: token
+              "Content-Type": "application/json" ,
+              authorization: token
             }
           })
     return data; 
@@ -87,6 +87,7 @@ export const UserResetPassword = async (body) => {
           {
             headers: { 
                 "Content-Type": "application/json" ,
+                authorization: token
             },
           })
         // console.log("Register Data",data);

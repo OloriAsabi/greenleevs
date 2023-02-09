@@ -1,14 +1,17 @@
-// import { useSnackbar } from 'notistack';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
 import React, { useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { FaTimes } from 'react-icons/fa';
 import { UpdateOrderStatus } from '../apis/api';
 import { orderStatus } from '../data/data';
+import { useNavigate } from 'react-router-dom';
 
 const OrdersModal = ({ showModal, setShowModal, id }) => {
     const [status, setStatus] = useState(orderStatus);
-    // const { enqueueSnackbar } = useSnackbar();
+    
 
+    const navigate = useNavigate();
     const {
         register,
         handleSubmit,
@@ -26,15 +29,14 @@ const OrdersModal = ({ showModal, setShowModal, id }) => {
               const responseStatus = response.status
       
               if (responseStatus  === "success" || 200) {
-                alert('Order Status Successful', { variant: responseStatus });
+                toast('Order Status Successful', { type: "success",theme: "colored" });
+                navigate('/orders');
               } else {
-                alert("Order Status failed" , { variant: responseStatus });
+                toast("Order Status failed" , { type:  'error',  theme: "colored"});
               }
             })    
           } catch (error) {
-          alert("Order Status  Failed", { variant: 'error' });
-          console.log(error);
-            
+          toast("Order Status  Failed", { type: 'error', theme: "colored" });         
         }
     
       }    
