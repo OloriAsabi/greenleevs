@@ -18,14 +18,12 @@ root.render(
     <BrowserRouter>
     <ContextProvider>
     <ToastContainer
-    position="top-center"
+    // position="top-center"
     autoClose={5000}
     hideProgressBar={false}
-    newestOnTop={true}
+    newestOnTop={false}
     closeOnClick
     rtl={false}
-    pauseOnFocusLoss
-    pauseOnHover
     theme= "colored"
     />
     <Routes>

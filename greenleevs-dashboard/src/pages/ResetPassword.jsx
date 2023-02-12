@@ -18,7 +18,7 @@ const ResetPassword = () => {
       formState: { errors },
       trigger
     } = useForm();
-
+    const raw = "{\n    \"token\": \"test\",\n    \"email\": \"admin@greenleevs.com\",\n    \"password\": \"newpassword\",\n    \"password_confirmation\": \"newpassword\"\n}";
 
   const submitHandler = async (data) => {
     console.log("Data",  data );
@@ -27,7 +27,7 @@ const ResetPassword = () => {
       return;
     }
     const bodyData =  {
-      token: '',
+      token: raw,
       email: data.email,
       password: data.password,
       password_confirmation: data.confirmPassword

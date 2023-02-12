@@ -18,6 +18,7 @@ const Settings = () => {
       navigate("/login")
     }
     setValue('name', user.name);
+    setValue('name', user.username);
     setValue('email', user.email);
   }, [navigate, user]);
 
@@ -32,6 +33,7 @@ const Settings = () => {
     console.log(data);
     const bodyData =  {
       username: data.username,
+      name: data.name,
       email: data.email,
     }
     try {
@@ -69,7 +71,7 @@ const Settings = () => {
         <div className='p-6 flex-grow scrollbar-hide w-full mb-6 scrollbar-hide max-h-full'>
         <div className='grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6'>
         <label className='block text-sm text-gray-700 dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm"'>
-        Name
+       User Name
         </label>
         <div className="col-span-8 sm:col-span-4">
           <input 
@@ -80,6 +82,23 @@ const Settings = () => {
            {errors.username && (
                   <p className="text-red-500 text-sm mt-2">
                   Username is Required!!!
+                  </p>
+            )}
+        </div>
+        </div>
+        <div className='grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6'>
+        <label className='block text-sm text-gray-700 dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm"'>
+       Name
+        </label>
+        <div className="col-span-8 sm:col-span-4">
+          <input 
+          className={`block w-full ${
+          errors.name ? "text-red-400 border-red-400" : "text-gray-700 "} px-3  mb-2 py-1 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
+          {...register("name", { required: "name is Required!!!" })}
+          type="text" name="username" placeholder="Your Name"/>
+           {errors.name && (
+                  <p className="text-red-500 text-sm mt-2">
+                  name is Required!!!
                   </p>
             )}
         </div>

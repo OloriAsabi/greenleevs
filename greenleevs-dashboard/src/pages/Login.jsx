@@ -72,7 +72,6 @@ const Login = () => {
         if (responseStatus || responseStatusOne  === 'success' || 200) {
           toast('Login Successful',
             {type : 'success', 
-             closeOnClick: true,
              theme: "colored"
              });
              navigate('/')

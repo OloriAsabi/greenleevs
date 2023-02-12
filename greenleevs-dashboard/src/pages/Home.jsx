@@ -19,8 +19,6 @@ const Home = () => {
       toast('Unable to load Products Unauthorized',
        {
         type : 'error', 
-        closeOnClick: true,
-        pauseOnHover: true,
         theme: "colored"
         });
     });
