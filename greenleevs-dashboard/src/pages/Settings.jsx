@@ -17,7 +17,8 @@ const Settings = () => {
     if(!user) {
       navigate("/login")
     }
-    setValue('name', user.name);
+    setValue('name', user.firstName);
+    setValue('name', user.lastName);
     setValue('name', user.username);
     setValue('email', user.email);
   }, [navigate, user]);
@@ -33,7 +34,8 @@ const Settings = () => {
     console.log(data);
     const bodyData =  {
       username: data.username,
-      name: data.name,
+      first_name: data.firstName,
+      last_name: data.lastName,
       email: data.email,
     }
     try {
@@ -88,17 +90,34 @@ const Settings = () => {
         </div>
         <div className='grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6'>
         <label className='block text-sm text-gray-700 dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm"'>
-       Name
+      First Name
         </label>
         <div className="col-span-8 sm:col-span-4">
           <input 
           className={`block w-full ${
-          errors.name ? "text-red-400 border-red-400" : "text-gray-700 "} px-3  mb-2 py-1 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
-          {...register("name", { required: "name is Required!!!" })}
-          type="text" name="username" placeholder="Your Name"/>
-           {errors.name && (
+          errors.firstName ? "text-red-400 border-red-400" : "text-gray-700 "} px-3  mb-2 py-1 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
+          {...register("firstName", { required: "First name is Required!!!" })}
+          type="text" name="firstName" placeholder="Your First Name"/>
+           {errors.firstName && (
                   <p className="text-red-500 text-sm mt-2">
-                  name is Required!!!
+                First  name is Required!!!
+                  </p>
+            )}
+        </div>
+        </div>
+        <div className='grid grid-cols-6 gap-3 md:gap-5 xl:gap-6 lg:gap-6 mb-6'>
+        <label className='block text-sm text-gray-700 dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm"'>
+      Last Name
+        </label>
+        <div className="col-span-8 sm:col-span-4">
+          <input 
+          className={`block w-full ${
+          errors.lastName ? "text-red-400 border-red-400" : "text-gray-700 "} px-3  mb-2 py-1 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
+          {...register("lastName", { required: "Last name is Required!!!" })}
+          type="text" name="lastName" placeholder="Your Last Name"/>
+           {errors.lastName && (
+                  <p className="text-red-500 text-sm mt-2">
+                Last  name is Required!!!
                   </p>
             )}
         </div>
