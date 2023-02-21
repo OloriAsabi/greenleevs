@@ -2,14 +2,12 @@ import React from 'react';
 import { MdOutlineCancel } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { useStateContext } from '../contexts/ContextProvider';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import 'react-tagsinput/react-tagsinput.css';
 import { CreateCustomers } from '../apis/api';
 
 const CustomerModal = ({ toggleMenu, setToggleMenu }) => {
-  const { dispatch  } = useStateContext();
   const navigate = useNavigate()
   const {
     register,
@@ -19,8 +17,6 @@ const CustomerModal = ({ toggleMenu, setToggleMenu }) => {
   } = useForm({ mode: 'onBlur', reValidateMode: 'onBlur' })
 
   const submitHandler = async (data) => {
-    console.log("Data Product Modal", data);
-
     const body = {
       username: data.username ,
       first_name: data.first_name,
@@ -35,19 +31,15 @@ const CustomerModal = ({ toggleMenu, setToggleMenu }) => {
        .then(response => {
         const responseStatus = response.data.status
 
-        if (responseStatus === "success" || 200 || 201) {
-          toast('Customer created Successful', { type:  'success', theme: "colored" });
+        if (responseStatus === "success" || 200) {
+          toast.success('Customer created Successful');
         } else {
-          toast("Customer creation failed" , { type: 'error', theme: "colored"});
+          toast.error("Customer creation failed");
         }
-          
-        console.log("responseStatus ",responseStatus);
       });
-      dispatch({ type: 'ADD_CUSTOMERS', payload: body});
-      localStorage.setItem('products', JSON.stringify(body));
       navigate('/customers');
     } catch (error) {
-      toast("Customer creation failed" , { type: 'error',    theme: "colored"});
+      toast.error("Customer creation failed" );
     }
   };
 

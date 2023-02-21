@@ -6,6 +6,6 @@ export default axios.post({
   baseURL:`${process.env.REACT_APP_BASEURL}/admin`,
   headers: {
     "Content-type": "application/json",
-    "Authorization" : token
+    "Authorization" : `Bearer ${token}`
   }
 });

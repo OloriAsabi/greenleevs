@@ -3,22 +3,20 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import './App.css'
 import App from './App';
-import { ContextProvider } from './contexts/ContextProvider';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { ForgotPassword, Login, Register, ResetPassword } from './pages';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
-
-// import 'react-toastify/dist/ReactToastify.css';
-
+import { Provider } from 'react-redux';
+import { store } from './rootReducer';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>    
     <BrowserRouter>
-    <ContextProvider>
+    <Provider store={store}>
     <ToastContainer
-    // position="top-center"
+    position='top-center'
     autoClose={5000}
     hideProgressBar={false}
     newestOnTop={false}
@@ -33,8 +31,7 @@ root.render(
         <Route path="/forgotPassword" element={(<ForgotPassword />)} />
         <Route path="/resetPassword" element={(<ResetPassword />)} />
      </Routes>  
-    <ToastContainer />
-    </ContextProvider>
+    </Provider>
     </BrowserRouter>
   </React.StrictMode>
 );

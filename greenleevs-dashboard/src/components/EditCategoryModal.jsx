@@ -13,43 +13,40 @@ const EditCategoryModal = ({ showModal, setShowModal, category }) => {
     
     const navigate = useNavigate();
 
-  function uploadSingleFile(e) {
-    const selectedFiles = Array.from(e.target.files);
-    setFiles(
-      [
-        ...files,
-        ...selectedFiles
-      ]
-    );
-    console.log(selectedFiles);
-    const formData = new FormData();
-    selectedFiles.forEach( (file) => {
-      formData.append("files[]", file, file.name);
-    });
-
-    /** TODO: need to catch and let users know about the error!!! */
-    UploadFiles(formData).then( (res) => {
-      console.log("Response: ",res);
-      if ( res !== undefined && res !== null && res.data !== undefined && res.data !== null) {
-        setUploadedFiles(
-          [
-            ...uploadedFiles,
-            ...res.data.data
-          ]
-        );
-       toast('Image Added Successfully', { type: res.data.status });
+    function uploadSingleFile(e) {
+      const selectedFiles = Array.from(e.target.files);
+      console.log(selectedFiles);
+      setFiles([...files, ...selectedFiles]);
+    
+      const formData = new FormData();
+      selectedFiles.forEach((file) => {
+        console.log(file);
+        formData.append('files[]', file, file.name);
+      });
+      if (selectedFiles.length > 0) {
+        UploadFiles(formData)
+          .then((res) => {
+            console.log("Response: ", res);
+            if (res !== undefined &&
+              res !== null &&
+              res.data !== undefined &&
+              res.data !== null) {
+              setUploadedFiles([...uploadedFiles, ...res.data.data]);
+              toast.success("Image Added Successfully");
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            toast.error("Error Uploading Image");
+          });
+      } else {
+        toast.error("At least one file is required for upload.");
       }
-    } ).catch( (error) => {
-      console.log(error)
-    });
-  }
-
-  function deleteFile(e) {
-    const s = files.filter((item, index) => index !== e);
-    setFiles(s);
-    console.log(s);
-  }
-
+    }
+    
+    function deleteFile(e) {
+      setFiles((prevFiles) => prevFiles.filter((_, i) => i !== e));
+    }
   const {
     register,
     handleSubmit,
@@ -73,14 +70,14 @@ const submitHandler = async (data) => {
           const responseStatus = response.data.status
   
           if (responseStatus === "success") {
-            toast('Category Edit Successful', { type: "success" });
+            toast.success('Category Edit Successful');
             navigate('/categories'); 
           } else {
-            toast("Category Edit failed" , { type: 'error'});
+            toast.error("Category Edit failed");
           }
         })    
       } catch (error) {
-      toast("Category Edit Failed", { type: 'error' });
+      toast.error("Category Edit Failed");
       console.log(error);
     }
 }

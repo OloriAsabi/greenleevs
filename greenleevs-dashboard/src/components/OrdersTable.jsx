@@ -130,11 +130,11 @@ const handleDelete = (rowIndex) => {
     newOrders.splice(rowIndex, 1)
 
     setOrders(newOrders);
-    toast('Orders Deleted Successful', { type: 'success', theme: "colored" });
+    toast.success('Orders Deleted Successful');
   })
   .catch((e) => {
     console.log(e);
-    toast('Orders delete Failed', { type: 'error', theme: "colored" });
+    toast.error('Orders delete Failed');
   });
 }
 const columns = useMemo(() => [

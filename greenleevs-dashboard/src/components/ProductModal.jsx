@@ -2,16 +2,17 @@ import React, { useEffect, useState } from 'react';
 import { MdOutlineCancel } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
-import { useStateContext } from '../contexts/ContextProvider';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import TagsInput from 'react-tagsinput';
 import 'react-tagsinput/react-tagsinput.css';
 import { strain, thcContents, cbdContents, Status } from "../data/data"
 import { CreateProducts, GetBrands, GetCategories, UploadFiles } from '../apis/api';
+import { useDispatch } from 'react-redux';
+import { setProducts } from '../reducers/auth';
 
 const ProductModal = ({ toggleMenu, setToggleMenu }) => {
-  const { dispatch } = useStateContext();
+  const dispatch  = useDispatch()
   const navigate = useNavigate()
 
   const [tags, setTags] = useState([]);
@@ -44,6 +45,7 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
     console.log(e);
     });
   },[]);
+
   useEffect(() => {
     GetCategories()
     .then((response) => {
@@ -54,39 +56,40 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
     });
   },[]);
 
+
   function uploadSingleFile(e) {
     const selectedFiles = Array.from(e.target.files);
-    setFiles(
-      [
-        ...files,
-        ...selectedFiles
-      ]
-    );
+    console.log(selectedFiles);
+    setFiles([...files, ...selectedFiles]);
+  
     const formData = new FormData();
-    selectedFiles.forEach( (file) => {
-      formData.append("files[]", file, file.name);
+    selectedFiles.forEach((file) => {
+      console.log(file);
+      formData.append('files[]', file, file.name);
     });
-
-    /** TODO: need to catch and let users know about the error!!! */
-    UploadFiles(formData).then( (res) => {
-      if ( res !== undefined && res !== null && res.data !== undefined && res.data !== null) {
-        setUploadedFiles(
-          [
-            ...uploadedFiles,
-            ...res.data.data
-          ]
-        );
-        toast('Image Added Successfully', { type: res.data.status });
-      }
-    } ).catch( (error) => {
-      console.log(error)
-    });
+    if (selectedFiles.length > 0) {
+      UploadFiles(formData)
+        .then((res) => {
+          console.log("Response: ", res);
+          if (res !== undefined &&
+            res !== null &&
+            res.data !== undefined &&
+            res.data !== null) {
+            setUploadedFiles([...uploadedFiles, ...res.data.data]);
+            toast.success("Image Added Successfully");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          toast.error("Error Uploading Image");
+        });
+    } else {
+      toast.error("At least one file is required for upload.");
+    }
   }
-
+  
   function deleteFile(e) {
-    const s = files.filter((item, index) => index !== e);
-    setFiles(s);
-    console.log(s);
+    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== e));
   }
 
   const handleTagsChange = (newTags) => {
@@ -138,15 +141,15 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
     try {
       CreateProducts(body)
        .then(response => {
-        const responseStatus = response.data.status
+        const responseStatus = response?.data?.status
         if (responseStatus  === "success") {
-          toast('Products Added Successfully', { type: "success" });
+          toast.success('Products Added Successfully');
           navigate('/products');
         } else {
-          toast("Products Upload failed" , { type: 'error' });
+          toast.error("Products Upload failed" );
         }
       });
-      dispatch({ type: 'ADD_PRODUCTS', payload: body});
+      dispatch(setProducts(body));
       localStorage.setItem('products', JSON.stringify(body));
     } catch (error) {
       toast("Products Upload failed" , { type: 'error' });
@@ -168,7 +171,7 @@ const ProductModal = ({ toggleMenu, setToggleMenu }) => {
       }
       >
         <article
-        className='relative w-screen max mb-5 pb-10 grid grid-rows space-y-6 h-full overflow-y-scroll'>
+        className='relative w-screen max mb-5 pb-10 grid grid-rows space-y-6 h-screen overflow-y-scroll'>
         <div className='flex justify-between m-10'>
         <header className="p-4 font-bold text-lg">Add Your Products</header>
         <MdOutlineCancel

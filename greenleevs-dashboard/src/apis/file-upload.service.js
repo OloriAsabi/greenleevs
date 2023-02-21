@@ -12,7 +12,7 @@ class FileUploadService {
     return http.post("/upload", formData, {
       headers: {
         "Content-Type": "multipart/form-data",
-        "Authorization" : token
+        "Authorization" :  `Bearer ${token}`
       },
       onUploadProgress
     });

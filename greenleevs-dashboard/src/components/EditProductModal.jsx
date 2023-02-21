@@ -23,37 +23,37 @@ const [files, setFiles] = useState([]);
 
 function uploadSingleFile(e) {
   const selectedFiles = Array.from(e.target.files);
-  setFiles(
-    [
-      ...files,
-      ...selectedFiles
-    ]
-  );
-  const formData = new FormData();
-  selectedFiles.forEach( (file) => {
-    formData.append("files[]", file, file.name);
-  });
+  console.log(selectedFiles);
+  setFiles([...files, ...selectedFiles]);
 
-  /** TODO: need to catch and let users know about the error!!! */
-  UploadFiles(formData).then( (res) => {
-    if ( res !== undefined && res !== null && res.data !== undefined && res.data !== null) {
-      setUploadedFiles(
-        [
-          ...uploadedFiles,
-          ...res.data.data
-        ]
-      );
-      toast('Image Added Successfully', { type: 'success',    theme: "colored" });
-    }
-  } ).catch( (error) => {
-    console.log(error)
+  const formData = new FormData();
+  selectedFiles.forEach((file) => {
+    console.log(file);
+    formData.append('files[]', file, file.name);
   });
+  if (selectedFiles.length > 0) {
+    UploadFiles(formData)
+      .then((res) => {
+        console.log("Response: ", res);
+        if (res !== undefined &&
+          res !== null &&
+          res.data !== undefined &&
+          res.data !== null) {
+          setUploadedFiles([...uploadedFiles, ...res.data.data]);
+          toast.success("Image Added Successfully");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        toast.error("Error Uploading Image");
+      });
+  } else {
+    toast.error("At least one file is required for upload.");
+  }
 }
 
 function deleteFile(e) {
-  const s = files.filter((item, index) => index !== e);
-  setFiles(s);
-  console.log(s);
+  setFiles((prevFiles) => prevFiles.filter((_, i) => i !== e));
 }
   const {
     register,
@@ -111,15 +111,15 @@ const submitHandler = async (data) => {
         const responseStatus = response.data.status
 
         if (responseStatus  === "success") {
-          toast('Product Edit Successful', { type: "success" });
+          toast.success('Product Edit Successful');
           navigate('/product');
         } else {
-          toast("Product Edit failed" , { type: "error"});
+          toast.error("Product Edit failed");
         }
       })
           
     } catch (error) {
-    toast("Products Edit Failed", { type: 'error' });
+    toast.error("Products Edit Failed");
     }
 }
 

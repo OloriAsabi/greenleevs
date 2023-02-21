@@ -73,11 +73,11 @@ const CustomersTable = () => {
       newCustomers.splice(rowIndex, 1)
 
       setCustomers(newCustomers);
-      toast('Customer Deleted Successful', { type: 'success', theme: "colored" });
+      toast.success('Customer Deleted Successful');
     })
     .catch((e) => {
       console.log(e);
-      toast('Customer delete Failed', { type: 'error',  theme: "colored" });
+      toast.error('Customer delete Failed');
     });
   }
 

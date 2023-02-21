@@ -15,7 +15,8 @@ import 'react-toastify/dist/ReactToastify.min.css';
 import Spinner from './Spinner';
 import { DeleteBrands, GetBrandById, GetBrands } from '../apis/api';
 import BrandModal from './BrandModal';
-import { useStateContext } from '../contexts/ContextProvider';
+import { setBrands } from '../reducers/auth';
+import { useDispatch } from 'react-redux';
 
 
 export function GlobalFilter({
@@ -60,12 +61,12 @@ export function GlobalFilter({
 
 const BrandTable = () => {
     const [toggleMenu, setToggleMenu] = useState(false);
-    const [brands, setBrands] = useState([])
+    const [brands, setBrand] = useState([])
     const [isLoading, setIsLoading] = useState(false);
     const data =  useMemo(() => [...brands], [brands]);
     const brandsRef = useRef();
     const navigate = useNavigate();
-    const { dispatch  } = useStateContext();
+    const dispatch = useDispatch()
 
     brandsRef.current = brands;
 
@@ -85,12 +86,12 @@ const BrandTable = () => {
           let newBrands = [...brandsRef.current];
           newBrands.splice(rowIndex, 1)
     
-          setBrands(newBrands);
-          toast('Brand Deleted Successful', { type: 'success',   theme: "colored" });
+          setBrand(newBrands);
+          toast.success('Brand Deleted Successful');
         })
         .catch((e) => {
           console.log(e);
-          toast('Brand delete Failed', { type: 'error',   theme: "colored" });
+          toast.error('Brand delete Failed');
         });
       }
 
@@ -101,13 +102,13 @@ const BrandTable = () => {
         // console.log(response);
         const data = response.data.data
           
-        setBrands(data)
-        dispatch({ type: 'ADD_BRANDS', payload: data});
+        setBrand(data)
+        dispatch(setBrands(data));
         setIsLoading(false)
         }).catch((e) => {
         console.log(e);
         });
-      },[]);
+      },[dispatch]);
 
       const columns = useMemo(() => [
         {

@@ -1,18 +1,16 @@
 import React from 'react'
-import { FcGoogle } from 'react-icons/fc';
 import logo from '../data/logo.png';
-import { GoogleOAuthProvider } from '@react-oauth/google';
-import { GoogleLogin } from '@react-oauth/google';
-import { useStateContext } from '../contexts/ContextProvider';
-import jwt_decode from "jwt-decode";
+import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { LoginUser } from '../apis/api';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.min.css';
 import { useNavigate } from 'react-router-dom';
+import { setToken, setUserLogin, startLoading } from '../reducers/auth';
+import { Spinner } from '../components';
 
 const Login = () => {
-  const { dispatch  } = useStateContext();
+  const  dispatch  = useDispatch();
+  const { loading } = useSelector((state) => state.auth)
 
   const navigate = useNavigate();
 
@@ -21,75 +19,46 @@ const Login = () => {
     handleSubmit,
     formState: { errors }
   } = useForm();
-
-  const responseGoogle = (response) => {
-    const userObject = jwt_decode(response.credential);
-    console.log(userObject);
-    const { email, sub } = userObject;
-    const bodyData = {
-      email: email,
-      sub: sub,
-    }
-    try {
-      LoginUser(bodyData)
-      .then(response => {
-        console.log(response);
-        const responseStatus = response.status
-        const responseStatusOne = response.data.status
-
-        if (responseStatus || responseStatusOne === 'success' || 200) {
-          toast('Login Successful', { type: 'success'});
-          navigate('/')
-        } else {
-          toast("Login failed", { type: 'error' });
-        }
-          
-        console.log("responseStatus ",responseStatus);
-        const { token } = response.data
-        localStorage.setItem('token', token);
-      });
-      dispatch({ type: 'USER_LOGIN', payload: bodyData });
-      localStorage.setItem('user', JSON.stringify(bodyData));
-    } catch (error) {
-      toast('Login Unautorized', { type: 'error' });
-    }
-  }
  
   const submitHandler = async (data) => {
-    console.log("Data", data );
-
     const bodyData =  {
       email: data.email,
       password: data.password,
     }
-    try {
-    LoginUser(bodyData) 
-      .then(response => {
-        console.log(response);
-        const responseStatus = response.status
-        const responseStatusOne = response.data.status
-
-        if (responseStatus || responseStatusOne  === 'success' || 200) {
-          toast('Login Successful',
-            {type : 'success', 
-             theme: "colored"
-             });
-             navigate('/')
-        } else {
-          toast("Login failed", { type: 'error',   theme: "colored"  });
+      try {
+        await LoginUser(bodyData) 
+          .then(response => {
+            const responseStatus = response.status
+            const responseStatusOne = response.data.status
+    
+            if (responseStatus === 200 && responseStatusOne === 'success') {
+              toast.success('Login Successful');
+                 navigate('/')
+            } else {
+              toast.error("Login failed");
+            }
+            const { token } = response.data
+            if (token !== '') {
+              console.log('check dummy');
+               dispatch(setToken(token));
+              localStorage.setItem('token', token);
+              navigate("/");
+            }
+            else if (token !== '') {
+              console.log('Check Response:', response.data);
+            }
+          });
+          startLoading();
+          dispatch(setUserLogin(bodyData));
+          localStorage.setItem('user', JSON.stringify(bodyData));
+          navigate('/');
+          toast.error('Login Successful');
+        } catch (error) {
+          console.log(error);
+          toast.error("Login failed")
         }
-        const { token } = response.data
-        localStorage.setItem('token', token);
-        dispatch({type : 'ADD_TOKEN', payload: token});
-      });
-      dispatch({ type: 'USER_LOGIN', payload: bodyData});
-      localStorage.setItem('user', JSON.stringify(bodyData));
-      navigate('/');
-      toast('Login Successful', { type: 'success',theme: "colored" });
-    } catch (error) {
-      toast('Invalid email or password', { type: 'error', theme: "colored" });
-    }
-  };
+    } 
+
 
   return (
         <div className="container mx-auto flex items-center min-h-screen p-6 justify-center">
@@ -156,32 +125,14 @@ const Login = () => {
                 )}
               </div>
               <button 
-              className="align-bottom inline-flex items-center justify-center cursor-pointer leading-5 transition-colors duration-150 font-medium focus:outline-none px-4 py-2 rounded-lg text-sm text-white bg-[#1F451A] border border-transparent active:bg-[#1F451A] hover:bg-[#1F451A] focus:ring focus:ring-purple-300 mt-4 h-12 w-full" type="submit"><a href='/'>Log in</a></button>
+              className="align-bottom inline-flex items-center justify-center cursor-pointer leading-5 transition-colors duration-150 font-medium focus:outline-none px-4 py-2 rounded-lg text-sm text-white bg-[#1F451A] border border-transparent active:bg-[#1F451A] hover:bg-[#1F451A] focus:ring focus:ring-purple-300 mt-4 h-12 w-full" 
+              type="submit"
+              >
+                  {loading ? <Spinner /> : 'Login'}</button>
             </div>
       
     
-        <hr className='my-10' />
-        <div className="">
-          <GoogleOAuthProvider 
-              clientId={`${process.env.REACT_APP_GOOGLE_API_TOKEN}`}
-              >
-          <GoogleLogin
-            render={(renderProps) => (
-              <button
-                type="button"
-                className="text-sm inline-flex items-center cursor-pointer transition ease-in-out duration-300 font-semibold font-serif text-center justify-center rounded-md focus:outline-none text-gray-700 bg-gray-100 shadow-sm my-2  md:px-2 lg:px-3 py-4 md:py-3.5 lg:py-4 hover:text-white hover:bg-red-500 h-11 md:h-12 w-full"
-                onClick={renderProps.onClick}
-                disabled={renderProps.disabled}
-              >
-                <FcGoogle className="" />Login with google
-              </button>
-            )}
-            onSuccess={responseGoogle}
-            onFailure={responseGoogle}
-            cookiePolicy="single_host_origin"
-          />
-          </GoogleOAuthProvider>
-        </div>    
+        <hr className='my-10' /> 
         </form>
       
         <p className="mt-4"><a className="text-sm font-medium text-[#1F451A] hover:underline" 

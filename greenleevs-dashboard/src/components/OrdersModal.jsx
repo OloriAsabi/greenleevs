@@ -26,14 +26,14 @@ const OrdersModal = ({ showModal, setShowModal, id }) => {
               const responseStatus = response.status
       
               if (responseStatus  === "success" || 200) {
-                toast('Order Status Successful', { type: "success",theme: "colored" });
+                toast.success('Order Status Successful');
                 navigate('/orders');
               } else {
-                toast("Order Status failed" , { type:  'error',  theme: "colored"});
+                toast.error("Order Status failed" );
               }
             })    
           } catch (error) {
-          toast("Order Status  Failed", { type: 'error', theme: "colored" });         
+          toast.error("Order Status  Failed");         
         }
     
       }    

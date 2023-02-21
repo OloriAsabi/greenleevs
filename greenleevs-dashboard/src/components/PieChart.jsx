@@ -7,11 +7,8 @@ const PieChart = () => {
 
   const [bestSellingProducts, setBestSellingProducts] = useState([]);
   useEffect(() => {
-   
-
     GetBestSellingProducts()
     .then((response) => {
-      // console.log("Weekly Sales",response);
     const data = response.data    
       setBestSellingProducts(data)
     }).catch((e) => {

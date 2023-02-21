@@ -171,11 +171,11 @@ const ProductsTable = () => {
       newProduct.splice(rowIndex, 1)
 
       setProducts(newProduct);
-      toast('Products Deleted Successful', { type: 'success' });
+      toast.success('Products Deleted Successful');
     })
     .catch((e) => {
       console.log(e);
-      toast('Product delete Failed', { type: 'error' });
+      toast.error('Product delete Failed');
     });
   }
   

@@ -6,21 +6,17 @@ import { BsTruck } from 'react-icons/bs';
 import { IoMdCheckmark } from 'react-icons/io';
 import { GetRequestOptions } from '../apis/api';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.min.css';
 
 const Home = () => {
   const [requestOptions, setRequestOptions] = useState([]);
+  
   useEffect(() => {
     GetRequestOptions()
     .then((response) => {
-    const data = response.data.data     
+    const data = response.data.data    
       setRequestOptions(data)
     }).catch((error) => {
-      toast('Unable to load Products Unauthorized',
-       {
-        type : 'error', 
-        theme: "colored"
-        });
+      toast.error('Unable to load Products Unauthorized');
     });
   },[]);
 

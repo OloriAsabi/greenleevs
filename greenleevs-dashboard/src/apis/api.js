@@ -1,13 +1,12 @@
 import axios from "axios";
-// import { useStateContext } from "../contexts/ContextProvider";
-
 const token =  localStorage.getItem("token");
 
 export const UploadFiles = async (body) => {
   try {
-    const data = await axios.post(`${process.env.REACT_APP_BASEURL}/admin/upload/files`, body, {
+    const data = await axios.post(`${process.env.REACT_APP_BASEURL}/admin/upload/files`, body,
+    {
       headers: {
-        "Content-Type": "application/json" ,
+        'Content-Type': 'multipart/form-data',
         "Authorization": `Bearer ${token}`
       },
     });
@@ -19,22 +18,23 @@ export const UploadFiles = async (body) => {
 };
 
 export const LoginUser = async (body) => {
-    try {
-    const data = await axios.post(`${process.env.REACT_APP_BASEURL}/login`, body,  {
-        Headers: { 
-          "Content-Type": "application/json" ,
-          "Authorization": `Bearer ${token}`
-        },
-      })
-     return data; 
-    } catch (error) {
-        console.log(error)  
-    }
+  try {
+    const data = await axios.post(`${process.env.REACT_APP_BASEURL}/login`, body, 
+        {
+          Headers: { 
+            "Content-Type": "application/json" ,
+            "Authorization": `Bearer ${token}`
+          },
+        })
+       return data; 
+      } catch (error) {
+          console.log(error)  
+      }
 };
 
 export const RegisterUser = async (body) => {
     try {
-      const data = await axios.post(`${process.env.REACT_APP_BASEURL}/register`, body,
+      const data = await axios.post(`${process.env.REACT_APP_BASEURL}/register`, body, 
           {
             Headers: { 
               "Content-Type": "application/json" ,
@@ -66,8 +66,8 @@ export const UpdateUser = async (body) => {
     try {
         const data = await axios.post(`${process.env.REACT_APP_BASEURL}/user`, body,
           {
-            headers: { 
-              "Content-Type": "application/json" ,
+            Headers: { 
+             "Content-Type": "application/json" ,
               "Authorization": `Bearer ${token}`
           },
           })
@@ -88,9 +88,9 @@ export const UserForgotPassword = async (body) => {
 
 export const UserResetPassword = async (body) => {
     try {
-      const data = await axios.post(`${process.env.REACT_APP_BASEURL}/password/reset`, body,
+      const data = await axios.post(`${process.env.REACT_APP_BASEURL}/password/reset`, body, 
           {
-            headers: { 
+            Headers: { 
                 "Content-Type": "application/json" ,
                 authorization: token
             },
@@ -134,7 +134,8 @@ export const UserResetPassword = async (body) => {
   }
   export const GetOrderById = (id) => {
     try {
-        const req = axios.get(`${process.env.REACT_APP_BASEURL}/admin/orders?id=${id}`,  {
+        const req = axios.get(`${process.env.REACT_APP_BASEURL}/admin/orders?id=${id}`, 
+         {
           headers: { 
               "Content-Type": "application/json" ,
               "Authorization": `Bearer ${token}`
@@ -209,7 +210,8 @@ export const DeleteOrders = async (id) => {
   }
 export const getProductId = (id) => {
   try {
-      const req = axios.get(`${process.env.REACT_APP_BASEURL}/admin/product?sku=${id}`,  {
+      const req = axios.get(`${process.env.REACT_APP_BASEURL}/admin/product?sku=${id}`,
+        {
         headers: { 
             "Content-Type": "application/json" ,
             "Authorization": `Bearer ${token}`

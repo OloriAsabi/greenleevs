@@ -4,12 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import { MdDelete } from 'react-icons/md';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
-// import { useStateContext } from '../contexts/ContextProvider';
 import { useForm } from 'react-hook-form';
 import { PostCategories, UploadFiles } from '../apis/api';
 
 const CategoryModal = ({toggleMenu, setToggleMenu}) => {
-  // const { dispatch  } = useStateContext();
     const navigate = useNavigate();
 
     const [files, setFiles] = useState([]);
@@ -22,47 +20,43 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
     trigger
   } = useForm();
 
-
   function uploadSingleFile(e) {
     const selectedFiles = Array.from(e.target.files);
-    setFiles(
-      [
-        ...files,
-        ...selectedFiles
-      ]
-    );
     console.log(selectedFiles);
+    setFiles([...files, ...selectedFiles]);
+  
     const formData = new FormData();
-    selectedFiles.forEach( (file) => {
-      formData.append("files[]", file, file.name);
+    selectedFiles.forEach((file) => {
+      console.log(file);
+      formData.append('files[]', file, file.name);
     });
-
-    /** TODO: need to catch and let users know about the error!!! */
-    UploadFiles(formData).then( (res) => {
-      console.log("Response: ",res);
-      if ( res !== undefined && res !== null && res.data !== undefined && res.data !== null) {
-        setUploadedFiles(
-          [
-            ...uploadedFiles,
-            ...res.data.data
-          ]
-        );
-        toast('Image Added Successfully', { type: 'success' });
-      }
-    } ).catch( (error) => {
-      console.log(error)
-    });
+    if (selectedFiles.length > 0) {
+      UploadFiles(formData)
+        .then((res) => {
+          console.log("Response: ", res);
+          if (res !== undefined &&
+            res !== null &&
+            res.data !== undefined &&
+            res.data !== null) {
+            setUploadedFiles([...uploadedFiles, ...res.data.data]);
+            toast.success("Image Added Successfully");
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          toast.error("Error Uploading Image");
+        });
+    } else {
+      toast.error("At least one file is required for upload.");
+    }
   }
-
+  
   function deleteFile(e) {
-    const s = files.filter((item, index) => index !== e);
-    setFiles(s);
-    console.log(s);
+    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== e));
   }
 
   const submitHandler = async (data) => {
     console.log("Categories Product Modal", data);
-
 
     const body = {
       label: data.title ,
@@ -70,25 +64,21 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
       image: uploadedFiles[0]['file_url'],
     };
 
-    console.log('Body',body);
-
     try {
       PostCategories(body)
       .then(response => {
-       console.log("Post Cat",response);
-       const responseStatus = response.data.status
-       if (responseStatus === "success" || 200 || 201) {
-         toast('Categories Added Successfully', { type:  'success',  theme: "colored" });
+      //  console.log("Post Cat",response);
+       if (response?.data?.status === 'success') {
+         toast.success('Categories Added Successfully');
        } else {
-        toast("Categories Upload failed" , { type: 'error',   theme: "colored" });
+        toast.error("Categories Upload failed");
        }
      });
-    //  dispatch({ type: 'ADD_CATEGORIES', payload: body});
      localStorage.setItem('categories', JSON.stringify(body));
      navigate('/categories');
    } catch (error) {
      console.log(error);
-     toast("Categories Upload failed" , { type: 'error',   theme: "colored" });
+     toast.error("Categories Upload failed");
     }
 
   }
@@ -108,7 +98,7 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
       }
       >
         <article
-        className='relative w-screen max mb-5 pb-10 grid grid-rows space-y-6 h-full overflow-y-scroll'>
+        className='relative w-screen max mb-5 pb-10 grid grid-rows space-y-6 h-screen overflow-y-scroll'>
         <div className='flex justify-between m-10'>
         <header className="p-4 font-bold text-lg">Add Your Category</header>
         <MdOutlineCancel
@@ -136,7 +126,7 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
             })}
           </div>
 
-          <div className="form-group">
+          <form encType='"multipart/form-data"' className="form-group">
             <input
               type="file"
               disabled={files.length === 5}
@@ -144,7 +134,7 @@ const CategoryModal = ({toggleMenu, setToggleMenu}) => {
               onChange={uploadSingleFile}
               multiple
             />
-          </div>
+          </form>
           </div>
 
           <form 

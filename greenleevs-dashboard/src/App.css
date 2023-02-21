@@ -5,3 +5,8 @@
     content: var(--tw-content);
     top: 0.625rem;
   }
+  @media screen and (max-width: 900px) {
+    .small-nav{
+        margin-top: 8rem;
+    }
+  }

@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { AiOutlineMenu } from 'react-icons/ai';
-import { UserProfile } from '.';
-import { MdKeyboardArrowDown } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 
-import { useStateContext } from '../contexts/ContextProvider';
+import { useDispatch, useSelector } from 'react-redux';
+import { setActiveMenu, setScreenSize } from '../reducers/auth';
+
 
 const NavButton = ({ title, customFunc, icon, dotColor }) => (
     <div content={title} position="BottomCenter">
@@ -23,51 +24,60 @@ const NavButton = ({ title, customFunc, icon, dotColor }) => (
   
 
 const Navbar = ({userInfo}) => {
-    const { activeMenu, setActiveMenu, handleClick, isClicked, setScreenSize, screenSize } = useStateContext();
+    const { activeMenu, screenSize, users } = useSelector(state => state.auth);
+    const dispatch = useDispatch();
 
+    const navigate = useNavigate()
     useEffect(() => {
-        const handleResize = () => setScreenSize(window.innerWidth);
+        const handleResize = () => dispatch(setScreenSize(window.innerWidth));
     
         window.addEventListener('resize', handleResize);
     
         handleResize();
     
         return () => window.removeEventListener('resize', handleResize);
-      }, [setScreenSize]);
+      }, [dispatch]);
     
       useEffect(() => {
         if (screenSize <= 900) {
-          setActiveMenu(false);
+          dispatch(setActiveMenu(false))
         } else {
-          setActiveMenu(true);
+          dispatch(setActiveMenu(true))
         }
-      }, [screenSize, setActiveMenu]);
+      }, [dispatch, screenSize]);
+    
+      useEffect(() => {
+        if(!users) {
+          navigate("/login")
+        }
+      }, [navigate, users]);
+    
 
-      const handleActiveMenu = () => setActiveMenu(!activeMenu);
+      const handleActiveMenu = () => dispatch(setActiveMenu(!activeMenu));
 
   return (
     <div className="flex justify-between border-b-2 p-3 md:ml-6 md:mr-6 relative">
 
     <NavButton title="Menu" customFunc={handleActiveMenu}  icon={<AiOutlineMenu />} />
-    <div className="flex">
-      <div content="Profile" position="BottomCenter">
+    <div className="flex justify-between space-x-10">
+      <div 
+      content="Profile" 
+      position="BottomCenter"
+      className='mt-5'
+      >
         <div
           className="flex items-center gap-2 cursor-pointer p-1 hover:bg-light-gray rounded-lg"
-          onClick={() => handleClick('userProfile')}
         >
           {userInfo &&
             <p>
-              <span className="text-gray-400 text-14">Hi,</span>{' '}
-              <span className="text-gray-400 font-bold ml-1 text-14">
-               {userInfo.username}
+              <span className="text-gray-400 text-14">Hi,</span>{'  '}
+              <span className="text-gray-500 text-sm font-semibold dark:text-gray-400">
+               {userInfo.email}
               </span>
             </p>
           }
-          <MdKeyboardArrowDown className="text-gray-400 text-14" />
         </div>
       </div>
-
-      {isClicked.userProfile && (<UserProfile userInfo={userInfo} />)}
     </div>
   </div>
   )

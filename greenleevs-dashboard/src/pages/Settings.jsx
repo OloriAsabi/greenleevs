@@ -2,26 +2,28 @@ import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '../components'
-import { useStateContext } from '../contexts/ContextProvider';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import { UpdateUser } from '../apis/api';
 import { getError } from '../utils/error';
+import { setToken, setUserUpdate } from '../reducers/auth';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Settings = () => {
-  const {dispatch, state} = useStateContext();
-  const { user } = state;
+  const dispatch = useDispatch();
+  const { users } = useSelector(state => state.auth);
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    if(!user) {
+    if(!users) {
       navigate("/login")
     }
-    setValue('name', user.firstName);
-    setValue('name', user.lastName);
-    setValue('name', user.username);
-    setValue('email', user.email);
-  }, [navigate, user]);
+    setValue('name', users.firstName);
+    setValue('name', users.lastName);
+    setValue('name', users.username);
+    setValue('email', users.email);
+  }, [navigate, users]);
 
   const {
     handleSubmit,
@@ -31,7 +33,7 @@ const Settings = () => {
   } = useForm();
 
   const submitHandler = async (data) => {
-    console.log(data);
+    // console.log(data);
     const bodyData =  {
       username: data.username,
       first_name: data.firstName,
@@ -48,18 +50,18 @@ const Settings = () => {
     
   
         if (responseStatus || responseStatusOne === 'success' || 200 || 201) {
-          toast('Profile updated successfully' , { type: responseStatus });
+          toast.success('Profile updated successfully');
           navigate('/');
         } else {
-          toast("Profile updated failed" , { type: responseStatus});
+          toast.error("Profile updated failed" );
         }       
         localStorage.setItem('token', token);
-        dispatch({type : 'ADD_TOKEN', payload: token});
+        dispatch(setToken(token));
       });;
-      dispatch({ type: 'USER_UPATE', payload: bodyData});
-      localStorage.setItem('user', JSON.stringify(bodyData));    
+      dispatch(setUserUpdate(bodyData));
+      localStorage.setItem('users', JSON.stringify(bodyData));    
     } catch (error) {
-      toast(getError(error), { type: 'error' });
+      toast.error(getError(error));
     }
 
   }

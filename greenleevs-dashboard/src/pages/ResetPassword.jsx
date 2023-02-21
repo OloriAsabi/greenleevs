@@ -1,14 +1,15 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom';
 import logo from '../data/logo.png';
-import { useStateContext } from '../contexts/ContextProvider';
 import { useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import { UserResetPassword } from '../apis/api';
+import { useDispatch } from 'react-redux';
+import { setToken, setUserReset } from '../reducers/auth';
 
 const ResetPassword = () => {
-    const { dispatch  } = useStateContext();
+    const dispatch  = useDispatch()
     const navigate = useNavigate()
   
     const {
@@ -23,7 +24,7 @@ const ResetPassword = () => {
   const submitHandler = async (data) => {
     console.log("Data",  data );
     if (data.password !== data.confirmPassword) {
-      toast("Passwords don't match", { type: 'error' });
+      toast.info("Passwords don't match");
       return;
     }
     const bodyData =  {
@@ -41,20 +42,20 @@ const ResetPassword = () => {
         const responseStatusOne = response.data.status
 
         if (responseStatus || responseStatusOne === 'success' || 200) {
-          toast('User Reset Password Successful', { type: 'success',  theme: "colored"  });
+          toast.success('User Reset Password Successful');
           navigate('/login');
         } else {
-          toast("User Reset Password failed", { type: 'error', theme: "colored"});
+          toast.error("User Reset Password failed");
         }
           
         localStorage.setItem('token', token);
-        dispatch({type : 'ADD_TOKEN', payload: token});
+        dispatch(setToken(token));
       });
-      dispatch({ type: 'USER_RESET_PASSWORD', payload: bodyData});
+      dispatch(setUserReset(bodyData));
       localStorage.setItem('user', JSON.stringify(bodyData));
-      toast(' User Reset Password Successful', { type: 'success',  theme: "colored" });
+      toast.success(' User Reset Password Successful');
     } catch (error) {
-      toast("User Reset Password failed", { type: 'error' , theme: "colored"});
+      toast.error("User Reset Password failed");
     }
   }
 

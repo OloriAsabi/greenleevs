@@ -14,3 +14,4 @@ export { default as Orders} from './Orders';
 export { default as OrdersDetails} from './OrdersDetails';
 export { default as ForgotPassword } from './ForgotPassword';
 export { default as ResetPassword } from './ResetPassword';
+export { default as PageNotFound} from './PageNotFound';

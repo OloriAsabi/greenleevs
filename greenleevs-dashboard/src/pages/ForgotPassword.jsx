@@ -6,11 +6,12 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 import { UserForgotPassword } from '../apis/api';
 import { getError } from '../utils/error';
-import { useStateContext } from '../contexts/ContextProvider';
+import { setToken } from '../reducers/auth';
+import { useDispatch } from 'react-redux';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
-  const { dispatch  } = useStateContext();
+  const dispatch = useDispatch();
 
   const {
     handleSubmit,
@@ -30,17 +31,17 @@ const ForgotPassword = () => {
         const responseStatusOne = response.data.status
 
         if (responseStatus || responseStatusOne === 'success' || 200) {
-          toast('Reset Password Sent', { type:  'success', theme: "colored"});
+          toast.success('Reset Password Sent');
           navigate('/resetPassword')
         } else {
-          toast("Reset Password failed", { type: 'error', theme: "colored"});
+          toast.error("Reset Password failed");
         }
         const { token } = response.data
         localStorage.setItem('token', token);
-        dispatch({type : 'ADD_TOKEN', payload: token});
+        dispatch(setToken(token));
       });
     } catch (error) {
-      toast(getError(error), { type: 'error', theme: "colored" });
+      toast.error(getError(error));
     }
   }
   return (

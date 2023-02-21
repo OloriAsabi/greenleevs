@@ -82,11 +82,11 @@ const CategoriesTables = () => {
           newCategories.splice(rowIndex, 1)
     
           setCategories(newCategories);
-          toast('Categories Deleted Successful', { type: 'success',   theme: "colored" });
+          toast.success('Categories Deleted Successful');
         })
         .catch((e) => {
           console.log(e);
-          toast('Categories delete Failed', { type: 'error' ,   theme: "colored"});
+          toast.error('Categories delete Failed');
         });
       }
 
@@ -96,7 +96,6 @@ const CategoriesTables = () => {
         .then((response) => {
         const data = response.data.data         
         setCategories(data)
-        // dispatch({ type: 'ADD_CATEGORIES', payload: data});
         localStorage.setItem('categories', JSON.stringify(data));
         setIsLoading(false)
         }).catch((e) => {

@@ -1,24 +1,26 @@
 import React from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, redirect } from 'react-router-dom';
 import { links } from '../data/data';
-import { useStateContext } from '../contexts/ContextProvider';
 import { IoIosLogOut } from "react-icons/io";
 import logo from "../data/logo.png"
 import { LogoutUser } from '../apis/api';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout, setActiveMenu } from '../reducers/auth';
 
 const Sidebar = () => {
-  const { activeMenu, setActiveMenu, screenSize } = useStateContext();
-  const navigate = useNavigate()
+  const { activeMenu, screenSize } = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+
     const handleCloseSideBar = () => {
         if (activeMenu !== undefined && screenSize <= 900) {
-          setActiveMenu(false);
+          dispatch(setActiveMenu(false));
         }
       }
 
-      const logout = () => {
-        LogoutUser()
-        localStorage.clear();  
-        navigate('/login');
+      const logoutUser = () => {
+       LogoutUser()
+       dispatch(logout())
+       redirect('/login')
       };
 
   const activeLink = 'flex items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg bg-[#14532d] text-white  text-md m-2';
@@ -29,7 +31,7 @@ const Sidebar = () => {
       {activeMenu && (
         <>
           <div className="flex">
-            <Link to="/" onClick={handleCloseSideBar} className="items-center gap-3 ml-3 mt-4 flex text-xl font-extrabold tracking-tight dark:text-white text-slate-900">
+            <Link to="/" onClick={handleCloseSideBar} className="items-center gap-3 ml-3 small-nav mt-4 flex text-xl font-extrabold tracking-tight dark:text-white text-slate-900">
             <img src={logo} alt="Logo" className='w-20 h-24 rounded' />
             </Link>
           </div>
@@ -57,10 +59,10 @@ const Sidebar = () => {
         <div className="mt-5 ml-2">
             <button 
             className="bg-[#1F451A] text-white hover: cursor-pointer p-4 rounded" 
-            onClick={(e) => logout(e)}>
-                <a href="/" className="flex gap-2 font-normal text-xl">
+            onClick={(e) => logoutUser(e)}>
+                <div className="flex gap-2 font-normal text-xl">
                 <IoIosLogOut fontSize={28}/> 
-                Logout </a>
+                Logout </div>
             </button>
         </div>
         </>

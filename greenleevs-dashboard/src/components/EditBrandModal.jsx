@@ -8,47 +8,44 @@ import { EditBrand, UploadFiles } from '../apis/api';
 import { useNavigate } from 'react-router-dom';
 
 const EditBrandModal = ({ showModal, setShowModal, id }) => {
-
     const [files, setFiles] = useState([]);
     const [uploadedFiles, setUploadedFiles] = useState([]);
-    const navigate = useNavigate();
-
+    const navigate = useNavigate()
 
     function uploadSingleFile(e) {
-        const selectedFiles = Array.from(e.target.files);
-        setFiles(
-          [
-            ...files,
-            ...selectedFiles
-          ]
-        );
-        // console.log(selectedFiles);
-        const formData = new FormData();
-        selectedFiles.forEach( (file) => {
-          formData.append("files[]", file, file.name);
-        });
+      const selectedFiles = Array.from(e.target.files);
+      console.log(selectedFiles);
+      setFiles([...files, ...selectedFiles]);
     
-        /** TODO: need to catch and let users know about the error!!! */
-        UploadFiles(formData).then( (res) => {
-          // console.log("Response: ",res);
-          if ( res !== undefined && res !== null && res.data !== undefined && res.data !== null) {
-            setUploadedFiles(
-              [
-                ...uploadedFiles,
-                ...res.data.data
-              ]
-            );
-          }
-        } ).catch( (error) => {
-          console.log(error)
-        });
+      const formData = new FormData();
+      selectedFiles.forEach((file) => {
+        console.log(file);
+        formData.append('files[]', file, file.name);
+      });
+      if (selectedFiles.length > 0) {
+        UploadFiles(formData)
+          .then((res) => {
+            console.log("Response: ", res);
+            if (res !== undefined &&
+              res !== null &&
+              res.data !== undefined &&
+              res.data !== null) {
+              setUploadedFiles([...uploadedFiles, ...res.data.data]);
+              toast.success("Image Added Successfully");
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+            toast.error("Error Uploading Image");
+          });
+      } else {
+        toast.error("At least one file is required for upload.");
       }
+    }
     
-      function deleteFile(e) {
-        const s = files.filter((item, index) => index !== e);
-        setFiles(s);
-        console.log(s);
-      }
+    function deleteFile(e) {
+      setFiles((prevFiles) => prevFiles.filter((_, i) => i !== e));
+    }
     
 
 
@@ -75,14 +72,14 @@ const submitHandler = async (data) => {
           const responseStatus = response.data.status
   
           if (responseStatus === "success") {
-            toast('Brand Edited Successful', { type: 'success',  theme: "colored" });
+            toast.success('Brand Edited Successful');
             navigate('/brands');
           } else {
-            toast("Brand Edited failed" , { type: 'error',  theme: "colored"});
+            toast.error("Brand Edited failed");
           }
         })    
       } catch (error) {
-      toast("Products Edit Failed", { type: 'error', theme: "colored" });
+      toast.error("Products Edit Failed");
       console.log(error);
     }
 }
