@@ -1,9 +1,8 @@
 /* eslint-disable */
-import React, { useState } from 'react';
-import { useStateContext } from '../contexts/ContextProvider';
+import React from 'react';
+import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
 
-import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
 import logo from '../assests/green (4) 2.png';
 import blog from '../assests/Rectangle 123.png';
@@ -12,9 +11,11 @@ import blog2 from '../assests/Rectangle 123 (1).png';
 
 import * as Yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { setWelcomeInfo } from '../reducers/auth';
+import { toast } from 'react-toastify';
 
 const WelcomePage = () => {
-  const { dispatch } = useStateContext();
+  const { dispatch } = useDispatch();
 
   const navigate = useNavigate();
 
@@ -37,15 +38,12 @@ const WelcomePage = () => {
     mode: 'onBlur',
     resolver: yupResolver(validationSchema)
   });
-
-  const { enqueueSnackbar } = useSnackbar();
  
   const submitHandler = async (data) => {
-    console.log('Data', data );
-    dispatch({ type: 'WELCOME_INFO', payload: data});
+    dispatch(setWelcomeInfo(data));
     localStorage.setItem('welcome', JSON.stringify(data));
     navigate('/');
-    enqueueSnackbar('Welcome to Green leevs', { variant: 'success' });
+   toast.success('Welcome to Green leevs');
   };
 
   return (

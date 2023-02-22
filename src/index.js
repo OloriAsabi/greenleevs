@@ -5,19 +5,26 @@ import App from './App';
 import './App.css';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { SnackbarProvider } from 'notistack';
-import { ContextProvider } from './contexts/ContextProvider';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.min.css';
+import { Provider } from 'react-redux';
+import { store } from './rootReducer';
 import { ForgotPassword, Login, Register, WelcomePage } from './pages';
 
-/* eslint-disable */
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
   <BrowserRouter>
-  <SnackbarProvider
-      anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-    >
-    <ContextProvider>
+  <Provider store={store}>
+    <ToastContainer
+    position='top-center'
+    autoClose={5000}
+    hideProgressBar={false}
+    newestOnTop={false}
+    closeOnClick
+    rtl={false}
+    theme= "colored"
+    />
     <Routes>
     <Route path="/*" element={<App />} /> 
     <Route path="/welcome" element={(<WelcomePage />)} />
@@ -25,8 +32,7 @@ root.render(
     <Route path="/register" element={(<Register />)} />
     <Route path="/forgotPassword" element={(<ForgotPassword />)} />
     </Routes>
-    </ContextProvider>
-  </SnackbarProvider>
+    </Provider>
   </BrowserRouter>
 </React.StrictMode>
 );

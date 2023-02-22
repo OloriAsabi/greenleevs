@@ -93,41 +93,41 @@ export function GlobalFilter({
     );
   }
 
-  export function SelectColumnFilter({
-    column: { filterValue, setFilter, preFilteredRows, id },
-  }) {
-    // Calculate the options for filtering
-    // using the preFilteredRows
-    const options = React.useMemo(() => {
-      const options = new Set();
-      preFilteredRows.forEach((row) => {
-        options.add(row.values[id]);
-      });
-      return [...options.values()];
-    }, [id, preFilteredRows]);
+  // export function SelectColumnFilter({
+  //   column: { filterValue, setFilter, preFilteredRows, id },
+  // }) {
+  //   // Calculate the options for filtering
+  //   // using the preFilteredRows
+  //   const options = React.useMemo(() => {
+  //     const options = new Set();
+  //     preFilteredRows.forEach((row) => {
+  //       options.add(row.values[id]);
+  //     });
+  //     return [...options.values()];
+  //   }, [id, preFilteredRows]);
   
-    // Render a multi-select box
-    return (
-      <select
-        name={id}
-        id={id}
-        value={filterValue}
-        onChange={(e) => {
-          setFilter(e.target.value || undefined);
-        }}
-        className="w-full rounded-xl border p-4 text-gray-500 cursor-pointer"
-      >
-        <option value="All">
-            All
-        </option>
-        {options.map((option, i) => (
-          <option key={i} value={option}>
-            {option}
-          </option>
-        ))}
-      </select>
-    );
-  }
+  //   // Render a multi-select box
+  //   return (
+  //     <select
+  //       name={id}
+  //       id={id}
+  //       value={filterValue}
+  //       onChange={(e) => {
+  //         setFilter(e.target.value || undefined);
+  //       }}
+  //       className="w-full rounded-xl border p-4 text-gray-500 cursor-pointer"
+  //     >
+  //       <option value="All">
+  //           All
+  //       </option>
+  //       {options.map((option, i) => (
+  //         <option key={i} value={option}>
+  //           {option}
+  //         </option>
+  //       ))}
+  //     </select>
+  //   );
+  // }
 
 const ProductsTable = () => {
     const [toggleMenu, setToggleMenu] = useState(false);
@@ -207,9 +207,7 @@ const columns = useMemo(() => [
       <div>
         ${value}
       </div>
- ),
-    Filter: SelectColumnFilter,  // new
-    filter: 'includes',  // new
+ )
   },
   {
     Header: "Stock",
@@ -303,18 +301,6 @@ const {
         globalFilter={state.globalFilter}
         setGlobalFilter={setGlobalFilter}
          />
-
-        {headerGroups.map((headerGroup) =>
-            headerGroup.headers.map((column) =>
-            column.Filter ? (
-                <div key={column.id} className='flex space-x-3'>
-                <label htmlFor={column.id} className='pt-4 font-normal w-full'>{column.render("Header")}: </label>
-                {column.render("Filter")}
-                </div>
-            ) : null
-            )
-        )}
-
         <div className='w-4/8'>
         <button className='p-3 bg-[#1F451A] text-white text-center rounded cursor-pointer'
           onClick={() => setToggleMenu(true)}>
@@ -323,7 +309,6 @@ const {
         <ProductModal toggleMenu={toggleMenu} setToggleMenu={setToggleMenu} />
         </div>
         </div>
-
 
         <div className="mt-2 flex flex-col">  
             <div className="-my-2 overflow-x-auto -mx-4 sm:-mx-6 lg:-mx-8">

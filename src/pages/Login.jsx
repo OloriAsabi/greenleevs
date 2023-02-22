@@ -3,27 +3,27 @@ import { FcGoogle } from 'react-icons/fc';
 import logo from '../assests/logo.png';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { GoogleLogin } from '@react-oauth/google';
-import { useStateContext } from '../contexts/ContextProvider';
+import { toast } from 'react-toastify';
 import jwt_decode from 'jwt-decode';
 import { useForm } from 'react-hook-form';
 import { LoginUser } from '../apis/api';
-import { useSnackbar } from 'notistack';
 import { useNavigate } from 'react-router-dom';
 import Emoji from '../components/Emoji';
+import { setToken, setUserLogin, startLoading } from '../reducers/auth';
+import { useDispatch } from 'react-redux';
 
-/* eslint-disable */
+  /* eslint-disable */
 const Login = () => {
-  const { dispatch } = useStateContext();
+  const { dispatch } = useDispatch();
 
   const navigate = useNavigate();
-
   const {
     register,
     handleSubmit,
     formState: { errors }
   } = useForm();
 
-  const responseGoogle = (response) => {
+  const responseGoogle = async (response) => {
     const userObject = jwt_decode(response.credential);
     console.log(userObject);
     const { email, sub } = userObject;
@@ -32,56 +32,70 @@ const Login = () => {
       sub: sub,
     };
     try {
-      LoginUser(bodyData)
-      .then((response) => {
-        console.log(response);
-        if (response.status === 200) {
-          const { token } = response.data;
-          const { user } = response.data
-          localStorage.setItem('token', token);
-          dispatch({ type: 'USER_LOGIN', payload: user });
-          localStorage.setItem('user', JSON.stringify(user));
-          navigate('/');
-          enqueueSnackbar('Login Successful', { variant: response.status }); 
-        }else{
-          console.log(response.statusText);
-          enqueueSnackbar(response.statusText, { variant: response.status });
-        }
-      });
-    } catch (error) {
-      enqueueSnackbar('Login Unautorized', { variant: 'error' });
-    }
-  };
-  const { enqueueSnackbar } = useSnackbar();
- 
-  const submitHandler = async (data) => {
-    console.log('Data', data );
-
-    const bodyData = {
-      email: data.email,
-      password: data.password,
-    };
-    try {
-      LoginUser(bodyData) 
+      await LoginUser(bodyData) 
         .then(response => {
-          console.log(response);
-          if (response.status === 200) {
-            const { token } = response.data;
-            const { user } = response.data
+          const responseStatus = response.status
+          const responseStatusOne = response.data.status
+  
+          if (responseStatus === 200 && responseStatusOne === 'success') {
+            toast.success('Login Successful');
+               navigate('/')
+          } else {
+            toast.error("Login failed");
+          }
+          const { token } = response.data
+          if (token !== '') {
+            console.log('check dummy');
+             dispatch(setToken(token));
             localStorage.setItem('token', token);
-            dispatch({ type: 'USER_LOGIN', payload: user});
-            localStorage.setItem('user', JSON.stringify(user));
-            navigate('/');
-            enqueueSnackbar('Login Successful', { variant: response.status }); 
-          }else{
-            console.log(response.statusText);
-            enqueueSnackbar(response.statusText, { variant: response.status });
+            navigate("/");
           }
         });
-    } catch (error) {
-      enqueueSnackbar('Invalid email or password', { variant: 'error' });
-    }
+        startLoading();
+        dispatch(setUserLogin(bodyData));
+        localStorage.setItem('user', JSON.stringify(bodyData));
+        navigate('/');
+        toast.error('Login Successful');
+      } catch (error) {
+        toast.error(error)
+      }
   };
+
+ 
+  const submitHandler = async (data) => {
+    const bodyData =  {
+      email: data.email,
+      password: data.password,
+    }
+      try {
+        await LoginUser(bodyData) 
+          .then(response => {
+            const responseStatus = response.status
+            const responseStatusOne = response.data.status
+    
+            if (responseStatus === 200 && responseStatusOne === 'success') {
+              toast.success('Login Successful');
+                 navigate('/')
+            } else {
+              toast.error("Login failed");
+            }
+            const { token } = response.data
+            if (token !== '') {
+              console.log('check dummy');
+               dispatch(setToken(token));
+              localStorage.setItem('token', token);
+              navigate("/");
+            }
+          });
+          startLoading();
+          dispatch(setUserLogin(bodyData));
+          localStorage.setItem('user', JSON.stringify(bodyData));
+          navigate('/');
+          toast.error('Login Successful');
+        } catch (error) {
+          toast.error(error)
+        }
+    } 
 
   return (
     <div className="container mx-auto flex items-center min-h-screen p-6 justify-center">

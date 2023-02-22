@@ -53,7 +53,7 @@ const OrdersModal = ({ showModal, setShowModal, id }) => {
       }
       >
         <article
-        className='relative w-screen max mb-5 pb-10 grid grid-rows space-y-6 h-auto overflow-y-scroll'>
+        className='relative w-screen max mb-5 pb-10 grid grid-rows space-y-6 h-screen overflow-y-scroll'>
         <div className='flex justify-between m-10'>
         <header className="p-4 font-bold text-lg">Edit Your Order's Status</header>
         <FaTimes

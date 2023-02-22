@@ -496,8 +496,6 @@ export const GetBestSellingProducts = async () => {
                 "Authorization": `Bearer ${token}`
             },
           })
-        // console.log("Get Best Selling Products",data);
-
          return data; 
         } catch (error) {
             console.log(error)  
