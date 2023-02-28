@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { toast } from 'react-toastify';
 /* eslint-disable */
 
 const token =  localStorage.getItem("token");
@@ -16,9 +17,9 @@ export const LoginUser = async (body) => {
       return data; 
     } catch (error) {
       if (axios.isCancel(err)) {
-        console.log("Request canceled!");
+        toast.error("Request canceled!");
       } else {
-        console.log(error);
+        toast.error(error);
       }
     }
   
@@ -36,13 +37,13 @@ export const RegisterUser = async (body) => {
         },
         cancelToken: cancelToken.token,
       });
-    console.log('Register Data',data);
+    // console.log('Register Data',data);
     return data; 
   } catch (error) {
     if (axios.isCancel(err)) {
-      console.log("Request canceled!");
+      toast.error("Request canceled!");
     } else {
-      console.log(error);
+      toast.error(error);
     }
   }
 
@@ -64,9 +65,9 @@ export const LogoutUser = async () => {
     return data; 
   } catch (error) {
     if (axios.isCancel(err)) {
-      console.log("Request canceled!");
+      toast.error("Request canceled!");
     } else {
-      console.log(error);
+      toast.error(error);
     }
   }
 
@@ -88,9 +89,9 @@ export const UpdateUser = async (body) => {
     return data; 
   } catch (error) {
     if (axios.isCancel(err)) {
-      console.log("Request canceled!");
+      toast.error("Request canceled!");
     } else {
-      console.log(error);
+      toast.error(error);
     } 
   }
   return () => {
@@ -107,9 +108,9 @@ export const UserForgotPassword = async (body) => {
     return data; 
   } catch (error) {
     if (axios.isCancel(err)) {
-      console.log("Request canceled!");
+      toast.error("Request canceled!");
     } else {
-      console.log(error);
+      toast.error(error);
     }
   }
   return () => {
@@ -126,13 +127,13 @@ export const UserResetPassword = async (body) => {
         },
         cancelToken: cancelToken.token,
       });
-    console.log('Register Data',data);
+    // console.log('Register Data',data);
     return data; 
   } catch (error) {
     if (axios.isCancel(err)) {
-      console.log("Request canceled!");
+      toast.error("Request canceled!");
     } else {
-      console.log(error);
+      toast.error(error);
     }
   }
   return () => {
@@ -155,9 +156,9 @@ export const GetProducts =  async () => {
          return data; 
         } catch (error) {
           if (axios.isCancel(err)) {
-            console.log("Request canceled!");
+            toast.error("Request canceled!");
           } else {
-            console.log(error);
+           toast.error(error);
           }
         }
 
@@ -173,11 +174,10 @@ export const GetProductId = (id) => {
             "Authorization": `Bearer ${token}`
         },
       });
-
-      console.log("Products By Id", req);
+      // console.log("Products By Id", req);
       return req;
   } catch (error) {
-      console.log(error)  
+      toast.error(error)  
   }
 }
 
@@ -196,9 +196,9 @@ export const GetCategories = async () => {
          return data; 
         } catch (error) {
           if (axios.isCancel(err)) {
-            console.log("Request canceled!");
+            toast.error("Request canceled!");
           } else {
-            console.log(error);
+           toast.error(error);
           }
         }
         return () => {
@@ -215,13 +215,13 @@ export const GetProductsByCategoryId = async (id) => {
             },
             cancelToken: cancelToken.token,
           })
-        console.log("Get Categories By Id",data);
+        // console.log("Get Categories By Id",data);
          return data; 
         } catch (error) {
           if (axios.isCancel(err)) {
-            console.log("Request canceled!");
+            toast.error("Request canceled!");
           } else {
-            console.log(error);
+           toast.error(error);
           }
         }
         return () => {
@@ -239,13 +239,13 @@ export const PostNewsletter = async (body) => {
         },
         cancelToken: cancelToken.token,
       })
-    console.log('News letter',data);
+    // console.log('News letter',data);
     return data; 
   } catch (err) {
     if (axios.isCancel(err)) {
-      console.log("Request canceled!");
+      toast.error("Request canceled!");
     } else {
-      console.log(err);
+     toast.error(error);
     }
   } 
   return () => {
@@ -263,13 +263,13 @@ export const GetCart = async () => {
             },
             cancelToken: cancelToken.token,
           })
-        console.log("Get cart",data);
+        // console.log("Get cart",data);
          return data; 
         } catch (err) {
           if (axios.isCancel(err)) {
-            console.log("Request canceled!");
+            toast.error("Request canceled!");
           } else {
-            console.log(err);
+           toast.error(error);
           }
         }
         return () => {
@@ -288,13 +288,13 @@ export const PostCart = async (body) => {
             },
             cancelToken: cancelToken.token,
           })
-        console.log("Get cart",data);
+        // console.log("Get cart",data);
          return data; 
         } catch (err) {
           if (axios.isCancel(err)) {
-            console.log("Request canceled!");
+            toast.error("Request canceled!");
           } else {
-            console.log(err);
+           toast.error(error);
           }
         }
         return () => {
@@ -312,13 +312,13 @@ export const UpdateCart = async (body) => {
             },
             cancelToken: cancelToken.token,
           })
-        console.log("Update cart",data);
+        // console.log("Update cart",data);
          return data; 
         } catch (err) {
           if (axios.isCancel(err)) {
-            console.log("Request canceled!");
+            toast.error("Request canceled!");
           } else {
-            console.log(err);
+           toast.error(error);
           }
         }
         return () => {
@@ -335,13 +335,13 @@ export const DeleteProductFromCart = async (id) => {
             },
             cancelToken: cancelToken.token,
           })
-        console.log("Delete from cart",data);
+        // console.log("Delete from cart",data);
          return data; 
         } catch (err) {
           if (axios.isCancel(err)) {
-            console.log("Request canceled!");
+            toast.error("Request canceled!");
           } else {
-            console.log(err);
+           toast.error(error);
           }
         }
         return () => {
@@ -358,13 +358,13 @@ export const WipeCart = async () => {
             },
             cancelToken: cancelToken.token,
           })
-        console.log("Wipe cart",data);
+        // console.log("Wipe cart",data);
          return data; 
         } catch (err) {
           if (axios.isCancel(err)) {
-            console.log("Request canceled!");
+            toast.error("Request canceled!");
           } else {
-            console.log(err);
+           toast.error(error);
           }
         }
         return () => {
@@ -383,13 +383,13 @@ export const GetPopularByCategory = async (slug) => {
             },
             cancelToken: cancelToken.token,
           })
-        console.log("Get Popular By category",data);
+        // console.log("Get Popular By category",data);
          return data; 
         } catch (err) {
           if (axios.isCancel(err)) {
-            console.log("Request canceled!", err);
+            toast.error("Request canceled!");
           } else {
-            console.log(err);
+           toast.error(error);
           }
         }
         return () => {
@@ -407,13 +407,13 @@ export const GetPopularProducts = async () => {
             },
             cancelToken: cancelToken.token,
           })
-        console.log("Get Popular",data);
+        // console.log("Get Popular",data);
          return data; 
         } catch (error) {
-          if (axios.isCancel(error)) {
-            console.log("Request canceled!");
+          if (axios.isCancel(err)) {
+            toast.error("Request canceled!");
           } else {
-            console.log(error);
+           toast.error(error);
           }
         }
         return () => {
@@ -431,13 +431,13 @@ export const GetRelatedProducts = async (id) => {
             },
             cancelToken: cancelToken.token,
           })
-        console.log("Get Related Products",data);
+        // console.log("Get Related Products",data);
          return data; 
         } catch (error) {
           if (axios.isCancel(err)) {
-            console.log("Request canceled!");
+            toast.error("Request canceled!");
           } else {
-            console.log(error);
+           toast.error(error);
           }
         }
         return () => {
@@ -455,13 +455,13 @@ export const GetRecentlyViewed = async () => {
             },
             cancelToken: cancelToken.token,
           })
-        console.log("Get Recently Viewed", data);
+        // console.log("Get Recently Viewed", data);
          return data; 
         } catch (error) {
           if (axios.isCancel(err)) {
-            console.log("Request canceled!");
+            toast.error("Request canceled!");
           } else {
-            console.log(error);
+           toast.error(error);
           }
         }
         return () => {
@@ -479,13 +479,13 @@ export const GetBrands= async () => {
             },
             cancelToken: cancelToken.token,
           })
-        console.log("Get Brands", data);
+        // console.log("Get Brands", data);
          return data; 
         } catch (err) {
           if (axios.isCancel(err)) {
-            console.log("Request canceled!");
+            toast.error("Request canceled!");
           } else {
-            console.log(err);
+           toast.error(error);
           }
         }
         return () => {
@@ -502,13 +502,13 @@ export const GetProductsByBrand = async (id) => {
             },
             cancelToken: cancelToken.token,
           })
-        console.log("Get Products by Brands", data);
+        // console.log("Get Products by Brands", data);
          return data; 
         } catch (err) {
           if (axios.isCancel(err)) {
-            console.log("Request canceled!");
+            toast.error("Request canceled!");
           } else {
-            console.log(err);
+           toast.error(error);
           }
         }
         return () => {
@@ -525,13 +525,13 @@ export const GetSearchParams = async (searchTerm) => {
             },
             cancelToken: cancelToken.token,
           })
-        console.log("Get Search", data);
+        // console.log("Get Search", data);
          return data; 
         } catch (err) {
           if (axios.isCancel(err)) {
-            console.log("Request canceled!");
+            toast.error("Request canceled!");
           } else {
-            console.log(err);
+           toast.error(error);
           }
         }
         return () => {
@@ -589,13 +589,13 @@ export const FilterProducts = async (slug, plant, brand, potency, outOfStock, so
       },
       cancelToken: cancelToken.token
     });
-    console.log("Filter Products", data);
+    // console.log("Filter Products", data);
     return data;
   } catch (error) {
-    if (axios.isCancel(error)) {
-      console.log("Request canceled!");
+    if (axios.isCancel(err)) {
+      toast.error("Request canceled!");
     } else {
-      console.log(error);
+     toast.error(error);
     }
   }
   return () => {
@@ -617,13 +617,13 @@ export const GetSpecialProduct = async (special) => {
             },
             cancelToken: cancelToken.token,
           })
-        console.log("Get Special Products", data);
+        // console.log("Get Special Products", data);
          return data; 
         } catch (err) {
           if (axios.isCancel(err)) {
-            console.log("Request canceled!");
+            toast.error("Request canceled!");
           } else {
-            console.log(err);
+           toast.error(error);
           }
         }
         return () => {
@@ -640,10 +640,9 @@ export const GetOrders = async () => {
                 "Authorization": `Bearer ${token}`
             },
           })
-        console.log("Get Orders",data);
          return data; 
         } catch (error) {
-            console.log(error)  
+            toast.error(error)  
         }
 }
 
@@ -655,15 +654,13 @@ export const PostOrders = async (body) => {
           'Content-Type': 'application/json' ,
           "Authorization": `Bearer ${token}`
         },
-        // cancelToken: cancelToken.token,
       })
-    console.log('POST ORDERS',data);
     return data; 
   } catch (err) {
     if (axios.isCancel(err)) {
-      console.log("Request canceled!");
+      toast.error("Request canceled!");
     } else {
-      console.log(err);
+     toast.error(error);
     }
   } 
   return () => {
@@ -677,16 +674,14 @@ export const UpdateShipping = async (body) => {
         headers: { 
           'Content-Type': 'application/json' ,
           "Authorization": `Bearer ${token}`
-        },
-        // cancelToken: cancelToken.token,
+        }
       })
-    console.log('Update Shipping',data);
     return data; 
   } catch (err) {
     if (axios.isCancel(err)) {
-      console.log("Request canceled!");
+      toast.error("Request canceled!");
     } else {
-      console.log(err);
+     toast.error(error);
     }
   } 
   return () => {
