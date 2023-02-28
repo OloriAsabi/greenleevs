@@ -1,43 +1,106 @@
-import React, { useEffect  } from 'react'
+import React, { useEffect, useState   } from 'react'
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useStateContext } from '../../contexts/ContextProvider';
+import { useSelector } from 'react-redux';
+import { City, Country, State } from "country-state-city";
+import Selector from "../../components/Selector";
+import { useDispatch } from 'react-redux';
+import { toast } from 'react-toastify';
+import { updateCart } from '../../reducers/auth';
 
 const Shipping = () => {
     /* eslint-disable */
-
   const history = useNavigate();
+
+  const dispatch = useDispatch();
+
   const {
     register,
     handleSubmit,
-    formState: { errors }
+    formState: { errors },
+    setValue,
   } = useForm();
 
-  const { state } = useStateContext();
-  const { user } = state;
+  const { users, cart } = useSelector(state => state.auth)
+
+  let countryData = Country.getAllCountries();
+  const [stateData, setStateData] = useState();
+  const [cityData, setCityData] = useState();
+
+  const [country, setCountry] = useState(countryData[232]);
+  const [state, setState] = useState();
+  const [city, setCity] = useState();
 
   useEffect(() => {
-    if(!user) {
+    setStateData(State.getStatesOfCountry(country?.isoCode));
+  }, [country]);
+
+  useEffect(() => {
+    setCityData(City.getCitiesOfState(country?.isoCode, state?.isoCode));
+  }, [state]);
+
+  useEffect(() => {
+    stateData && setState(stateData[0]);
+  }, [stateData]);
+
+  useEffect(() => {
+    cityData && setCity(cityData[0]);
+  }, [cityData]);
+
+  useEffect(() => {
+    if(!users) {
     history("/login")
     }
-  }, [history, user]);
+  }, [history, users]);
+
+  useEffect(() => {
+    if(!cart.shippingAddress) {
+      toast.info("You've not entered any shipping infomation before")
+    }
+    setValue('first_name', cart.shippingAddress.firstName);
+    setValue('last_name', cart.shippingAddress.lastName);
+    setValue('email', cart.shippingAddress.email);
+    setValue('phone', cart.shippingAddress.phone);
+    setValue('country', cart.shippingAddress.country)
+    setValue('postcode', cart.shippingAddress.postCode)
+    setValue('addressline1', cart.shippingAddress.addressline1)
+    setValue('addressline2', cart.shippingAddress.addressline2)
+    setValue('city', cart.shippingAddress.city)
+    setValue('state', cart.shippingAddress.state)
+  }, []);
   
 
   const submitHandler = (data) => {
     console.log(data);
+
+    const body = {
+      firstname: data.firstName,
+      lastname: data.lastName,
+      email: data.email,
+      phone: data.phone,
+      country: country.isoCode,
+      postcode: data.postCode,
+      addressline1: data.address,
+      addressline2: data.addressLine2,
+      city: city.name,
+      state: state.isoCode
+    }
+    toast.success("Shipping Updated Successfully")
+
+    dispatch(updateCart(body))
   };
 
   return (
     <div>
-      <div className='container mx-auto small my-8 p-10'>
+      <div className='container mx-auto small my-8 '>
       <div className='flex justify-between items-center gap-1'>
       <h4 className='text-3xl font-bold pb-5'>Shipping</h4>
       </div>
       <p className='text-[#2D2D2D]'>Edit your shipping details</p>
 
 
-      <form onSubmit={handleSubmit(submitHandler)} className="w-full h-full p-5">
-          <div>
+      <form onSubmit={handleSubmit(submitHandler)} className="w-full h-full ">
+          <div className=''>
 
             <div className='flex justify-between gap-10 pt-10 w-full'>
               <div className='flex flex-col w-full'>
@@ -142,28 +205,15 @@ const Shipping = () => {
 
             </div>
             <div className='flex justify-between gap-10 pt-10 w-full'>
-              <div className='flex flex-col w-full'>
-                <label
-                  htmlFor="country"
+            <div className='flex flex-col w-full'>
+                <p
                   className={` pb-3 text-sm 2 ${
-                    errors.country ? 'text-red-400' : 'text-gray-700 '} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}>Select Country</label>
-                <select id="country"  
-                  className={`w-full ${
-                    errors.country ? ' border-red-400' : ''} rounded-xl border p-4 text-gray-500 cursor-pointer`}
-                  {...register('country')}>
-                  <option defaultValue="select" value="">select country</option>
-                  <option value="orange">Orange</option>
-                  <option value="yellow">Yellow</option>
-                  <option value="green">Green</option>
-                  <option value="blue">Blue</option>
-                  <option value="indigo">Indigo</option>
-                  <option value="violet">Violet</option>
-                </select>
-                {errors.country && (
-                  <p className="text-red-500 text-sm mt-2">
-                  Select a valid country
-                  </p>
-                )}
+                    errors.country ? 'text-red-400' : 'text-gray-700 '} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}>Select Country</p>
+                  <Selector
+                    data={countryData}
+                    selected={country}
+                    setSelected={setCountry}
+                  />
               </div>
               <div className='flex flex-col w-full'>
                 <label
@@ -238,51 +288,27 @@ const Shipping = () => {
               )}
             </div>
             <div className='flex justify-between gap-10 pb-10 pt-10 w-full'>
-              <div className='flex flex-col w-full'>
-                <label
-                  htmlFor="city"
-                  className={` pb-3 text-sm 2 ${
-                    errors.city ? 'text-red-400' : 'text-gray-700 '} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}>Town/City</label>
-                <input 
-                  name="city" 
-                  id="city" 
-                  type="text" 
-                  placeholder='Enter Town or City'
-                  required={true}
-                  {...register('city', { 
-                    required: 'City is Required ' ,
-                  })}
-                  className={`block w-full ${
-                    errors.city ? 'text-red-400 border-red-400' : 'text-gray-700 '}  py-1 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
-                />
-                {errors.city && (
-                  <p className="text-red-500 text-sm mt-2">
-                    A valid city or town is required .
-                  </p>
-                )}
+            <div className='flex flex-col w-full'>
+                  {city && (
+            <div>
+              <p className={` pb-3 text-sm 2 ${
+                    errors.city ? 'text-red-400' : 'text-gray-700 '} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}>Town/City :</p>
+              <Selector data={cityData} selected={city} setSelected={setCity} />
+            </div>
+              )}
               </div>
               <div className='flex flex-col w-full'>
-                <label
-                  htmlFor="state"
-                  className={` pb-3 text-sm 2 ${
-                    errors.state ? 'text-red-400' : 'text-gray-700 '} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}>State</label>
-                <select id="state"  
-                  className={`w-full ${
-                    errors.email ? ' border-red-400' : ''} rounded-xl border p-4 text-gray-500 cursor-pointer`}
-                  {...register('state')}>
-                  <option defaultValue="select" value="">select state</option>
-                  <option value="orange">Orange</option>
-                  <option value="yellow">Yellow</option>
-                  <option value="green">Green</option>
-                  <option value="blue">Blue</option>
-                  <option value="indigo">Indigo</option>
-                  <option value="violet">Violet</option>
-                </select>
-                {errors.state && (
-                  <p className="text-red-500 text-sm mt-2">
-                  Select a valid state
-                  </p>
-                )}
+              {state && (
+                <div>
+                  <p  className={` pb-3 text-sm 2 ${
+                    errors.city ? 'text-red-400' : 'text-gray-700 '} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}>State :</p>
+                  <Selector
+                    data={stateData}
+                    selected={state}
+                    setSelected={setState}
+                  />
+                </div>
+              )}
               </div>
             </div>
             <hr/>

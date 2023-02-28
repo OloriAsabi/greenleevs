@@ -1,255 +1,180 @@
-/* eslint-disable */
-import React, {useState} from 'react';
-import logo from '../assests/logo.png';
-import {  NavLink } from 'react-router-dom';
-import { links } from '../data/data';
+import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 import { GrFormSearch } from 'react-icons/gr';
-import { TbChevronRight } from 'react-icons/tb';
 import { FaTimes } from 'react-icons/fa';
 import { CgMenuRight } from 'react-icons/cg';
-import {BsCart, BsSearch} from 'react-icons/bs';
-
-import navpic from '../assests/Rectangle 131.png';
-import { useStateContext } from '../contexts/ContextProvider';
-import { SearchModal } from '../pages';
-import { useForm } from 'react-hook-form';
-import { useSnackbar } from 'notistack';
+import { BsCart, BsSearch } from 'react-icons/bs';
+import { TbChevronRight } from 'react-icons/tb';
+import { links } from '../data/data';
 import { GetSearchParams } from '../apis/api';
+import logo from '../assests/logo.png';
 
 const Navbar = () => {
+          const [navbar, setNavbar] = useState(false);
+          const [showModal, setShowModal] = useState(false);
+          const [filteredData, setFilteredData] = useState([]);
+          const [wordEntered, setWordEntered] = useState('');
+          const { cart } = useSelector(state => state.auth);
 
-  const [navbar, setNavbar] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const [filteredData, setFilteredData] = useState([]);
-  const [wordEntered, setWordEntered] = useState("");
-  const { state } = useStateContext();
-  const { cart } = state;
+          const handleButtonClick = () => {
+            setShowModal(!showModal);
+          };
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors }
-  } = useForm();
+          const handleModalClose = () => {
+            setShowModal(false);
+          };
 
-  const { enqueueSnackbar } = useSnackbar();
- 
-  const submitHandler = async (data) => {
-    const searchWord = data.search
-    setWordEntered(searchWord);
-    try {
-      GetSearchParams(searchWord).then((response) => {
-        if (response.status === 200) {
-          const data = response.data.data
-          
-          const newFilter = data.products.filter((value) => {
-            return value.label.toLowerCase().includes(searchWord.toLowerCase());
-          })
-          if (searchWord === "") {
-            setFilteredData([]);
-          } else {
-            setFilteredData(newFilter);
-          }
-        }else{
-          enqueueSnackbar(response.statusText, { variant: response.status });
-        }       
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  }
+          const { register, handleSubmit } = useForm();
 
-  const activeLink = 'flex cursor-pointer items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-white text-md m-2';
-  const normalLink = 'flex cursor-pointer items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md text-slate-300 dark:text-gray-200 dark:hover:text-black hover:scale-x-105 m-2';
+          const submitHandler = async data => {
+            const searchWord = data.search;
+            setWordEntered(searchWord);
+            try {
+              GetSearchParams(searchWord).then(response => {
+                if (response.status === 200) {
+                  const data = response.data.data;
 
-  return (
-    <div>
-      <nav
-        className="flex items-center justify-between flex-wrap bg-[#1F451A] py-4 lg:px-12 shadow ">
-        <div className="flex justify-between lg:w-auto w-full lg:border-b-0 pl-6 pr-2 lg:pb-0">
-            <div className="flex items-center flex-shrink-0 text-gray-800 mr-16">
-            <a href="/">
-              <img 
-                className="object-cover  w-24 h-40  dark:text-black text-white dark:bg-white rounded-none cursor-pointer"
-                src={logo}
-                alt='logo'
-              />
-            </a>
-            </div>
-            <div className="block text-white lg:hidden ">
-            <div>
-            {!navbar && (
-              <div className='flex justify-bewteen gap-10 mr-5  mt-10 items-center'>
-                <BsSearch fontSize={28} className="text-white marker:md:hidden cursor-pointer" onClick={() => setShowModal(true)}/>
-                {showModal ? (<SearchModal/>) : null}
-                <div className=''>
-                  <a href='/carts' className='' >
-                    <button className='bg-white font-bold text-[#1F451A] marker:md:hidden rounded-full p-3 cursor-pointer'>
-                      <BsCart fontSize={28} /> 
-                    </button>
-                  </a>
-                </div>
-                <CgMenuRight fontSize={28} className="text-white marker:md:hidden cursor-pointer dark:text-white" onClick={() => setNavbar(true)} />
-              </div>        
-            )}
-            {navbar && (
-              <div className='flex justify-bewteen gap-10 mr-5 mt-10 items-center'>
-                <BsSearch fontSize={28} className="text-white marker:md:hidden cursor-pointer"/>
-                <div className=''>
-                  <a href='/carts' className='' >
-                    <button className='bg-white font-bold text-[#1F451A] marker:md:hidden rounded-full p-3 cursor-pointer'>
-                      <BsCart fontSize={28} /> 
-                    </button>
-                  </a>
-                </div>
-                <FaTimes fontSize={28} className="text-white  cursor-pointer font-light" onClick={() => setNavbar(false)} />  
-              </div>    
-            )}
-          </div>
-            </div>
-        </div>
-    
-        <div className="menu w-full lg:block flex-grow lg:flex lg:items-center lg:w-auto lg:px-3 px-8">
-          {!navbar && (
-            <div className='lg:flex hidden'>
-             {links.map((link) => (
-              <div key={link.id} className="">
-                <NavLink
-                  // eslint-disable-next-line no-useless-concat
-                  to={`/${link.link}`}
-                  key={link.id}
-                  style={({ isActive }) => ({
-                    backgroundColor: isActive ? '' : '',
-                  })}
-                  className={({ isActive }) => (isActive ? activeLink : normalLink)}
+                  const newFilter = data.products.filter(value => {
+                    return value.label.toLowerCase().includes(searchWord.toLowerCase());
+                  });
+                  if (searchWord === '') {
+                    setFilteredData([]);
+                  } else {
+                    setFilteredData(newFilter);
+                  }
+                } else {
+                  toast.error(response.statusText);
+                }
+              });
+            } catch (error) {
+              toast.error(error);
+            }
+          };
+
+          const activeLink = 'flex cursor-pointer items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-white text-md m-2';
+          const normalLink = 'flex cursor-pointer items-center gap-5 pl-4 pt-3 pb-2.5 rounded-lg text-md text-slate-300 dark:text-gray-200 dark:hover:text-black hover:scale-x-105 m-2';
+
+            const menuIcon = (
+              <div className="block relative lg:hidden">
+                <button
+                  onClick={() => setNavbar(!navbar)}
+                  className="flex items-center px-3 py-2 border rounded text-white border-white hover:text-white hover:border-white"
                 >
-                  {link.icon}
-                  <span className="capitalize text-xl whitespace-nowrap" >{link.name}</span>
-                </NavLink>
-        
-              </div>
-            ))}
-            </div>
-          )}
-          {navbar && (
-                <div
-                className={`w-full h-full  p-10 ease-in-out duration-300  lg:hidden md:hidden  bg-[#1F451A] pb-10 md:block  ${
-                  navbar ? 'block translate-x-0\'' : 'hidden translate-x-full'
-                }`}
-              > 
-                {navbar && (
-                <div className=' md:hidden text-white cursor-pointer fixed top-4 right-4 font-light'>
-                        {/* <FaTimes fontSize={28} className=" md:hidden" onClick={() => setNavbar(false)} />   */}
-                    </div>    
-                )}
-                <ul className="text-white md:hidden pt-5 small list-none flex-col">
-                  <li className='mx-4 cursor-pointer text-xl  hover:border-b-2  capitalize p-3 my-2'>
-                    <a href="/user/orders" className='flex justify-between  capitalize'>MY ACCOUNT<TbChevronRight fontSize={28} className='text-end ' /></a>
-                  </li>
-                  <li className='mx-4 cursor-pointer text-xl  p-3  hover:border-b-2 capitalize  dark:text-white my-2'>
-                    <a href="/specialmenu" className='flex justify-between  capitalize'>SPECIALMENU <TbChevronRight fontSize={28} className='text-end' /></a>
-                  </li>
-                  <li className='mx-4 cursor-pointer text-xl  p-3 capitalize  dark:text-white my-2'>
-                    <a href="/shop" className='flex justify-between  capitalize'>SHOP <TbChevronRight fontSize={28} className='text-end' /></a>
-                  </li>
-                  <li className='mx-4 cursor-pointer text-xl  p-3 capitalize hover:border-b-2 dark:text-white my-2'>
-                    <a href="/" className='flex justify-between  capitalize '>TINCTURES <TbChevronRight fontSize={28} className='text-end ' /></a>
-                  </li>
-                  <li className='mx-4 cursor-pointer text-xl  p-3 capitalize hover:border-b-2 dark:text-white my-2'>
-                    <a href="/" className='flex justify-between  capitalize'>EDIBLES <TbChevronRight fontSize={28} className='text-end ' /></a>
-                  </li>
-                  <li className='mx-4 cursor-pointer text-xl  p-3 capitalize hover:border-b-2 dark:text-white my-2'>
-                    <a href="/" className='flex justify-between  capitalize'>TROPICALS <TbChevronRight fontSize={28} className='text-end ' /></a>
-                  </li>
-                  <li className='mx-4 cursor-pointer text-xl  p-3 capitalize hover:border-b-2 dark:text-white my-2'>
-                    <a href="/" className='flex justify-between  capitalize'>ACCESSORIES <TbChevronRight fontSize={28} className='text-end ' /></a>
-                  </li>
-                  <li className='mx-4 cursor-pointer text-xl capitalize  p-3 hover:border-b-2 dark:text-white my-2'>
-                    <a href="/" className='flex justify-between  capitalize'>EXTRACTS <TbChevronRight fontSize={28} className='text-end ' /></a>
-                  </li>
-                  <li className='mx-4 cursor-pointer text-xl  p-3 hover:border-b-2 dark:text-white my-2'>
-                    <a href="/" className='flex justify-between  capitalize'>LEARN <TbChevronRight fontSize={28} className='text-end ' /></a>
-                  </li>
-                </ul>
-      
-                <div className='text-center flex flex-col small md:hidden items-center space-y-5 pt-5 font-normal'>
-                  <p className='text-white'>Not Sure What you’re Looking For?</p>
-                  <img src={navpic} alt='Nav' className='w-72 h-48 rounded'/>
-                  <button className='bg-transparent text-center hover:scale-x-110 cursor-pointer border border-white text-white rounded gap-2 p-3 w-48'>
-                      Shop with us
-                  </button>
-                </div>
-              </div>   
-          )}
-       
-            <form className="relative mx-auto inline-flex flex-col text-gray-600 lg:block hidden" onSubmit={handleSubmit(submitHandler)} b>
-              <div className="relative">
-                <input
-                    className="border placeholder-blueGray-300 relative h-10 pl-2 pr-8 bg-white text-[#1F451A] rounded-xl text-sm shadow focus:border-gray-200 border-gray-200  focus:outline-none focus:bg-white cursor-pointer w-full "
-                    type="search" 
-                    name="search" 
-                    placeholder='What are you looking for?'
-                    {...register('search')}
-                    />
-                <button type="submit" className="absolute text-white right-0 top-0 mt-3 mr-2" onClick={() => setShowModal(true)}>
-                <GrFormSearch fontSize={38}  className="fill-current h-4 w-4"  onClick={() => setShowModal(true)}/>
+                  <CgMenuRight size={30} />
                 </button>
-                </div>            
-              <div className='absolute'>
-              {showModal ? (
-              <ul className="bg-white border border-gray-100 p-5 rounded-md w-[30vw] mt-2">
-             <h3 className="mt-2 text-xl text-[#1F451A]">{wordEntered}</h3>
-              {filteredData.length != 0 && (  
-                <div>
-                  <FaTimes fontSize={28} className="text-[#1F451A] cursor-pointer font-light" onClick={() => setShowModal(false)} />  
-                  {filteredData.slice(0, 15).map((value) => {
-                  return (
-                    <div key={value.product_id} className='flex justify-between px-10 py-10'>
-                    <img src={value.product_image} alt="product image" className="stroke-current absolute w-12 h-12 left-2 " />
-                    <a className="" href={`/product/${value.slug}`}>
-                    <b>{value.label}</b>
-                    </a>
-                    </div>
-                  );
-                })}
-               </div>
-              )}  
-              </ul>
-              ) : 
-              null}
-            </div>
-            </form>
-           
-            <div className="lg:flex hidden">
-                <a href="/user/orders"
-                   className="block text-md px-4 py-5 active:text-[#ededed] hover:scale-x-105 cursor-pointer rounded text-white  ml-2 font-bold hover:text-[#ededed] mt-4 lg:mt-0">
-                       Account
-                </a>
-    
-                <a href="/carts"
-                   className=" block text-md px-4  ml-2 py-2 rounded text-white font-bold cursor-pointer hover:scale-x-105 hover:text-[#ededed]  lg:mt-0">
-                     {/* <button className='flex bg-white text-[#1F451A] rounded gap-2 p-3 w-24'>
-                    <BsCart fontSize={28}/> Cart
-                  </button> */}
-                    <span className="relative inline-block">
-                    <button className='flex bg-white text-[#1F451A] rounded gap-2 p-3 w-24'>
-                    <BsCart fontSize={28}/> Cart
+              </div>
+            );
+
+          const searchIcon = (
+            <div className="relative lg:block hidden">
+              <button className="flex items-center justify-center text-white" onClick={handleButtonClick}>
+                <BsSearch fontSize={28} />
+              </button>
+              {showModal && (
+                <div className="absolute top-20 -right-40 z-50">
+                <form className="bg-white shadow-md w-[30rem] rounded-lg p-5" onSubmit={handleSubmit(submitHandler)}>
+                  <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-2xl font-bold text-slate-800 dark:text-gray-200">Search Products</h2>
+                  <button type="button" onClick={handleModalClose}>
+                  <FaTimes size={28} className="text-[#1F451A]" />
                   </button>
-                  {cart.cartItems.length > 0 ? (
-                    <span
-                    className="absolute top-0 right-0 px-2 py-1 font-bold text-xs leading-none text-red-100 transform bg-red-600 rounded-full">
+                  </div>
+                  <div className="relative flex items-center">
+                  <input
+                  type="text"
+                  placeholder="Search products..."
+                  className="bg-gray-100 rounded-lg text-[#1F451A] py-2 pl-10 pr-4 w-full focus:outline-none focus:ring-2 focus:ring-[#1F451A] focus:bg-white"
+                  {...register('search')}
+                  />
+                  <button type="submit" className="absolute right-4">
+                  <GrFormSearch size={20} />
+                  </button>
+                  </div>
+                  <div className="mt-5">
+                  {filteredData.length !== 0 && (
+                  <div className="max-h-52 overflow-y-auto">
+                  {filteredData.map((product, index) => (
+                  <NavLink
+                  key={index}
+                  to={`/products/${product.id}`}
+                  className="flex justify-between items-center hover:bg-gray-100 p-3 rounded-lg"
+                  onClick={() => setShowModal(false)}
+                  >
+                  <img src={product.product_image} alt={product.label} className="w-20 h-20 object-cover rounded-lg" />
+                  <div className="flex flex-col flex-1 ml-4">
+                  <span className="text-lg text-[#1F451A] font-semibold">{product.label}</span>
+                  <span className="text-[#1F451A]">{product.description}</span>
+                  </div>
+                  <TbChevronRight size={24} />
+                  </NavLink>
+                  ))}
+                  </div>
+                  )}
+                  {filteredData.length === 0 && wordEntered !== '' && (
+                  <div className="text-lg font-medium text-gray-500 text-center mt-5">No Products Found</div>
+                  )}
+                  </div>
+                  </form>
+                  </div>
+                  )}
+                  </div>
+              );
+
+            const cartIcon = (
+            <div className='flex justify-between items-center gap-16'>
+            <NavLink to='/user/orders'
+            className='block text-md p-3 active:text-[#ededed] hover:scale-x-105 cursor-pointer rounded text-[#1F451A] bg-white font-bold hover:text-[#ededed] lg:mt-0'>
+              Account
+            </NavLink>
+            <NavLink to="/carts" className="flex items-center text-white">
+            <span className="relative inline-block">
+            <button className='flex bg-white items-center justify-center text-[#1F451A] cursor-pointer rounded gap-2 p-3 w-24'>
+            <BsCart size={28}   />
+            </button>
+            {cart.cartItems.length > 0 ? (
+            <span className="bg-red-600 text-white rounded-full h-5 w-5 flex justify-center items-center text-xs absolute top-0 right-5">
                       {cart.cartItems.length}
-                    </span>
-                    ) : (
-                      ''
-                    )}
-                  </span>
-                   </a>
-            </div>           
-        </div>
-    </nav>
+            </span>
+            ): 
+            ''
+            }
+            </span>
+            </NavLink>
+            </div>
+            );
 
-    </div>
-  );
-};
-
-export default Navbar;
+        return (
+        <nav className="bg-[#1F451A] text-white">
+            <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+            <NavLink to="/" className="flex items-center gap-2">
+            <img src={logo} alt="logo" className="w-30 h-40" />
+            </NavLink>
+               <div className={`lg:flex items-center justify-between gap-40 ${navbar ? 'block ease-in-out z-50 w-full right-0 space-y-10 duration-300 top-36 px-8 py-10 bg-[#1F451A] absolute' : 'hidden'} pt-6 lg:pt-0`}>
+               <div className="lg:flex lg:px-3">
+                  {links.map((link, index) => (
+                          <NavLink
+                            key={index}
+                            to={`/${link.link}`}
+                            style={({ isActive }) => ({
+                                              backgroundColor: isActive ? '' : '',
+                                      })}
+                            className={({ isActive }) => (isActive ? activeLink : normalLink)}
+                            onClick={() => setNavbar(false)}
+                          >
+                            {link.icon}
+                            <span className="capitalize text-xl whitespace-nowrap">{link.name}</span>
+                          </NavLink>
+                        ))}
+                    </div>
+                    {searchIcon}
+                    {cartIcon}
+                </div>
+                {menuIcon}
+              </div>
+        </nav>
+        )
+    }
+ export default Navbar;

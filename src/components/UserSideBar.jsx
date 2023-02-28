@@ -5,20 +5,23 @@ import { FaCubes } from 'react-icons/fa';
 import { GrLocation } from 'react-icons/gr';
 import { IoMdLogIn } from 'react-icons/io';
 import { LogoutUser } from '../apis/api';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, redirect } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 /* eslint-disable */
 
 const UserSideBar = ({setOpenNav}) => {
-    const history = useNavigate();
-    const logout = () => {
-        LogoutUser();
-        localStorage.clear();
-    
-        navigate('/login');
-      };
+  const dispatch = useDispatch();
 
+
+    const logout = () => {
+      LogoutUser()
+      dispatch(logout())
+      redirect('/login')
+     };
+     
       const menus = [
+        {id: "/", title: "Home", icon:<AiOutlineHome fontSize={28}/> },
         { 
         id: 'orders', 
         title: 'Orders', 
@@ -29,25 +32,12 @@ const UserSideBar = ({setOpenNav}) => {
       ];
 
   return (
-    <div>
+    <div className=''>
     <FaTimes fontSize={28} className="text-[#2D2D2D] cursor-pointer fixed top-4 right-4 font-light" onClick={() => setOpenNav(false)} /> 
 
-    <div className='fixed w-full top-20 p-10 '>
+    <div className='fixed w-full z-100 top-20  p-10 '>
     <div className='w-full  space-y-10'>
     <ul className="pt-6 text-xl">
-            <li>
-             <div
-                    className={`flex rounded-md p-2 cursor-pointer text-[#2D2D2D] hover:bg-[#1F451A] hover:text-white active:text-[#1F451A] text- text-sm items-center gap-x-4 
-                     mt-2`}
-                     onClick={() => history('/')}
-                     >
-                    <div><AiOutlineHome fontSize={28}/></div>
-                    <span className={'origin-left duration-200 text-xl'}>
-                    Home
-                    </span>
-          
-                  </div>
-                </li>
                 {menus.map((menu) => (
               <li 
               key={menu.id}

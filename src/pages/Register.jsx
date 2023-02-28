@@ -4,19 +4,18 @@ import { FcGoogle } from 'react-icons/fc';
 import logo from '../assests/logo.png';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { GoogleLogin } from '@react-oauth/google';
-import { useStateContext } from '../contexts/ContextProvider';
 import jwt_decode from 'jwt-decode';
 import { useForm } from 'react-hook-form';
-import { useSnackbar } from 'notistack';
+import { toast } from 'react-toastify';
 import { RegisterUser } from '../apis/api';
+import { setToken, setUserLogin } from '../reducers/auth';
+import { useDispatch } from 'react-redux';
 
 
-/* eslint-disable */
+  /* eslint-disable */
 const Register = () => {
-  const { dispatch } = useStateContext();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
- 
-  const { enqueueSnackbar } = useSnackbar();
 
   const {
     register,
@@ -26,7 +25,7 @@ const Register = () => {
     trigger
   } = useForm();
 
-  const responseGoogle = (response) => {
+  const responseGoogle = async (response) => {
     const userObject = jwt_decode(response.credential);
     const { name, email, sub } = userObject;
     const bodyData = {
@@ -35,61 +34,76 @@ const Register = () => {
       sub: sub,
     };
     try {
-      RegisterUser(bodyData)
-      .then(response => {
-        console.log(response);
-        if (response.status === 200) {
-          const { token } = response.data;
-          const { user } = response.data
-          localStorage.setItem('token', token);
-          dispatch({ type: 'USER_LOGIN', payload: user});
-          localStorage.setItem('user', JSON.stringify(user));
-          navigate('/');
-          enqueueSnackbar('Registered Successful', { variant: response.status }); 
-        }else{
-          console.log(response.statusText);
-          enqueueSnackbar(response.statusText, { variant: response.status });
-        }
-      });
-    } catch (error) {
-      enqueueSnackbar('Registration failed', { variant: 'error' });
-    }
+      await  RegisterUser(bodyData) 
+        .then(response => {
+          console.log(response);
+          const responseStatus = response.status
+          const responseStatusOne = response.data.status
+  
+          if (responseStatus === 200 && responseStatusOne === 'success') {
+            toast.success('Registered Successful');
+          } else {
+                toast.error("Registration failed");
+              }
+          const { token } = response.data
+          if (token !== '') {
+            console.log('check dummy');
+            dispatch(setToken(token));
+            localStorage.setItem('token', token);
+            navigate("/");
+            toast.success('Registered Successful');
+          }
+        });
+        dispatch(setUserLogin(bodyData));
+        localStorage.setItem('user', JSON.stringify(bodyData));
+        navigate('/');
+        toast.success('Registered Successfully');
+      } catch (error) {
+        toast.error(error);
+      }        
   };
-
   const submitHandler = async (data) => {
+    console.log("Data",  data );
     if (data.password !== data.confirmPassword) {
-      enqueueSnackbar('Passwords don\'t match', { variant: 'error' });
+      toast.info("Passwords don't match", { type: 'error' });
       return;
     }
-    const bodyData = {
-      first_name: data.first_name,
-      last_name: data.last_name,
+    const bodyData =  {
       username: data.username ,
       email: data.email,
       password: data.password,
       password_confirmation: data.confirmPassword
-    };
-    try {
-      RegisterUser(bodyData)
-        .then(response => {
-          console.log(response);
-          if (response.status === 200) {
-            const { token } = response.data;
-            const { user } = response.data
-            localStorage.setItem('token', token);
-            dispatch({ type: 'USER_LOGIN', payload: user});
-            localStorage.setItem('user', JSON.stringify(user));
-            navigate('/');
-            enqueueSnackbar('Registered Successful', { variant: response.status }); 
-          }else{
-            console.log(response.statusText);
-            enqueueSnackbar(response.statusText, { variant: response.status });
-          }
-        });
-    } catch (error) {
-      enqueueSnackbar('Registration failed', { variant: 'error' });
     }
-  };
+
+      try {
+        await  RegisterUser(bodyData) 
+          .then(response => {
+            console.log(response);
+            const responseStatus = response.status
+            const responseStatusOne = response.data.status
+    
+            if (responseStatus === 200 && responseStatusOne === 'success') {
+              toast.success('Registered Successful');
+            } else {
+                  toast.error("Registration failed");
+                }
+            const { token } = response.data
+            if (token !== '') {
+              console.log('check dummy');
+              dispatch(setToken(token));
+              localStorage.setItem('token', token);
+              navigate("/");
+              toast.success('Registered Successful');
+            }
+          });
+          dispatch(setUserLogin(bodyData));
+          localStorage.setItem('user', JSON.stringify(bodyData));
+          navigate('/');
+          toast.success('Registered Successfully');
+        } catch (error) {
+          toast.error(error);
+        }        
+  }
 
   return (
     <div className="container mx-auto flex items-center min-h-screen p-6 justify-center">

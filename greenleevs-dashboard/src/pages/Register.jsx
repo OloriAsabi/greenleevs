@@ -62,7 +62,6 @@ const Register = () => {
           dispatch(setUserLogin(bodyData));
           localStorage.setItem('user', JSON.stringify(bodyData));
           navigate('/');
-          toast.success('Registered Successfully');
         } catch (error) {
           toast.error("Registration failed");
         }        

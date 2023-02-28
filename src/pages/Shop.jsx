@@ -4,7 +4,7 @@ import {BsCart} from 'react-icons/bs';
 import { Link, useNavigate } from 'react-router-dom';
 
 
-/* eslint-disable */
+
 import { Mousewheel } from 'swiper';
 import visa from '../assests/Vector (1).png';
 import master from '../assests/master.png';
@@ -13,19 +13,22 @@ import { GetCategories, GetPopularProducts, PostCart } from '../apis/api';
 
 import 'swiper/css';
 import { Spinner } from '../components';
-import { useSnackbar } from 'notistack';
-import { useStateContext } from '../contexts/ContextProvider';
+import { useDispatch } from 'react-redux';
+import { addCartItem } from '../reducers/auth';
+import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux';
+
 
 
 const Shop = () => {
   const history = useNavigate();
-  const { state, dispatch } = useStateContext();
-  const { cart } = state;
+  const  dispatch = useDispatch();
+  const { cart } = useSelector(state => state.auth);
 
   const [categories, setCategories] = useState([]);
   const [popular, setPopular] = useState([]);
   const [isLoading, setIsLoading] = useState(false)
-  const { enqueueSnackbar } = useSnackbar();
+
 
   const getDataCategory =  useCallback(() => {
     setIsLoading(true)
@@ -37,15 +40,14 @@ const Shop = () => {
       
     setCategories(data)
     setIsLoading(false)
-    }else{
-      console.log(response.statusText);
-      enqueueSnackbar(response.statusText, { variant: response.status });
+    }
+    else{
+      toast.success(response.statusText);
     }
     }).catch((e) => {
-    console.log(e);
+    toast.error(e);
     });
-  },
-  []);
+  }, []);
 
   const getPopularProducts = useCallback(() => {
     setIsLoading(true)
@@ -58,8 +60,7 @@ const Shop = () => {
         setPopular(data)
         setIsLoading(false)
     }else{
-      console.log(res.statusText);
-      enqueueSnackbar(res.statusText, { variant: res.status });
+    toast.error(res.statusText);
     }
     })
   },[]);
@@ -73,7 +74,7 @@ const Shop = () => {
     const existItem = cart.cartItems.find((x) => x._id === e.product_id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
         if (e.countinStock < quantity) {
-      enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
+          toast.error('Sorry. Product is out of stock');
       return;
     }
     const body = {
@@ -83,9 +84,8 @@ const Shop = () => {
     PostCart(body)
       .then((res) => {
         console.log(res);
-        dispatch({
-          type: 'CART_ADD_ITEM',
-          payload: {
+        dispatch(addCartItem(
+            {
             _key: e.product_id,
             name: e.label,
             countInStock: e.countinStock,
@@ -94,15 +94,11 @@ const Shop = () => {
             image: e.product_image,
             quantity,
           },
-        });
+        ));
         if(res.data.status === 'success'){
-           enqueueSnackbar(`${product.label} added to the cart`, {
-          variant: res.status, 
-        });
-              // history('/carts')
+           toast.success(`${e.label} added to the cart`);
         }else{
-          // console.log(res.data.message);
-          enqueueSnackbar(res.data.message, { variant: res.data.status });
+          toast.error(res.data.message);
         }
       })
   };
@@ -115,12 +111,12 @@ const Shop = () => {
           <div className='pb-10'>
           {isLoading
                   ? 
-                  <Spinner /> 
+                <Spinner /> 
                   :
-            <div className='grid lg:grid-cols-3  md:grid-cols-2  sm:grid-cols-2 gap-10 pt-10 justify-between items-center'>
+            <div className='grid lg:grid-cols-3 md:grid-cols-2  sm:grid-cols-2 gap-10 pt-10  md:justify-between items-center'>
               {categories.map((cat) => (
-                <Link to={`/shop/${cat.slug}`} key={cat.slug} className='w-[80%] h-auto  bg-white ro unded-lg borderflex flex-col justify-between p-5 space-y-5 hover:shadow-md'>
-                  <img  src={cat.image} alt="" className='rounded-md w-auto h-auto' />
+                <Link to={`/shop/${cat.slug}`} key={cat.slug} className='w-full h-auto  bg-white ro unded-lg borderflex flex-col justify-between p-5 space-y-5 hover:shadow-md'>
+                  <img  src={cat.image} alt="" className='rounded-md w-full h-64' />
                   <div className='text-2xl text-start capitalize text-[#1F451A] font-normal'>{cat.label}</div>
                   <div onClick={() => history(`/shop/${cat.slug}`)} className='' >
                     <button className='text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'>
@@ -139,7 +135,7 @@ const Shop = () => {
           <div className='p-10'>
           {isLoading
                   ? 
-                  <Spinner /> 
+            <Spinner /> 
                   :
             <Swiper
               mousewheel={true}
@@ -164,7 +160,7 @@ const Shop = () => {
                 <SwiperSlide key={pop.product_id}>
                   <Link to={`/product/${pop.slug}`}>
                     <div className='w-full h-full bg-white rounded-lg border flex flex-col justify-between p-5 space-y-10 hover:shadow-md'>
-                      <img src={pop.product_image} alt="" className='rounded-md w-auto h-auto' />
+                      <img src={pop.product_image} alt="" className='rounded-md w-auto h-64' />
                       <div className='text-2xl text-start text-[#1F451A] font-normal'>{pop.label}</div>
                         <button className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
                           onClick={() => addToCartHandler(pop)}>

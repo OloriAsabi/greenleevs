@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { useForm } from 'react-hook-form';
@@ -15,7 +15,7 @@ import { setWelcomeInfo } from '../reducers/auth';
 import { toast } from 'react-toastify';
 
 const WelcomePage = () => {
-  const { dispatch } = useDispatch();
+  const  dispatch = useDispatch();
 
   const navigate = useNavigate();
 
@@ -57,7 +57,7 @@ const WelcomePage = () => {
               <h1 className='capitalize text-3xl font-bold'>Welcome to green leevs</h1>
               <p className='text-[#2D2D2D] text-xl font-semibold'>Green leevs solely sells only to online retailer and wholesaler of legal recreational cannabis</p>
               <p className='text-[#2D2D2D] text-xl '>You must be 19 or older to access this site as part of our commitment to safe and responsible consumption. Cannabis purchase or attempted purchase by anybody under the age of 19
-                <br/>is prohibited, as is buying it for a minor. All sales are subject to the receiver and purchaser's legal age. To read our privacy notification and find out more about how your date of birth is collected, 
+                <br/>is prohibited, as is buying it for a minor. All sales are subject to the receiver and purchasers legal age. To read our privacy notification and find out more about how your date of birth is collected, 
                 <br/>click here.</p>
 
               <div className='text-[#2D2D2D] text-xl font-semibold'>To verify that you are at least 19 years old, please enter your age.</div>

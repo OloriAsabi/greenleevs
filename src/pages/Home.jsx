@@ -11,7 +11,6 @@ import spot4 from '../assests/cannabis_PNG37 1 (3).png';
 import bg5 from '../assests/Rectangle 20 (3).png';
 import bg3 from '../assests/Rectangle 20.png';
 import { useForm } from 'react-hook-form';
-import { useSnackbar } from 'notistack';
 import blog from '../assests/Rectangle 123.png';
 import blog1 from '../assests/Rectangle 123 (2).png';
 import blog2 from '../assests/Rectangle 123 (1).png';
@@ -23,6 +22,7 @@ import american from '../assests/american.png';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import { toast } from 'react-toastify';
 
 
 // import required modules
@@ -59,13 +59,12 @@ const SliderItems = ({pic,id, price, title, brandImage, taste, content, }) => {
   return(
     <div key={id} className=' p-10 text-center tracking-widest leading-8'>
       <div className='flex flex-col space-y-5 items-center justify-center'>
-        <img src={pic} className="w-48 h-48 rounded" alt='featured Products'/>
+        <img src={pic} className="w-64 h-64 rounded" alt='featured Products'/>
         <div className='rounded-full text-center '>
-        <img src={brandImage} className="rounded-full object-cover w-auto h-auto"  alt='' />
+        <img src={brandImage} className="rounded-full object-cover w-auto h-40"  alt='' />
         </div>
         <div className='font-bold'>{title}</div>
         <p className='font-medium'>Price: ${price}</p>
-        {/* <p className='pb-5'>{salesPrice}</p> */}
         <div className='font-bold'>{taste}</div>
         <div>{content}</div>
       </div>
@@ -121,8 +120,6 @@ const Home = () => {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
 
-  const { enqueueSnackbar } = useSnackbar();
-
   const getDataProducts =  useCallback(() => {
     GetProducts()
     .then((response) => {
@@ -131,8 +128,7 @@ const Home = () => {
       
     setProducts(data)
     }else{
-      console.log(response.statusText);
-      enqueueSnackbar(response.statusText, { variant: response.status });
+     toast.error(response.statusText)
     }
     }).catch((e) => {
     console.log(e);
@@ -150,8 +146,8 @@ const Home = () => {
       
     setCategories(data)
   }else{
-    console.log(response.statusText);
-    enqueueSnackbar(response.statusText, { variant: response.status });
+    // console.log(response.statusText);
+    toast.error(response.statusText)
   }
     }).catch((e) => {
     console.log(e);
@@ -206,12 +202,12 @@ const Home = () => {
       .then((response) => {
         console.log("Response ",response);
         const reply = response.data
-        enqueueSnackbar(reply.message , { variant: 'success' });
+        toast.success(reply.message)
       });
-      enqueueSnackbar('Newsletter Subsrcibed Successfully', { variant: 'success' });
+
+      toast.success('Newsletter Subsrcibed Successfully');
     } catch (error) {
-      console.log(error);
-      enqueueSnackbar('Newsletter Subscrition Failed', { variant: 'error' });
+      toast.error(error);
     }
   };
 
@@ -342,8 +338,8 @@ const Home = () => {
           <div className='grid lg:grid-cols-3 md:grid-cols-2 sm:grid-cols-1 gap-10  justify-between items-center'>
             {categories.map((cat) => (
               <Link to={`/shop/${cat.slug}`} key={cat.slug}>
-                <div key={cat.slug} className='w-auto h-full bg-white rounded-lg border flex flex-col items-center p-10  border-gray-200 shadow-md'>
-                  <img  src={cat.image}  alt="" className='rounded-md w-full h-full' />
+                <div key={cat.slug} className='w-auto h-90 bg-white rounded-lg border flex flex-col items-center p-10  border-gray-200 shadow-md'>
+                  <img  src={cat.image}  alt="" className='rounded-md w-auto h-72' />
                   <div className='text-2xl capitalize font-medium p-5'>{cat.label}</div>
                   <button className='bg-[#1F451A] text-white p-3 cursor-pointer rounded-md w-full hover:scale-x-110 font-normal text-xl'>Explore</button>
                 </div>

@@ -4,26 +4,27 @@ import { Routes, Route, useNavigate} from 'react-router-dom';
 import { BillingDetails, Footer, Navbar, PaymentDetails } from './components';
 import { Carts, Categories, CheckOut, ComingSoon, Error, Home, Orders, ProductDetails, Settings, Shipping, Shop, SpecialMenu, UserProfile } from './pages';
 
-import { useStateContext } from './contexts/ContextProvider';
+
 import { GetCategories } from './apis/api';
 import ScrollToTop from "react-scroll-to-top";
+import { useSelector } from 'react-redux';
 
 
 function App() {
-  /* eslint-disable */
+
   const scrollRef = useRef(null);
-  const { state } = useStateContext();
-  const { welcome } = state;
+  const {  welcomeInfo } = useSelector(state => state.auth);
   const navigate = useNavigate();
 
+  // eslint-disable-next-line no-unused-vars
   const [categories, setCategories] = useState([]);
 
   useEffect(() => {
-    if(!welcome) {
+    if(!welcomeInfo) {
       navigate("/welcome")
     }
     scrollRef.current.scrollTo(0, 0)
-  }, [navigate, welcome]);
+  }, [navigate, welcomeInfo]);
 
   useEffect(() => {
     GetCategories()

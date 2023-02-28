@@ -1,4 +1,4 @@
-/* eslint-disable */
+
 import React, { useState } from 'react';
 import { cbdContents, plant_type, thcContents } from '../data/data';
 import { BiMenuAltRight } from 'react-icons/bi';
@@ -10,13 +10,16 @@ import master from '../assests/master.png';
 import american from '../assests/american.png';
 
 import { Mousewheel } from 'swiper';
-import { FlexStyle, GridStyle, SidebarCat, Spinner } from '../components';
+import { FlexStyle, GridStyle, Spinner } from '../components';
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import { FilterProducts, GetBrands, GetProductsByCategoryId, GetPopularByCategory, PostCart } from '../apis/api';
 import { useCallback } from 'react';
-import { useSnackbar } from 'notistack';
-import { useStateContext } from '../contexts/ContextProvider';
+import { useDispatch } from 'react-redux';
+import { addCartItem } from '../reducers/auth';
+import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
+import Sidebar from '../components/Sidebar';
 
 const Categories = () => {
   const [openNav, setOpenNav] = useState(false);
@@ -24,13 +27,13 @@ const Categories = () => {
   const [popular, setPopular] = useState([])
   const [isGrid, setIsGrid] = useState(false);
   const [isLoading, setIsLoading] = useState(false)
-  const { state, dispatch } = useStateContext();
-  const { cart } = state;
+  const { cart } = useSelector(state => state.auth);
+  const dispatch = useDispatch();
   const [products, setProducts] = useState([]);
 
   const [brands, setBrands] = useState([]);
-  const [potency, setPotency] = useState('');
-  const { enqueueSnackbar } = useSnackbar();
+  const [potency ] = useState('');
+
   const {
     watch,
     register,
@@ -41,7 +44,7 @@ const Categories = () => {
       sort: 'default',
       outofstock: false
     }
-  });
+  })
 
   const submitSort = (data) => {
     console.log(data);
@@ -89,7 +92,7 @@ const Categories = () => {
           setIsLoading(false);
         } else {
           console.log(res.statusText);
-          enqueueSnackbar(res.statusText, { variant: res.status });
+          toast.error(res.statusText);
         }
       })
       .catch((e) => {
@@ -112,7 +115,12 @@ const Categories = () => {
   }, []);
   
   const handleFilterSubmit = async (formValues) => {
-    await FilterProducts(id, formValues['plant'], formValues['brand'], potency, formValues['outOfStock'], formValues['sort']).then((res) => {
+    await FilterProducts(id, 
+    formValues['plant'], 
+    formValues['brand'], 
+    potency, 
+    formValues['outOfStock'], 
+    formValues['sort']).then((res) => {
       if (res && res.status === 200) {
         console.log(res);
         if (res.data != null && res.data != undefined && typeof res.data == "object") {
@@ -128,10 +136,9 @@ const Categories = () => {
 
 
   useEffect(() => {
-    const subscription = watch((value, { name, type }) => {
+    const subscription = watch((value,) => {
       handleFilterSubmit(value);
     });
-
 
     return () => subscription.unsubscribe();
   }, [watch]);
@@ -140,7 +147,7 @@ const Categories = () => {
     const existItem = cart.cartItems.find((x) => x._id === e.product_id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
         if (e.countinStock < quantity) {
-      enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
+          toast.error('Sorry. Product is out of stock');
       return;
     }
     const body = {
@@ -150,9 +157,8 @@ const Categories = () => {
     PostCart(body)
       .then((res) => {
         console.log(res);
-        dispatch({
-          type: 'CART_ADD_ITEM',
-          payload: {
+        dispatch(addCartItem(
+            {
             _key: e.product_id,
             name: e.label,
             countInStock: e.countinStock,
@@ -161,19 +167,14 @@ const Categories = () => {
             image: e.product_image,
             quantity,
           },
-        });
+        ));
         if(res.data.status === 'success'){
-           enqueueSnackbar(`${product.label} added to the cart`, {
-          variant: res.status, 
-        });
-              // history('/carts')
+           toast.success(`${e.label} added to the cart`);
         }else{
-          enqueueSnackbar(res.data.message, { variant: res.data.status });
+          toast.error(res.data.message);
         }
       })
   };
-
-console.log(products);
   
 return (
   <div>
@@ -196,7 +197,7 @@ return (
   <form>
         <div className='pt-6'>
                 <p className='pb-5'>BRANDS</p>
-                <div className='flex flex-col justify-between space-y-5 items-start'>
+                <div className='flex flex-col justify-between space-y-5 pb-6 items-start'>
                 {brands.map((brand) => (
                 <div  className='flex mb-5' key={brand.id}>
                 <input id={brand.id} 
@@ -289,7 +290,7 @@ return (
                     <select id="sort"  
                       className={
                         `w-24 ${
-                        errors.sort ? ' border-red-400' : ''} bg-[#1F451A] text-white cursor-pointer rounded-md accessorySide hover:scale-x-110 font-normal text-xl border p-4
+                        errors.sort ? ' border-red-400' : ''} bg-[#1F451A] text-white cursor-pointer rounded-md hover:scale-x-110 font-normal text-xl border p-4
                         `}
                       {...register('sort')}>
                       <option 
@@ -303,7 +304,7 @@ return (
                     </select>
                     {errors.sort && (
                       <p className="text-red-500 text-sm mt-2">
-               Select a vaild sort
+                    Select a vaild sort
                       </p>
                     )}
                   </div>
@@ -325,7 +326,15 @@ return (
               </button>
             ):(
               <div className={`top-0 right-0 fixed bg-white w-full h-full p-10' ${openNav ? 'translate-x-0' : 'translate-x-full'} ease-in-out duration-300`}>
-                <SidebarCat setOpenNav={setOpenNav}/>
+                <Sidebar 
+                setOpenNav={setOpenNav} 
+                openNav={openNav}
+                id={id} 
+                brands={brands} 
+                onSubmit={handleSubmit(handleFilterSubmit)}  
+                plantTypes={plant_type} 
+                thcContents={thcContents} 
+                cbdContents={cbdContents} />
               </div>
             )}
           </div>

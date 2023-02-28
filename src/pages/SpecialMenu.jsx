@@ -1,31 +1,31 @@
 import React, { useEffect, useState,  useCallback } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import {BsCart} from 'react-icons/bs';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { Spinner } from '../components';
 
-/* eslint-disable */
+
 
 import { Mousewheel } from 'swiper';
 import visa from '../assests/Vector (1).png';
 import master from '../assests/master.png';
 import american from '../assests/american.png';
 import { GetPopularProducts, GetSpecialProduct, PostCart } from '../apis/api';
-import { useSnackbar } from 'notistack';
-import { useStateContext } from '../contexts/ContextProvider';
+import { useDispatch } from 'react-redux';
+import { addCartItem } from '../reducers/auth';
+import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux';
 
 import 'swiper/css';
 
 const SpecialMenu = () => {
-  const history = useNavigate();
   const [special, setSpecial] = useState([]);
   const [popular, setPopular] = useState([]);
-  const { state, dispatch } = useStateContext();
-  const { cart,  } = state;
+  const dispatch = useDispatch()
+  const { cart } = useSelector(state => state.auth);
 
-  const product = popular.map((product) => console.log(product));
+  // const product = popular.map((product) => console.log(product));
   const [isLoading, setIsLoading] = useState(false)
-  const { enqueueSnackbar } = useSnackbar();
 
   const getPopularProducts = useCallback(() => {
     setIsLoading(true)
@@ -38,8 +38,8 @@ const SpecialMenu = () => {
         setPopular(data)
         setIsLoading(false)
     }else{
-      console.log(res.statusText);
-      enqueueSnackbar(res.statusText, { variant: res.status });
+      // console.log(res.statusText);
+      toast.error(res.statusText);
     }
     })
   },[]);
@@ -56,7 +56,7 @@ const SpecialMenu = () => {
         setIsLoading(false)
     }else{
       console.log(res.statusText);
-      enqueueSnackbar(res.statusText, { variant: res.status });
+      toast.error(res.statusText);
     }
     })
   },[]);
@@ -70,7 +70,7 @@ const SpecialMenu = () => {
     const existItem = cart.cartItems.find((x) => x._id === e.product_id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
         if (e.countinStock < quantity) {
-      enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
+          toast.error('Sorry. Product is out of stock');
       return;
     }
     const body = {
@@ -80,9 +80,8 @@ const SpecialMenu = () => {
     PostCart(body)
       .then((res) => {
         console.log(res);
-        dispatch({
-          type: 'CART_ADD_ITEM',
-          payload: {
+        dispatch(addCartItem(
+            {
             _key: e.product_id,
             name: e.label,
             countInStock: e.countinStock,
@@ -91,28 +90,26 @@ const SpecialMenu = () => {
             image: e.product_image,
             quantity,
           },
-        });
+        ));
         if(res.data.status === 'success'){
-           enqueueSnackbar(`${product.label} added to the cart`, {
-          variant: res.status, 
-        });
-              // history('/carts')
+           toast.success(`${e.product.label} added to the cart`);
         }else{
-          enqueueSnackbar(res.data.message, { variant: res.data.status });
+          toast.error(res.data.message);
         }
       })
   };
+
 
   return (
     <div>
       <div className='small w-screen container mx-auto my-8'>
         <div>
           <h1 className='text-3xl font-bold mb-10 text-[#2D2D2D] pt-10 text-start shopText'>Special</h1>
-          <div className='grid lg:grid-cols-3  md:grid-cols-2 pl-5 sm:grid-cols-2 gap-10 pt-10 justify-between items-center'>
+          <div className='grid lg:grid-cols-3  md:grid-cols-2 pl-5 sm:grid-cols-2 gap-10 pt-10  md:justify-between  items-center'>
             {special.map((cat) => (
               <Link to={`/product/${cat.slug}`} key={cat.product_id}>
-                <div className='w-80 h-auto  bg-white rounded-lg border flex flex-col justify-between p-5 space-y-5 hover:shadow-md'>
-                  <img src={cat.product_image} alt="" className='rounded-md w-auto h-auto' />
+                <div className='w-full h-full bg-white rounded-lg border flex flex-col justify-between p-5 space-y-5 hover:shadow-md'>
+                  <img src={cat.product_image} alt="" className='rounded-md w-full h-64' />
                   <p className='text-14 text-[#1F451A]'>{cat.brand?.label}</p>
                   <div className='text-2xl text-start capitalize text-[#1F451A] font-normal'>{cat.label}</div>
                   <div className=''>$ {cat.price}</div>
@@ -156,7 +153,7 @@ const SpecialMenu = () => {
                 <SwiperSlide key={pop.product_id}>
                   <Link to={`/product/${pop.slug}`}>
                     <div className='w-full h-full bg-white rounded-lg border flex flex-col justify-between p-5 space-y-10 hover:shadow-md'>
-                      <img src={pop.product_image} alt="" className='rounded-md w-auto h-auto' />
+                      <img src={pop.product_image} alt="" className='rounded-md w-auto h-64' />
                       <div className='text-2xl text-start text-[#1F451A] font-normal'>{pop.label}</div>
                       <div className='' >
                         <button className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'

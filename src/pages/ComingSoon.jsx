@@ -1,4 +1,3 @@
-// import { useSnackbar } from 'notistack';
 /* eslint-disable */
 import React from 'react'
 import { useForm } from 'react-hook-form';
@@ -14,8 +13,6 @@ const ComingSoon = () => {
         formState: { errors },
         trigger
       } = useForm();
-    
-    //   const { enqueueSnackbar } = useSnackbar();
       
       const submitHandler = async (data) => {
         console.log('Data', data );

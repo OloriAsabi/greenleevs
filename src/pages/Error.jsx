@@ -20,12 +20,12 @@ const Error = () => {
         <div className='flex justify-evenly items-center pt-5 '>
         <button
        className='bg-[#1F451A] text-white w-18  rounded text-center cursor-pointer p-3 font-normal' 
-       onClick={() => history('/c')}>
+       onClick={() => history('/')}>
             Home
         </button>
         <button
           className='border border-[#1F451A] text-[#1F451A] w-18  rounded text-center cursor-pointer p-3 font-normal' 
-          onClick={() => history('/c')}>
+          onClick={() => history('/shop')}>
             Shop
         </button>
         </div>

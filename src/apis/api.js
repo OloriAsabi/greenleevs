@@ -235,6 +235,7 @@ export const PostNewsletter = async (body) => {
       {
         headers: { 
           'Content-Type': 'application/json' ,
+          "Authorization": `Bearer ${token}`
         },
         cancelToken: cancelToken.token,
       })
@@ -628,4 +629,67 @@ export const GetSpecialProduct = async (special) => {
         return () => {
           cancelToken.cancel();
         };
+}
+
+export const GetOrders = async () => {
+  try {
+      const data = await axios.get(`${process.env.REACT_APP_BASEURL}/user/orders`,
+          {
+            headers: { 
+                "Content-Type": "application/json" ,
+                "Authorization": `Bearer ${token}`
+            },
+          })
+        console.log("Get Orders",data);
+         return data; 
+        } catch (error) {
+            console.log(error)  
+        }
+}
+
+export const PostOrders = async (body) => {
+  try {
+    const data = await axios.post(`${process.env.REACT_APP_BASEURL}/user/checkout/process`, body,
+      {
+        headers: { 
+          'Content-Type': 'application/json' ,
+          "Authorization": `Bearer ${token}`
+        },
+        // cancelToken: cancelToken.token,
+      })
+    console.log('POST ORDERS',data);
+    return data; 
+  } catch (err) {
+    if (axios.isCancel(err)) {
+      console.log("Request canceled!");
+    } else {
+      console.log(err);
+    }
+  } 
+  return () => {
+    cancelToken.cancel();
+  };
+}
+export const UpdateShipping = async (body) => {
+  try {
+    const data = await axios.post(`${process.env.REACT_APP_BASEURL}/user/orders/update/shipping`, body,
+      {
+        headers: { 
+          'Content-Type': 'application/json' ,
+          "Authorization": `Bearer ${token}`
+        },
+        // cancelToken: cancelToken.token,
+      })
+    console.log('Update Shipping',data);
+    return data; 
+  } catch (err) {
+    if (axios.isCancel(err)) {
+      console.log("Request canceled!");
+    } else {
+      console.log(err);
+    }
+  } 
+  return () => {
+    cancelToken.cancel();
+  };
 }

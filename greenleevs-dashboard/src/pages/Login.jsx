@@ -52,7 +52,6 @@ const Login = () => {
           dispatch(setUserLogin(bodyData));
           localStorage.setItem('user', JSON.stringify(bodyData));
           navigate('/');
-          toast.error('Login Successful');
         } catch (error) {
           console.log(error);
           toast.error("Login failed")

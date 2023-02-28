@@ -1,5 +1,5 @@
 import React, { useEffect, useState,  useCallback  } from 'react';
-/* eslint-disable */
+
 import { useNavigate, useParams } from 'react-router-dom';
 import {AiOutlineLeftCircle} from 'react-icons/ai';
 import {IoIosRemoveCircleOutline, IoIosAddCircleOutline} from 'react-icons/io';
@@ -8,27 +8,27 @@ import {BsCart} from 'react-icons/bs';
 import visa from '../assests/Vector (1).png';
 import master from '../assests/master.png';
 import american from '../assests/american.png';
-import { useSnackbar } from 'notistack';
+import { toast } from 'react-toastify';
 
 import { Mousewheel } from 'swiper';
 import { GetProductId, GetRecentlyViewed, GetRelatedProducts, PostCart } from '../apis/api';
 import { Spinner } from '../components';
-import { useStateContext } from '../contexts/ContextProvider';
+import { useDispatch } from 'react-redux';
+import { addCartItem } from '../reducers/auth';
+import { useSelector } from 'react-redux';
 
 
 const ProductDetails = () => {
   const { id } = useParams();
-  const { state, dispatch } = useStateContext();
-  const { user, cart } = state;
+  const { users, cart } = useSelector(state => state.auth);
+  const dispatch = useDispatch();
   const history = useNavigate();
 
   useEffect(() => {
-    if(!user) {
+    if(!users) {
       history("/login")
     }
-  }, [history, user]);
-
-  const { enqueueSnackbar } = useSnackbar();
+  }, [history, users]);
   
   const [product, setProduct] = useState({});
   const [recent, setRecent] = useState([]);
@@ -47,10 +47,10 @@ const ProductDetails = () => {
           setProduct(data)
           setIsLoading(false)
       }else{
-        enqueueSnackbar(res.data.message, { variant: res.data.status });
+       toast.success(res.data.message);
             }
           }).catch((e) => {
-          console.log(e);
+        toast.error(e)
           });
   },
   [id]);
@@ -64,7 +64,7 @@ const ProductDetails = () => {
       setRelated(data)
       setIsLoading(false)
     }).catch((e) => {
-      console.log(e);
+     toast.error(e)
       });
   },[id]);
 
@@ -79,10 +79,10 @@ const ProductDetails = () => {
         setRecent(data)
         setIsLoading(false)
     }else{
-      enqueueSnackbar(res.data.message, { variant: res.data.status });
-    };
+      toast.success(res.data.message);
+    }
     }).catch((e) => {
-      console.log(e);
+      toast.error(e);
       });
   },[id]);
 
@@ -93,81 +93,70 @@ const ProductDetails = () => {
   }, [id]);
 
   const addToCartHandler = async (e) => {
-    console.log("e", e);
-    const existItem = cart.cartItems.find((x) => x._id === product.product_id);
-    const quantity = existItem ? existItem.quantity + 1 : 1;
-    if (product.countinStock < quantity) {
-      enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
-      return;
-    }
-    const body = {
-      product_id: product.product_id,
-      quantity: quantity,
-    }
-    PostCart( body)
-    .then((res) => {
-      console.log(res);
-      dispatch({
-        type: 'CART_ADD_ITEM',
-        payload: {
-          _key: product.product_id,
-          name: product.label,
-          countInStock: product.countinStock,
-          slug: product.slug,
-          price: product.price,
-          image: product.product_image,
-          quantity,
-        },
-      });
-      if(res.data.status === 200){
-        enqueueSnackbar(`${product.label} added to the cart`, {
-        variant: res.status, 
-      });
-            // history('/carts')
-      }else{
-        enqueueSnackbar(res.data.message, { variant: res.data.status });
-      }
-    })
-  }
-
-  const addToCartHandlerProduct = async (e) => {
-    console.log("e", e);
     const existItem = cart.cartItems.find((x) => x._id === e.product_id);
     const quantity = existItem ? existItem.quantity + 1 : 1;
         if (e.countinStock < quantity) {
-      enqueueSnackbar('Sorry. Product is out of stock', { variant: 'error' });
+      toast.error('Sorry. Product is out of stock');
       return;
     }
     const body = {
       product_id: e.product_id,
       quantity: quantity,
     }
-    PostCart( body)
-    .then((res) => {
-      console.log(res);
-      dispatch({
-        type: 'CART_ADD_ITEM',
-        payload: {
-          _key: e.product_id,
-          name: e.label,
-          countInStock: e.countinStock,
-          slug: e.slug,
-          price: e.price,
-          image: e.product_image,
-          quantity,
-        },
-      });
-      if(res.data.status === 'success'){
-        enqueueSnackbar(`${e.label} added to the cart`, {
-        variant: res.data.status, 
-      });
-            // history('/carts')
-      }else{
-        enqueueSnackbar(res.data.message, { variant: res.data.status });
-      }
-    })
-  }
+    PostCart(body)
+      .then((res) => {
+        console.log(res);
+        dispatch(addCartItem(
+            {
+            _key: e.product_id,
+            name: e.label,
+            countInStock: e.countinStock,
+            slug: e.slug,
+            price: e.price,
+            image: e.product_image,
+            quantity,
+          },
+        ));
+        if(res.data.status === 'success'){
+           toast.success(`${e.product.label} added to the cart`);
+        }else{
+          toast.error(res.data.message);
+        }
+      })
+  };
 
+ const addToCartHandlerProduct = async (e) => {
+    const existItem = cart.cartItems.find((x) => x._id === e.product_id);
+    const quantity = existItem ? existItem.quantity + 1 : 1;
+        if (e.countinStock < quantity) {
+          toast.error('Sorry. Product is out of stock');
+      return;
+    }
+    const body = {
+      product_id: e.product_id,
+      quantity: quantity,
+    }
+    PostCart(body)
+      .then((res) => {
+        console.log(res);
+        dispatch(addCartItem(
+            {
+            _key: e.product_id,
+            name: e.label,
+            countInStock: e.countinStock,
+            slug: e.slug,
+            price: e.price,
+            image: e.product_image,
+            quantity,
+          },
+        ));
+        if(res.data.status === 'success'){
+           toast.success(`${e.label} added to the cart`);
+        }else{
+          toast.error(res.data.message);
+        }
+      })
+  };
 
   return (
     <div>
@@ -198,19 +187,20 @@ const ProductDetails = () => {
                   <span className='text-black text-2xl font-normal'>Brand; </span>
                     {product?.brand?.label}
                 </li>
-                <li className='flex justify-between text-justify items-center'>
+                <li className='flex justify-between text-justify gap-20 items-center'>
                   <span className='text-black text-2xl font-normal'>Brand Logo; </span>
                   <img src={product?.brand?.logo} className="rounded-full object-cover w-auto h-32"  alt='' />
                 </li>
                 {product.metas?.map((meta) => (
                       <li className='flex justify-between text-justify gap-20 items-center' key={meta.id}>
                       <span className='text-black text-2xl capitalize font-normal'>{meta.option}; </span>
-                            {meta?.values?.map((value, index) => (
+                      <button className='text-[#1F451A] text-xl space-x-5 rounded p-3'>{meta.values}</button>
+                            {/* {meta?.values?.map((value, index) => (
                            <div key={index} className="ml-8 mt-2">
                                 <button className='text-[#1F451A] text-xl rounded p-3'>{value?.size  ? `size: ${value?.size}`  : value }</button>
                                 <button className='text-[#1F451A] text-xl rounded p-3'>{value?.price ? `price:  $${value?.price}` : ""}</button>
                               </div>
-                            ))}
+                            ))} */}
                     </li>
                       ))} 
               </ul>
@@ -237,7 +227,7 @@ const ProductDetails = () => {
               <p className='' >
                 <button 
                 className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
-                onClick={() => addToCartHandler()}
+                onClick={(e) => addToCartHandler(e)}
                 >
                   <BsCart fontSize={28}/> Add to cart
                 </button>
@@ -272,7 +262,7 @@ const ProductDetails = () => {
               {related.map(cat => (
                 <SwiperSlide key={cat.product_id}>
                   <div className='w-full h-full bg-white rounded-lg border flex flex-col justify-between p-5 space-y-10 hover:shadow-md'>
-                    <img src={cat.product_image} alt="" className='rounded-md w-auto h-auto' />
+                    <img src={cat.product_image} alt="" className='rounded-md w-auto h-64' />
                     <div className='text-2xl text-start text-[#1F451A] font-normal'>{cat.label}</div>
                       <button className='flex justify-center items-center text-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'
                         onClick={() =>  addToCartHandlerProduct(cat)}>
@@ -303,18 +293,14 @@ const ProductDetails = () => {
                 768:{
                   width: 768,
                   slidesPerView: 2
-                },
-                //   1400:{
-                //       width: 1400,
-                //       slidesPerView: 3
-                //   },
+                }
               }}
               modules={Mousewheel}
               className="mySwiper">
               {recent.map(r => (
                 <SwiperSlide key={r.product_id}>
                   <div className='w-full h-full bg-white rounded-lg border flex flex-col justify-between p-5 space-y-10 hover:shadow-md'>
-                    <img src={r.product_image} alt="" className='rounded-md w-auto h-auto object-cover' />
+                    <img src={r.product_image} alt="" className='rounded-md w-auto h-64 object-cover' />
                     <div className='text-2xl text-start text-[#1F451A] font-normal'>{r.label}</div>
                     <p className='text-center ' >
                       <button className='flex justify-center text-center items-center bg-[#1F451A] text-white cursor-pointer rounded-md  gap-2 p-3 w-full'

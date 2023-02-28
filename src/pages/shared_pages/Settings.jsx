@@ -1,8 +1,10 @@
 import React, { useEffect } from 'react'
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import { useStateContext } from '../../contexts/ContextProvider';
-import { useSnackbar } from 'notistack';
+import { useDispatch } from 'react-redux';
+import { updateUser } from '../../reducers/auth';
+import { useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import { getError } from '../../data/error';
 import { UpdateUser } from '../../apis/api';
 
@@ -19,26 +21,25 @@ const Settings = () => {
     formState: { errors }
   } = useForm();
 
-  const { dispatch, state } = useStateContext();
-  const { user } = state;
+  const { users } = useSelector(state => state.auth);
 
-  const { enqueueSnackbar } = useSnackbar();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if(!user) {
+    if(!users) {
     history("/login")
     }
-    setValue('first_name', user.firstName);
-    setValue('last_name', user.lastName);
-    setValue('email', user.email);
-    setValue('old_password', user.oldPassword);
-    setValue('new_password', user.newPassword)
-  }, [history, user]);
+    setValue('first_name', users.firstName);
+    setValue('last_name', users.lastName);
+    setValue('email', users.email);
+    setValue('old_password', users.oldPassword);
+    setValue('new_password', users.newPassword)
+  }, [history, users]);
   
   const submitHandler = (data) => {
     console.log(data);
     if (data.newPassword !== data.confirmPassword) {
-      enqueueSnackbar("Passwords don't match", { variant: 'error' });
+      toast.error("Passwords don't match", { variant: 'error' });
       return;
     }
     const bodyData =  {
@@ -51,11 +52,11 @@ const Settings = () => {
     }
     try {
       UpdateUser(bodyData)   
-      dispatch({ type: 'USER_UPDATE', payload: bodyData});
+      dispatch(updateUser(bodyData));
       localStorage.setItem('user', JSON.stringify(bodyData));    
-      enqueueSnackbar('Profile updated successfully', { variant: 'success' });
+      toast.success('Profile updated successfully');
     } catch (error) {
-      enqueueSnackbar(getError(error), { variant: 'error' });
+    toast.error(getError(error));
     }
 
   };

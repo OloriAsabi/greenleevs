@@ -1,85 +1,118 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BillingDetails, PaymentDetails } from '../components';
 
 import visa from '../assests/Vector (1).png';
 import master from '../assests/master.png';
 import american from '../assests/american.png';
 
-import image1 from '../assests/oils.jpg';
+import { GetCart } from '../apis/api';
+import { AiOutlineLeftCircle } from 'react-icons/ai';
+import { toast } from 'react-toastify';
 
 /* eslint-disable */
 const CheckOut = () => {
 
-  const [open, setOpen] = useState(false);
-  const showPayment = () => {
-    if (window.location.pathname === '/checkout') {
+  const [activeTab, setActiveTab] = useState('billing');
+  const [carts, setCarts] = useState([]);
+
+  const toggleTab = () => {
+    setActiveTab((prevTab) => prevTab === 'billing' ? 'payment' : 'billing');
+  };
+
+  const showTab = () => {
+    if (activeTab === 'billing') {
+      return <BillingDetails />;
+    } else {
       return <PaymentDetails />;
     }
   };
-  const showBilling = () => {
-    if (window.location.pathname === '/checkout') {
-      return <BillingDetails />;
-    }
-  };
- 
+
+  useEffect(() => {
+    GetCart()
+    .then((res) => {
+    console.log("Get Cart Fot", res);
+    if (res.status === 200) {
+      const data = res.data.data
+  
+      setCarts(data)
+      setIsLoading(false)
+      }else{
+        toast.error(res.data.message);
+      }
+    }).catch((e) => {
+      toast.error(e);
+    });
+  },[]);
+
+ const totalPrice = carts.reduce((acc, cart) => acc + (cart.quantity * cart.product.price), 0);
+  
+
   return (
     <div>
       <div className='container mx-auto w-screen small my-8'>
         <div className='flex justify-between lg:flex-row md:flex-col productDetails gap-20 '>
-          <div className='w-full'>
-            <div className='flex justify-between gap-10   mt-10 mb-5 leading-8 tracking-widest'>
-              <div>
-                <button className='cursor-pointer text-[#1F451A]'
-                  onClick={() => setOpen(!open)}
-                >
-                  <span className='bg-[#1F451A] text-start p-3 rounded-full  text-white'>1</span> Billing Details      
-                </button> 
-              </div> 
-              <div>
-                <button className='cursor-pointer text-[#1F451A]'
-                  onClick={() => setOpen(!open)}>
-                  <span className='bg-[#1F451A] p-3  mt-10 rounded-full mr-5 text-white'>2</span>Payment Details
-                </button> 
+        <div className='w-full'>
+      <div className='flex justify-between gap-10 mt-10 mb-5 leading-8 tracking-widest'>
+        <div>
+          <button className='cursor-pointer text-[#1F451A]' onClick={toggleTab}>
+            <span className='bg-[#1F451A] text-start p-3 rounded-full text-white'>1</span> Billing Details
+          </button>
+        </div>
+        <div>
+          <button className='cursor-pointer text-[#1F451A]' onClick={toggleTab}>
+            <span className='bg-[#1F451A] p-3 mt-10 rounded-full mr-5 text-white'>2</span>Payment Details
+          </button>
+        </div>
+      </div>
+      <hr />
+      <div className='w-full'>
+        {showTab()}
+      </div>
+    </div>
 
-       
-              </div>
-            </div>
-            <hr/>
-            <div className='w-full'>
-              {!open && (
-                showBilling()
-              )} 
-              <div className='w-full'>
-                {open && (
-                  showPayment()
-                )} 
-              </div>
-            </div>
-          </div>
           <div className='w-full h-full  bg-[#cde6ca] rounded-lg border flex flex-col  p-10  border-gray-200 shadow-md'>
             <h3 className='text-2xl font-medium pb-5 text-[#2D2D2D]'>ORDER SUMMARY</h3>
             <hr className='text-black'/>
-
-            <div className='flex gap-10 pt-5 pb-5'>
-              <img src={image1} alt='' className='cartBg '/>
+      {carts.length > 0 ? (
+           carts.map((cart) =>(
+            <div className='flex gap-10 pt-5 pb-5' key={cart.id}>
+              <img src={cart.product.product_image}  alt='' className='cartBg '/>
               <div className='flex flex-col gap-5'>
-                <p className='text-xl'>Oil Tinctures</p>
-                <p className=''>Quantity - 01</p>
-                <p className='text-[#1F451A] text-xl rounded-md p-2'>£50.00</p>
+                <p className='text-xl'>{cart.product.label}</p>
+                <p className=''>Quantity - {cart.quantity}</p>
+                {cart.quantity > 1 ? (
+                    <p className='text-[#1F451A] text-xl rounded-md p-2'>
+                      {cart.price}
+                    </p>
+                  ) : (
+                    <p className='text-[#1F451A] text-xl rounded-md p-2'>
+                      {cart.product.price}
+                    </p>
+                  )}
               </div>
             </div>
+            ))
+            )
+          :
+           (
+            <p className='text-xl space-y-10'>Your cart is empty. Please go  
+            <button className='text-[#1F451A] flex rounded items-center cursor-pointer gap-4 text-xl' onClick={() => history('/shop')}>
+            <AiOutlineLeftCircle fontSize={28}/> Go shopping
+          </button>
+          </p>
+          )}
             <hr className='text-black'/>
 
-            <div className='pb-5'>
+            {/* <div className='pb-5'>
               <p className='pb-6'>Have A Voucher?</p>
               <div className='text-[#2D2D2D] flex justify-between'>Enter Coupon<span className='#1F451A'>Save</span></div>
-            </div>
+            </div> */}
             <hr className='text-black'/>
             <div className='space-y-10 pt-5 pb-5'>
-              <p className='flex justify-between text-slate-500'>Sub-total <span className='text-[#1F451A]'>£20.00</span></p>
-              <p className='flex justify-between text-slate-500'>Shipping Charges <span className='text-[#1F451A]'>£10.00</span></p>
+              <p className='flex justify-between text-slate-500'>Sub-total <span className='text-[#1F451A]'>{totalPrice}</span></p>
+              {/* <p className='flex justify-between text-slate-500'>Shipping Charges <span className='text-[#1F451A]'>£10.00</span></p> */}
               <hr/>
-              <p className='flex justify-between text-slate-500'>Total <span className='text-[#1F451A] text-xl'>£30.00</span></p>
+              <p className='flex justify-between text-slate-500'>Total <span className='text-[#1F451A] text-xl'>{totalPrice}</span></p>
             </div>
           </div>
         </div>

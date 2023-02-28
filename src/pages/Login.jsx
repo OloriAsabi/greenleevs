@@ -14,7 +14,7 @@ import { useDispatch } from 'react-redux';
 
   /* eslint-disable */
 const Login = () => {
-  const { dispatch } = useDispatch();
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
   const {
@@ -91,7 +91,6 @@ const Login = () => {
           dispatch(setUserLogin(bodyData));
           localStorage.setItem('user', JSON.stringify(bodyData));
           navigate('/');
-          toast.error('Login Successful');
         } catch (error) {
           toast.error(error)
         }

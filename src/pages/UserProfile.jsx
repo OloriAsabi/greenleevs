@@ -1,7 +1,6 @@
-/* eslint-disable */
+
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, Outlet } from 'react-router-dom';
-import { useStateContext } from '../contexts/ContextProvider';
+import { Link, redirect, Outlet } from 'react-router-dom';
 import logo from '../assests/green (4) 2.png';
 import { LogoutUser } from '../apis/api';
 import { IoMdLogIn } from 'react-icons/io';
@@ -15,13 +14,14 @@ import american from '../assests/american.png';
 import { AiOutlineSetting } from 'react-icons/ai';
 import { FaCubes } from 'react-icons/fa';
 import { GrLocation } from 'react-icons/gr';
+import { useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 
 const UserProfile = () => {
-  const { state } = useStateContext();
-  const { user } = state;
-  const navigate = useNavigate();
+  const { users } = useSelector(state => state.auth);
   const [openNav, setOpenNav] = useState(false);
+  const dispatch = useDispatch()
 
   const menus = [
     { 
@@ -34,16 +34,15 @@ const UserProfile = () => {
   ];
   
   useEffect(() => {
-    if(!user) {
-      navigate("/login")
+    if(!users) {
+      redirect("/login")
     }
-  }, [navigate, user]);
+  }, [users]);
 
   const logout = () => {
-    LogoutUser();
-    localStorage.clear();
-
-    navigate('/login');
+    LogoutUser()
+    dispatch(logout())
+    redirect('/login')
   };
 
   return (
