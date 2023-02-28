@@ -4,8 +4,6 @@ import {BsCart} from 'react-icons/bs';
 import { Link } from 'react-router-dom';
 import { Spinner } from '../components';
 
-
-
 import { Mousewheel } from 'swiper';
 import visa from '../assests/Vector (1).png';
 import master from '../assests/master.png';
@@ -24,7 +22,6 @@ const SpecialMenu = () => {
   const dispatch = useDispatch()
   const { cart } = useSelector(state => state.auth);
 
-  // const product = popular.map((product) => console.log(product));
   const [isLoading, setIsLoading] = useState(false)
 
   const getPopularProducts = useCallback(() => {
@@ -38,7 +35,6 @@ const SpecialMenu = () => {
         setPopular(data)
         setIsLoading(false)
     }else{
-      // console.log(res.statusText);
       toast.error(res.statusText);
     }
     })
@@ -48,14 +44,12 @@ const SpecialMenu = () => {
     const specials = true
     GetSpecialProduct(specials)
     .then((res) => {
-      console.log(res);
       if (res.status === 200) {
         const data = res.data.data
     
         setSpecial(data)
         setIsLoading(false)
     }else{
-      console.log(res.statusText);
       toast.error(res.statusText);
     }
     })

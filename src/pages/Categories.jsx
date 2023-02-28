@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { cbdContents, plant_type, thcContents } from '../data/data';
 import { BiMenuAltRight } from 'react-icons/bi';
@@ -10,7 +9,7 @@ import master from '../assests/master.png';
 import american from '../assests/american.png';
 
 import { Mousewheel } from 'swiper';
-import { FlexStyle, GridStyle, Spinner } from '../components';
+import { FlexStyle, GridStyle, Spinner, Sidebar } from '../components';
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import { FilterProducts, GetBrands, GetProductsByCategoryId, GetPopularByCategory, PostCart } from '../apis/api';
@@ -19,7 +18,6 @@ import { useDispatch } from 'react-redux';
 import { addCartItem } from '../reducers/auth';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import Sidebar from '../components/Sidebar';
 
 const Categories = () => {
   const [openNav, setOpenNav] = useState(false);
@@ -54,7 +52,6 @@ const Categories = () => {
     setIsLoading(true)
     GetPopularByCategory(id)
     .then((res) => {
-      console.log("Popular by Categories ",res);
           const data = res.data.data
       
           setPopular(data)
@@ -68,16 +65,15 @@ const Categories = () => {
   const getBrands =  useCallback(() => {
     GetBrands()
     .then((res) => {
-      console.log("Brands",res);
       if (res.status === 200) {
           const data = res.data.data
       
           setBrands(data)
         }else{
-          console.log(res.statusText);
+          toast.error(res.statusText);
         }
           }).catch((e) => {
-          console.log(e);
+            toast.error(e);
           });
   },
   []);
@@ -122,7 +118,6 @@ const Categories = () => {
     formValues['outOfStock'], 
     formValues['sort']).then((res) => {
       if (res && res.status === 200) {
-        console.log(res);
         if (res.data != null && res.data != undefined && typeof res.data == "object") {
           setProducts(res.data.data);
         } else {
@@ -156,7 +151,6 @@ const Categories = () => {
     }
     PostCart(body)
       .then((res) => {
-        console.log(res);
         dispatch(addCartItem(
             {
             _key: e.product_id,

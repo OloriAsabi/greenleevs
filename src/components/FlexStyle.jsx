@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BsCart } from 'react-icons/bs';
 import { Link } from 'react-router-dom';
@@ -28,7 +27,6 @@ const FlexStyle = ({ filteredProducts , isLoading}) => {
     }
     PostCart(body)
       .then((res) => {
-        console.log(res);
         dispatch(addCartItem(
             {
             _key: e.product_id,

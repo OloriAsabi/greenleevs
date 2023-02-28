@@ -1,5 +1,4 @@
 import React, { useEffect, useState,  useCallback  } from 'react';
-
 import { useNavigate, useParams } from 'react-router-dom';
 import {AiOutlineLeftCircle} from 'react-icons/ai';
 import {IoIosRemoveCircleOutline, IoIosAddCircleOutline} from 'react-icons/io';
@@ -40,7 +39,6 @@ const ProductDetails = () => {
     setIsLoading(true)
     GetProductId(id)
     .then((res) => {
-      console.log("Product By id",res);
       if (res.status === 200) {
           const data = res.data.data
       
@@ -59,7 +57,6 @@ const ProductDetails = () => {
     setIsLoading(true)
     GetRelatedProducts(id)
     .then((res) => {
-      console.log("Related Products",res);
       const data = res.data.data
       setRelated(data)
       setIsLoading(false)
@@ -72,7 +69,6 @@ const ProductDetails = () => {
     setIsLoading(true)
     GetRecentlyViewed()
     .then((res) => {
-      console.log("Recently Viewed Products", res);
       if (res.status === 200) {
         const data = res.data.data
     
@@ -105,7 +101,6 @@ const ProductDetails = () => {
     }
     PostCart(body)
       .then((res) => {
-        console.log(res);
         dispatch(addCartItem(
             {
             _key: e.product_id,
@@ -138,7 +133,6 @@ const ProductDetails = () => {
     }
     PostCart(body)
       .then((res) => {
-        console.log(res);
         dispatch(addCartItem(
             {
             _key: e.product_id,

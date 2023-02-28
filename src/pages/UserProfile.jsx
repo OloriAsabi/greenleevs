@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link, redirect, Outlet } from 'react-router-dom';
 import logo from '../assests/green (4) 2.png';
@@ -79,7 +78,7 @@ const UserProfile = () => {
               <li 
                 className={`flex rounded-md p-2 cursor-pointer text-red-500 hover:bg-[#1F451A] active:text-[#1F451A] text- text-sm items-center gap-x-4 
             mt-2`}
-                onClick={(e) => logout(e)}>
+                onClick={() => logout()}>
                 <IoMdLogIn className='text-red-500' /> 
                 <a href="/" className="">
                 Logout </a>

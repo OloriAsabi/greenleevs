@@ -23,9 +23,6 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { toast } from 'react-toastify';
-
-
-// import required modules
 import { Navigation, Pagination } from 'swiper';
 import { strainTypes } from '../data/data';
 import { MdOutlineCancel } from 'react-icons/md';
@@ -124,8 +121,7 @@ const Home = () => {
     GetProducts()
     .then((response) => {
       if (response.status === 200) {
-    const data = response.data.data
-      
+    const data = response.data.data   
     setProducts(data)
     }else{
      toast.error(response.statusText)
@@ -140,13 +136,11 @@ const Home = () => {
   const getDataCategory =  useCallback(() => {
     GetCategories()
     .then((response) => {
-    console.log(response);
     if (response.status === 200) {
     const data = response.data.data
       
     setCategories(data)
   }else{
-    // console.log(response.statusText);
     toast.error(response.statusText)
   }
     }).catch((e) => {
@@ -154,8 +148,6 @@ const Home = () => {
     });
   },
   []);
-  
-
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -191,7 +183,6 @@ const Home = () => {
   } = useForm();
 
   const submitHandler = async (data) => {
-    console.log('Data', data );
     const body = {
       email: data.email,
       first_name: "Asabi",
@@ -200,11 +191,9 @@ const Home = () => {
     try {
       PostNewsletter(body)
       .then((response) => {
-        console.log("Response ",response);
         const reply = response.data
         toast.success(reply.message)
-      });
-
+      })
       toast.success('Newsletter Subsrcibed Successfully');
     } catch (error) {
       toast.error(error);

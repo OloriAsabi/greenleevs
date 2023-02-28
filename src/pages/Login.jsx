@@ -25,7 +25,6 @@ const Login = () => {
 
   const responseGoogle = async (response) => {
     const userObject = jwt_decode(response.credential);
-    console.log(userObject);
     const { email, sub } = userObject;
     const bodyData = {
       email: email,
@@ -45,7 +44,6 @@ const Login = () => {
           }
           const { token } = response.data
           if (token !== '') {
-            console.log('check dummy');
              dispatch(setToken(token));
             localStorage.setItem('token', token);
             navigate("/");
@@ -81,7 +79,6 @@ const Login = () => {
             }
             const { token } = response.data
             if (token !== '') {
-              console.log('check dummy');
                dispatch(setToken(token));
               localStorage.setItem('token', token);
               navigate("/");

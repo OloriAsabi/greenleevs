@@ -3,8 +3,6 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import {BsCart} from 'react-icons/bs';
 import { Link, useNavigate } from 'react-router-dom';
 
-
-
 import { Mousewheel } from 'swiper';
 import visa from '../assests/Vector (1).png';
 import master from '../assests/master.png';
@@ -17,8 +15,6 @@ import { useDispatch } from 'react-redux';
 import { addCartItem } from '../reducers/auth';
 import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
-
-
 
 const Shop = () => {
   const history = useNavigate();
@@ -34,7 +30,6 @@ const Shop = () => {
     setIsLoading(true)
     GetCategories()
     .then((response) => {
-    console.log(response);
     if (response.status === 200) {
     const data = response.data.data
       
@@ -53,7 +48,6 @@ const Shop = () => {
     setIsLoading(true)
     GetPopularProducts()
     .then((res) => {
-      console.log(res);
       if (res.status === 200) {
         const data = res.data.data
     

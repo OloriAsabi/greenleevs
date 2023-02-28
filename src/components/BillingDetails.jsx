@@ -53,7 +53,6 @@ const BillingDetails = () => {
   } = useForm();
 
   const submitHandler = async (data) => {
-
     const body = {
       firstname: data.firstName,
       lastname: data.lastName,
@@ -66,7 +65,6 @@ const BillingDetails = () => {
       city: city.name,
       state: state.isoCode
     }
-    console.log(body);
     try {
       await PostOrders(body) 
         .then(res => {

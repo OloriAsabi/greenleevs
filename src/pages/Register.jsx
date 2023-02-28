@@ -36,7 +36,6 @@ const Register = () => {
     try {
       await  RegisterUser(bodyData) 
         .then(response => {
-          console.log(response);
           const responseStatus = response.status
           const responseStatusOne = response.data.status
   
@@ -47,7 +46,6 @@ const Register = () => {
               }
           const { token } = response.data
           if (token !== '') {
-            console.log('check dummy');
             dispatch(setToken(token));
             localStorage.setItem('token', token);
             navigate("/");
@@ -63,7 +61,6 @@ const Register = () => {
       }        
   };
   const submitHandler = async (data) => {
-    console.log("Data",  data );
     if (data.password !== data.confirmPassword) {
       toast.info("Passwords don't match", { type: 'error' });
       return;
@@ -78,7 +75,6 @@ const Register = () => {
       try {
         await  RegisterUser(bodyData) 
           .then(response => {
-            console.log(response);
             const responseStatus = response.status
             const responseStatusOne = response.data.status
     
@@ -89,7 +85,6 @@ const Register = () => {
                 }
             const { token } = response.data
             if (token !== '') {
-              console.log('check dummy');
               dispatch(setToken(token));
               localStorage.setItem('token', token);
               navigate("/");

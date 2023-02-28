@@ -2,7 +2,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {AiOutlineLeftCircle, AiOutlineDelete} from 'react-icons/ai';
-// import image1 from '../assests/oils.jpg';
 import {IoIosRemoveCircleOutline, IoIosAddCircleOutline} from 'react-icons/io';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import {BsCart} from 'react-icons/bs';
@@ -33,7 +32,6 @@ const Carts = () => {
     setIsLoading(true)
     GetPopularProducts()
     .then((res) => {
-      console.log(res);
       if (res.status === 200) {
         const data = res.data.data
     
@@ -49,7 +47,6 @@ const Carts = () => {
     setIsLoading(true)
     GetRecentlyViewed()
     .then((res) => {
-      console.log("Recently Viewed Products", res);
       if (res.status === 200) {
         const data = res.data.data
     
@@ -66,7 +63,6 @@ const Carts = () => {
   useEffect(() => {
     GetCart()
     .then((res) => {
-    console.log("Get Cart Fot", res);
     if (res.status === 200) {
       const data = res.data.data
   
@@ -106,12 +102,11 @@ const Carts = () => {
       if (response.data.status === 'success') {
         dispatch(updateCart(updatedCart));
         toast.success(`${cart.product.label} updated in the cart`);
-        // toast.success('Cart updated');
       } else {
         toast.error(response.data.message);
       }
     } catch (error) {
-      console.log(error);
+      toast.error(error);
       toast.error('Something went wrong. Please try again later.');
     }
   };
@@ -130,7 +125,6 @@ const Carts = () => {
     }
     PostCart(body)
       .then((res) => {
-        console.log(res);
         dispatch(addCartItem(
             {
             _key: e.product_id,
@@ -156,7 +150,6 @@ const Carts = () => {
     setCarts(updatedCarts);
     DeleteProductFromCart(cart.product_id)
     .then((res) => {
-      console.log(res);
       dispatch(removeCartItem(updatedCarts))
       if(res.data.status === 'success'){
          toast.success(`${cart.product.label} has been deleted`);

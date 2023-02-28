@@ -37,7 +37,6 @@ const ResetPassword = () => {
     try {
       UserResetPassword(bodyData)
       .then(response => {
-        console.log(response);
         const { token } = response.data
         const responseStatus = response.status
         const responseStatusOne = response.data.status

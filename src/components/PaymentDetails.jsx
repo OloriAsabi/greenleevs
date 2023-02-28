@@ -80,7 +80,6 @@ const PaymentDetails = () => {
               className=' text-center mt-5 bg-[#1F451A] text-white cursor-pointer rounded-md p-4 w-42'
             >
                     Make Payment  
-              {/* {showPayment()} */}
             </button>           
           </div>
         </form>

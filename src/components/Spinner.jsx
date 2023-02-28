@@ -1,7 +1,8 @@
 import React from 'react';
 import { TailSpin } from 'react-loader-spinner';
 
-/* eslint-disable */
+
+// eslint-disable-next-line react/prop-types
 function Spinner({ message }) {
   return (
     <div className="flex flex-col justify-center items-center w-full h-full">

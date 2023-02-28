@@ -8,22 +8,10 @@ import oils from '../assests/oils.jpg';
 import pro from '../assests/Rectangle 12 (1).png';
 import pro1 from '../assests/Rectangle 20 (3).jpg';
 import edi from '../assests/edibles.jpg';
-/* eslint-disable */
-import edible from '../assests/edibles/edibles.jpg';
-import edibles1 from '../assests/edibles/edibles1.jpg';
-import edibles2 from '../assests/edibles/edibles2.jpg';
-import edibles3 from '../assests/edibles/edibles3.jpg';
-import edibles4 from '../assests/edibles/edibles4.jpg';
-
-
-import ex from '../assests/extracts/Rectangle 12 (2).png';
-import ex1 from '../assests/extracts/Rectangle 12 (3).png';
-import ex2 from '../assests/extracts/Rectangle 12 (4).png';
-import ex3 from '../assests/extracts/Rectangle 12.png';
-
 import { AiOutlineSetting } from 'react-icons/ai';
 import { FaCubes } from 'react-icons/fa';
 import { GrLocation } from 'react-icons/gr';
+    /* eslint-disable */
 
 
 export const links = [

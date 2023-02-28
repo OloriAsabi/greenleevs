@@ -8,9 +8,8 @@ import { LogoutUser } from '../apis/api';
 import { Link, redirect } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
-/* eslint-disable */
-
-const UserSideBar = ({setOpenNav}) => {
+// eslint-disable-next-line react/prop-types
+const UserSideBar = ({ setOpenNav }) => {
   const dispatch = useDispatch();
 
 

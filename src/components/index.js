@@ -5,5 +5,5 @@ export { default as BillingDetails} from './BillingDetails';
 export { default as PaymentDetails} from './PaymentDetails';
 export { default as GridStyle } from './GridStyle';
 export { default as FlexStyle } from './FlexStyle';
-export { default as SidebarCat } from './SidebarCat';
+export { default as Sidebar } from './Sidebar';
 export { default as UserSideBar } from './UserSideBar';

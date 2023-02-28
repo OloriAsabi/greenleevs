@@ -27,7 +27,6 @@ const ForgotPassword = () => {
     try {
       UserForgotPassword(bodyData)
       .then(response => {
-        // console.log(response);
         const responseStatus = response.status
         const responseStatusOne = response.data.status
 

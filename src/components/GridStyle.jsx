@@ -10,8 +10,6 @@ import { addCartItem } from '../reducers/auth';
 /* eslint-disable */
 
 const GridStyle = ({ isLoading, filteredProducts }) => {
-  console.log("Category : ", filteredProducts);
-
   const { cart } = useSelector(state => state.auth);
   const dispatch = useDispatch();
 
@@ -28,7 +26,6 @@ const GridStyle = ({ isLoading, filteredProducts }) => {
     }
     PostCart(body)
       .then((res) => {
-        console.log(res);
         dispatch(addCartItem(
             {
             _key: e.product_id,

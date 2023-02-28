@@ -1,5 +1,4 @@
 import React from 'react'
-
 import visa from '../assests/Vector (1).png';
 import master from '../assests/master.png';
 import american from '../assests/american.png';

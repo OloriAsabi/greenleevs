@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { BillingDetails, PaymentDetails } from '../components';
-
 import visa from '../assests/Vector (1).png';
 import master from '../assests/master.png';
 import american from '../assests/american.png';
-
 import { GetCart } from '../apis/api';
 import { AiOutlineLeftCircle } from 'react-icons/ai';
 import { toast } from 'react-toastify';
 
-/* eslint-disable */
+
 const CheckOut = () => {
 
   const [activeTab, setActiveTab] = useState('billing');
@@ -35,7 +33,6 @@ const CheckOut = () => {
       const data = res.data.data
   
       setCarts(data)
-      setIsLoading(false)
       }else{
         toast.error(res.data.message);
       }
