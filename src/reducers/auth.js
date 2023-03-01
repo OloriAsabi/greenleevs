@@ -101,12 +101,12 @@ const authSlice = createSlice({
         state.cart.shippingAddress = action.payload;
       },
     logout: (state) => {
-        localStorage.removeItem('token') // delete token from storage
-        localStorage.removeItem('user')
+        localStorage.clear()
         state.loading = false
         state.users = null
         state.token = null
         state.error = null
+        state.welcomeInfo = null
       },
       saveShippingAddress: (state, action) => {
         state.cart.shippingAddress = action.payload;

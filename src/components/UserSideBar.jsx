@@ -7,16 +7,18 @@ import { IoMdLogIn } from 'react-icons/io';
 import { LogoutUser } from '../apis/api';
 import { Link, redirect } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { logout } from '../reducers/auth';
 
 // eslint-disable-next-line react/prop-types
 const UserSideBar = ({ setOpenNav }) => {
   const dispatch = useDispatch();
 
 
-    const logout = () => {
+    const logoutUser = () => {
       LogoutUser()
       dispatch(logout())
-      redirect('/login')
+
+      redirect('/')
      };
      
       const menus = [
@@ -55,12 +57,12 @@ const UserSideBar = ({ setOpenNav }) => {
               </li>
               ))}
               <li 
-                className={`flex rounded-md p-2 cursor-pointer text-red-500 hover:bg-[#1F451A] active:text-[#1F451A] text- text-sm items-center gap-x-4 
-            mt-2`}
-                onClick={(e) => logout(e)}>
+                className='flex rounded-md p-2 cursor-pointer text-red-500 hover:bg-[#1F451A] active:text-[#1F451A] text- text-sm items-center gap-x-4 
+            mt-2'
+               >
                 <IoMdLogIn className='text-red-500'  fontSize={28} /> 
-                <a href="/" className="text-xl">
-                Logout </a>
+                <button  className="text-xl"  onClick={() => logoutUser()}>
+                Logout </button>
               </li>
             </ul>
     </div>
@@ -69,4 +71,4 @@ const UserSideBar = ({ setOpenNav }) => {
   )
 }
 
-export default UserSideBar
+export default UserSideBar 

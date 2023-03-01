@@ -19,7 +19,7 @@ export const LoginUser = async (body) => {
       if (axios.isCancel(err)) {
         toast.error("Request canceled!");
       } else {
-        toast.error(error);
+        toast.error("error");
       }
     }
   
@@ -43,7 +43,7 @@ export const RegisterUser = async (body) => {
     if (axios.isCancel(err)) {
       toast.error("Request canceled!");
     } else {
-      toast.error(error);
+      toast.error("error");
     }
   }
 
@@ -67,7 +67,7 @@ export const LogoutUser = async () => {
     if (axios.isCancel(err)) {
       toast.error("Request canceled!");
     } else {
-      toast.error(error);
+      toast.error("error");
     }
   }
 
@@ -91,7 +91,7 @@ export const UpdateUser = async (body) => {
     if (axios.isCancel(err)) {
       toast.error("Request canceled!");
     } else {
-      toast.error(error);
+      toast.error("error");
     } 
   }
   return () => {
@@ -110,7 +110,7 @@ export const UserForgotPassword = async (body) => {
     if (axios.isCancel(err)) {
       toast.error("Request canceled!");
     } else {
-      toast.error(error);
+      toast.error("error");
     }
   }
   return () => {
@@ -133,7 +133,7 @@ export const UserResetPassword = async (body) => {
     if (axios.isCancel(err)) {
       toast.error("Request canceled!");
     } else {
-      toast.error(error);
+      toast.error("error");
     }
   }
   return () => {
@@ -158,7 +158,7 @@ export const GetProducts =  async () => {
           if (axios.isCancel(err)) {
             toast.error("Request canceled!");
           } else {
-           toast.error(error);
+            toast.error("error");
           }
         }
 
@@ -192,13 +192,13 @@ export const GetCategories = async () => {
             },
             cancelToken: cancelToken.token,
           })
-        console.log("Get categories",data);
+        // console.log("Get categories",data);
          return data; 
         } catch (error) {
           if (axios.isCancel(err)) {
             toast.error("Request canceled!");
           } else {
-           toast.error(error);
+            toast.error("error");
           }
         }
         return () => {
@@ -221,7 +221,7 @@ export const GetProductsByCategoryId = async (id) => {
           if (axios.isCancel(err)) {
             toast.error("Request canceled!");
           } else {
-           toast.error(error);
+            toast.error("error");
           }
         }
         return () => {
@@ -245,7 +245,7 @@ export const PostNewsletter = async (body) => {
     if (axios.isCancel(err)) {
       toast.error("Request canceled!");
     } else {
-     toast.error(error);
+      toast.error("error");
     }
   } 
   return () => {
@@ -269,7 +269,7 @@ export const GetCart = async () => {
           if (axios.isCancel(err)) {
             toast.error("Request canceled!");
           } else {
-           toast.error(error);
+            toast.error("error");
           }
         }
         return () => {
@@ -294,7 +294,7 @@ export const PostCart = async (body) => {
           if (axios.isCancel(err)) {
             toast.error("Request canceled!");
           } else {
-           toast.error(error);
+            toast.error("error");
           }
         }
         return () => {
@@ -318,7 +318,7 @@ export const UpdateCart = async (body) => {
           if (axios.isCancel(err)) {
             toast.error("Request canceled!");
           } else {
-           toast.error(error);
+            toast.error("error");
           }
         }
         return () => {
@@ -341,7 +341,7 @@ export const DeleteProductFromCart = async (id) => {
           if (axios.isCancel(err)) {
             toast.error("Request canceled!");
           } else {
-           toast.error(error);
+            toast.error("error");
           }
         }
         return () => {
@@ -364,7 +364,7 @@ export const WipeCart = async () => {
           if (axios.isCancel(err)) {
             toast.error("Request canceled!");
           } else {
-           toast.error(error);
+            toast.error("error");
           }
         }
         return () => {
@@ -389,7 +389,7 @@ export const GetPopularByCategory = async (slug) => {
           if (axios.isCancel(err)) {
             toast.error("Request canceled!");
           } else {
-           toast.error(error);
+            toast.error("error");
           }
         }
         return () => {
@@ -413,7 +413,7 @@ export const GetPopularProducts = async () => {
           if (axios.isCancel(err)) {
             toast.error("Request canceled!");
           } else {
-           toast.error(error);
+            toast.error("error");
           }
         }
         return () => {
@@ -437,7 +437,7 @@ export const GetRelatedProducts = async (id) => {
           if (axios.isCancel(err)) {
             toast.error("Request canceled!");
           } else {
-           toast.error(error);
+            toast.error("error");
           }
         }
         return () => {
@@ -461,7 +461,7 @@ export const GetRecentlyViewed = async () => {
           if (axios.isCancel(err)) {
             toast.error("Request canceled!");
           } else {
-           toast.error(error);
+            toast.error("error");
           }
         }
         return () => {
@@ -485,7 +485,7 @@ export const GetBrands= async () => {
           if (axios.isCancel(err)) {
             toast.error("Request canceled!");
           } else {
-           toast.error(error);
+            toast.error("error");
           }
         }
         return () => {
@@ -508,7 +508,7 @@ export const GetProductsByBrand = async (id) => {
           if (axios.isCancel(err)) {
             toast.error("Request canceled!");
           } else {
-           toast.error(error);
+            toast.error("error");
           }
         }
         return () => {
@@ -531,7 +531,7 @@ export const GetSearchParams = async (searchTerm) => {
           if (axios.isCancel(err)) {
             toast.error("Request canceled!");
           } else {
-           toast.error(error);
+            toast.error("error");
           }
         }
         return () => {
@@ -595,7 +595,7 @@ export const FilterProducts = async (slug, plant, brand, potency, outOfStock, so
     if (axios.isCancel(err)) {
       toast.error("Request canceled!");
     } else {
-     toast.error(error);
+     toast.error("error");
     }
   }
   return () => {
@@ -623,7 +623,7 @@ export const GetSpecialProduct = async (special) => {
           if (axios.isCancel(err)) {
             toast.error("Request canceled!");
           } else {
-           toast.error(error);
+            toast.error("error");
           }
         }
         return () => {
@@ -660,7 +660,7 @@ export const PostOrders = async (body) => {
     if (axios.isCancel(err)) {
       toast.error("Request canceled!");
     } else {
-     toast.error(error);
+      toast.error("error");
     }
   } 
   return () => {
@@ -681,7 +681,7 @@ export const UpdateShipping = async (body) => {
     if (axios.isCancel(err)) {
       toast.error("Request canceled!");
     } else {
-     toast.error(error);
+      toast.error("error");
     }
   } 
   return () => {

@@ -48,14 +48,14 @@ function Selector({ data, selected, setSelected }) {
               ) : (
                 filteredPeople.map((person) => (
                   <Combobox.Option
-                    key={person.id}
-                    className={({ active }) =>
-                      `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                        active ? "bg-[#1F451A] text-white" : "text-gray-900"
-                      }`
-                    }
-                    value={person}
-                  >
+                  key={person.id}
+                  className={({ active }) =>
+                    `relative cursor-default select-none py-2 pl-10 pr-4 ${
+                      active ? "bg-[#1F451A] text-white" : "text-gray-900"
+                    }`
+                  }
+                  value={person}
+                >                
                     {({ selected, active }) => (
                       <>
                         <span

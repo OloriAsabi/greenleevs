@@ -15,6 +15,7 @@ import { FaCubes } from 'react-icons/fa';
 import { GrLocation } from 'react-icons/gr';
 import { useDispatch } from 'react-redux';
 import { useSelector } from 'react-redux';
+import { logout } from '../reducers/auth';
 
 
 const UserProfile = () => {
@@ -38,11 +39,12 @@ const UserProfile = () => {
     }
   }, [users]);
 
-  const logout = () => {
+  const logoutUser = () => {
     LogoutUser()
     dispatch(logout())
-    redirect('/login')
-  };
+
+    redirect('/')
+   };
 
   return (
     <div>
@@ -76,9 +78,9 @@ const UserProfile = () => {
               </li>
               ))}
               <li 
-                className={`flex rounded-md p-2 cursor-pointer text-red-500 hover:bg-[#1F451A] active:text-[#1F451A] text- text-sm items-center gap-x-4 
+                className={`flex rounded-md p-2 cursor-pointer text-red-500 hover:bg-[#1F451A] hover:text-white active:text-[#1F451A] text- text-sm items-center gap-x-4 
             mt-2`}
-                onClick={() => logout()}>
+                onClick={() => logoutUser()}>
                 <IoMdLogIn className='text-red-500' /> 
                 <a href="/" className="">
                 Logout </a>
