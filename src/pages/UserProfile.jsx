@@ -103,7 +103,7 @@ const UserProfile = () => {
                   <BiMenuAltRight className='' fontSize={28}/>
                 </button>
               ):(
-                <div className={`top-0 right-0 fixed bg-white w-full h-full p-10' ${openNav ? 'translate-x-0' : 'translate-x-full'} ease-in-out duration-300`}>
+                <div className={`top-0 right-0 fixed bg-white z-50 w-full h-full p-10' ${openNav ? 'translate-x-0' : 'translate-x-full'} ease-in-out duration-300`}>
                   <UserSideBar setOpenNav={setOpenNav}/>
                 </div>
               )}

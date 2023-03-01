@@ -206,7 +206,7 @@ const Home = () => {
       <div className=' w-screen bg-white'>
         
         <div className='relative h-full small overflow-x-hidden'>
-          <div className='text-[#1F451A] lg:w-1/2 md:w-full flex ml-20 mr-20 pb-20 leading-8 flex-col text-justify space-y-20 tracking-widest '>
+          <div className='text-[#1F451A] lg:w-1/2  flex  px-10 pb-20 leading-8 flex-col text-justify space-y-20  '>
             <h1 className='font-extrabold text-4xl'>
             Green leevs provides you with the best home grown plant in the city
             </h1>
@@ -225,7 +225,7 @@ const Home = () => {
       </div>
 
       <div className='w-screen '>  
-        <div className='pb-20 pt-20 container mx-auto small text-[#1F451A] text-center tracking-widest leading-8'>
+        <div className='pb-20 pt-20 container  px-10  mx-auto small text-[#1F451A] text-center tracking-widest leading-8'>
           <h1 className='font-bold text-4xl'>Why Green Leevs</h1>
           <p className='text-2xl font-normal p-5 opacity-50 '>Here’s why people choose to order from us</p>
           <div className='flex flex-row xsflex  gap-10 justify-between pt-10 items-center'>
@@ -249,7 +249,7 @@ const Home = () => {
       </div>
 
       <div className='w-screen'>  
-        <div className='pb-20 container mx-auto small text-[#1F451A] text-center tracking-widest leading-8'>
+        <div className='pb-20 container mx-auto px-10 small text-[#1F451A] text-center tracking-widest leading-8'>
           <div className='flex items-center justify-between'>
             <div className='font-bold text-2xl '>Featured Products</div>
             <div className='font-bold text-2xl '>See All</div>
@@ -301,7 +301,7 @@ const Home = () => {
       <div className='pt-10 relative pb-10 w-screen h-full spotBg'>
         <img src={images[value]} alt="img" className='h-full  w-full object-cover'/>     
         <div className='w-screen items-center justify-center flex'>
-          <div className='absolute small top-0 mx-auto container flex flex-row h-full  justify-between items-center '>
+          <div className='absolute small top-0 mx-auto container flex  px-10  flex-row h-full  justify-between items-center '>
             <div className='flex flex-col space-y-10  text-white text-start tracking-widest leading-8'>
               <h3 className='text-4xl pt-5 font-bold'>{info[infos]}</h3>
               <p className='text-xl'>Here’s a sweet choice: Rich, earthy, minty pine is mixed with floral notes <br/>
@@ -353,7 +353,7 @@ const Home = () => {
       </div>
 
       <div className='contactBg w-screen h-full'>
-        <div className='flex lg:flex-row sm:flew-col small md:flex-col xsflex container mx-auto space-y-10 justify-between items-center pt-20 pb-20 text-white tracking-widest leading-8'>
+        <div className='flex lg:flex-row sm:flew-col small md:flex-col xsflex container  px-10  mx-auto space-y-10 justify-between items-center pt-20 pb-20 text-white tracking-widest leading-8'>
           <div className='text-start space-y-10'>
             <h2 className='font-bold text-3xl'>Join Our Circle</h2>
             <p className='font-normal text-xl'>Sign up to receive emails from Green leevs about new products,

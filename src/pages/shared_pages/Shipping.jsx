@@ -92,18 +92,18 @@ const Shipping = () => {
 
   return (
     <div>
-      <div className='container mx-auto small my-8 '>
+      <div className='container mx-auto px-10  small my-8 '>
       <div className='flex justify-between items-center gap-1'>
       <h4 className='text-3xl font-bold pb-5'>Shipping</h4>
       </div>
       <p className='text-[#2D2D2D]'>Edit your shipping details</p>
 
 
-      <form onSubmit={handleSubmit(submitHandler)} className="w-full h-full ">
+      <form onSubmit={handleSubmit(submitHandler)} className="">
           <div className=''>
 
-            <div className='flex justify-between gap-10 pt-10 w-full'>
-              <div className='flex flex-col w-full'>
+            <div className='lg:flex sm:flex-row  justify-between gap-10 pt-10 '>
+              <div className='flex flex-col pb-5 w-full'>
                 <label
                   htmlFor="name"
                   className={` pb-3 text-sm 2 ${
@@ -126,7 +126,7 @@ const Shipping = () => {
                   </p>
                 )}
               </div>
-              <div className='flex flex-col w-full'>
+              <div className='flex flex-col pb-5 w-full'>
                 <label
                   htmlFor="lastName"
                   className={` pb-3 text-sm 2 ${
@@ -152,8 +152,8 @@ const Shipping = () => {
 
             </div>
                             
-            <div className='flex justify-between gap-10 pt-10 w-full'>
-              <div className='flex flex-col w-full '>
+            <div className='lg:flex sm:flex-row  justify-between gap-10 pt-10'>
+              <div className='flex flex-col pb-5 w-full '>
                 <label
                   htmlFor="email"
                   className={` pb-3 text-sm 2 ${
@@ -171,7 +171,7 @@ const Shipping = () => {
                       message: 'Invalid email address',
                     }})}
                   className={`block w-full ${
-                    errors.email ? 'text-red-400 border-red-400' : 'text-gray-700 '}  py-1 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
+                    errors.email ? 'text-red-400 border-red-400' : 'text-gray-700 '}   py-1 text-sm focus:outline-none leading-5 rounded-md focus:border-gray-200 border-gray-200 focus:ring focus:ring-[#1F451A] border h-12 p-2 bg-gray-100 border-transparent focus:bg-white`}
                 />
                 {errors.email && (
                   <p className="text-red-500 text-sm mt-2">
@@ -179,7 +179,7 @@ const Shipping = () => {
                   </p>
                 )}
               </div>
-              <div className='flex flex-col w-full'>
+              <div className='flex flex-col pb-5 w-full'>
                 <label
                   htmlFor="phone"
                   className={` pb-3 text-sm 2 ${
@@ -204,8 +204,8 @@ const Shipping = () => {
               </div>
 
             </div>
-            <div className='flex justify-between gap-10 pt-10 w-full'>
-            <div className='flex flex-col w-full'>
+            <div className='lg:flex sm:flex-row  justify-between gap-10 pt-10 '>
+            <div className='flex flex-col pb-5 w-full'>
                 <p
                   className={` pb-3 text-sm 2 ${
                     errors.country ? 'text-red-400' : 'text-gray-700 '} dark:text-gray-400 col-span-4 sm:col-span-2 font-medium text-sm`}>Select Country</p>
@@ -215,7 +215,7 @@ const Shipping = () => {
                     setSelected={setCountry}
                   />
               </div>
-              <div className='flex flex-col w-full'>
+              <div className='flex flex-col pb-5 w-full'>
                 <label
                   htmlFor="postCode"
                   className={` pb-3 text-sm 2 ${
@@ -241,7 +241,7 @@ const Shipping = () => {
 
             </div>
 
-            <div className='flex flex-col pt-5'>
+            <div className='flex pb-5 flex-col pt-5'>
               <label
                 htmlFor="address"
                 className={` pb-3 text-sm 2 ${
@@ -264,7 +264,7 @@ const Shipping = () => {
                 </p>
               )}
             </div>
-            <div className='flex flex-col pt-5'>
+            <div className='flex pb-5 flex-col pt-5'>
               <label
                 htmlFor="address"
                 className={` pb-3 text-sm 2 ${
@@ -287,8 +287,8 @@ const Shipping = () => {
                 </p>
               )}
             </div>
-            <div className='flex justify-between gap-10 pb-10 pt-10 w-full'>
-            <div className='flex flex-col w-full'>
+            <div className='lg:flex sm:flex-row justify-between gap-10 pb-10 pt-10 '>
+            <div className='flex pb-5 flex-col w-full'>
                   {city && (
             <div>
               <p className={` pb-3 text-sm 2 ${
@@ -297,7 +297,7 @@ const Shipping = () => {
             </div>
               )}
               </div>
-              <div className='flex flex-col w-full'>
+              <div className='flex pb-5 flex-col w-full'>
               {state && (
                 <div>
                   <p  className={` pb-3 text-sm 2 ${
@@ -314,7 +314,7 @@ const Shipping = () => {
             <hr/>
             <div className='mt-5'>
               <div className='block'>
-                <button className='bg-[#1F451A] text-white w-full  rounded text-center cursor-pointer p-3 font-normal' onClick={() => history('/carts')}>
+                <button className='bg-[#1F451A] text-white w-48 rounded text-center cursor-pointer p-3 font-normal' onClick={() => history('/carts')}>
                 SAVE SHIPPING INFO
                 </button>
               </div>     

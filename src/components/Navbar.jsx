@@ -152,7 +152,7 @@ const Navbar = () => {
             <NavLink to="/" className="flex items-center gap-2">
             <img src={logo} alt="logo" className="w-30 h-20" />
             </NavLink>
-               <div className={`lg:flex items-center justify-between gap-40 ${navbar ? 'block ease-in-out z-50 w-full right-0 space-y-10 duration-300 top-36 px-8 py-10 bg-[#1F451A] absolute' : 'hidden'} pt-6 lg:pt-0`}>
+               <div className={`lg:flex items-center justify-between gap-40 ${navbar ? 'block ease-in-out z-50 w-full right-0 space-y-10 duration-300 top-28 px-8 py-10 bg-[#1F451A] absolute' : 'hidden'} pt-6 lg:pt-0`}>
                <div className="lg:flex lg:px-3">
                   {links.map((link, index) => (
                           <NavLink

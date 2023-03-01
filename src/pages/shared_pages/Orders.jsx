@@ -50,7 +50,12 @@ const Orders = () => {
                   <Spinner /> 
                   :
                   <div>
-                 {orders.map((order) => (
+                    {orders.length === 0 ? (
+                // eslint-disable-next-line react/no-unescaped-entities
+                  <p>Sorry you've not placed any order</p>
+                        ) : (
+
+                 orders.map((order) => (
                   <div className='mt-10 flex flex-col  space-y-10 ' key={order.id}>
                   <div className='flex w-auto p-10 bg-white rounded-lg border h-54 lg:flex-row productDetails justify-between gap-10 border-gray-200 shadow-md'>
                   {order?.products?.map((product) => (
@@ -76,7 +81,8 @@ const Orders = () => {
                   </div>
                   </div>
                    </div>
-                 ))} 
+                 ))         
+                )} 
                  </div>
             } 
       </div>
