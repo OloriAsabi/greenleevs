@@ -206,7 +206,7 @@ const Home = () => {
       <div className=' w-screen bg-white'>
         
         <div className='relative h-full small overflow-x-hidden'>
-          <div className='text-[#1F451A] lg:w-1/2 md:w-full flex  mr-20 ml-20 px-10 pb-20 leading-8 flex-col text-justify space-y-20  '>
+          <div className='text-[#1F451A] lg:w-1/2 md:w-full flex mr-20 ml-20 px-10 pb-20 leading-8 flex-col text-justify space-y-20  '>
             <h1 className='font-extrabold text-4xl'>
             Green leevs provides you with the best home grown plant in the city
             </h1>

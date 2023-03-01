@@ -18,11 +18,10 @@ function Sidebar({ id, brands, plantTypes, thcContents, setOpenNav,  cbdContents
 
   return (
     <div>
-    <FaTimes fontSize={28} className="text-black cursor-pointer fixed top-4 right-4 font-light" onClick={() => setOpenNav(false)} />  
-    <div className='fixed  w-full top-20 p-10 '>
+    <FaTimes fontSize={28} className="text-black cursor-pointer overflow-y-scroll fixed top-4 right-4 font-light" onClick={() => setOpenNav(false)} />  
+    <div className='fixed  w-full h-screen top-5  p-10 '>
         <div className='w-full small space-y-8'>
       
-     
       <section className="subcategories">
         <header>
           <h4 className='pt-5'>SUBCATEGORIES</h4>
@@ -39,7 +38,7 @@ function Sidebar({ id, brands, plantTypes, thcContents, setOpenNav,  cbdContents
 
       <section className="filters">
         <form onSubmit={handleSubmit}>
-          <fieldset className='pt-5'>
+          <fieldset className='pt-5 pb-5'>
             <legend className='pb-5 text-xl'>Brands</legend>
             <ul className='flex flex-col justify-between space-y-5  pb-6 items-start'>
               {brands.map((brand) => (
@@ -58,7 +57,7 @@ function Sidebar({ id, brands, plantTypes, thcContents, setOpenNav,  cbdContents
             <hr/>
           </fieldset>
 
-          <fieldset  className='pt-5'>
+          <fieldset  className='pt-5 pb-5'>
             <legend className='pb-5 text-xl'>Plant Types</legend>
             <ul className='flex flex-col justify-between space-y-5 pb-6 items-start'>
               {plantTypes.map((plantType) => (
@@ -81,7 +80,7 @@ function Sidebar({ id, brands, plantTypes, thcContents, setOpenNav,  cbdContents
 
           <fieldset className='flex flex-col pt-5 pb-5 w-full'>
             <legend  className='text-xl'>THC Potency</legend>
-            <select name="thcPotency" value={sort} onChange={handleSortChange}>
+            <select name="thcPotency" value={sort} className="pb-5" onChange={handleSortChange}>
               <option value="default">All</option>
               {thcContents.map((thc) => (
                 <option value={thc.name} key={thc.id}>
@@ -89,12 +88,12 @@ function Sidebar({ id, brands, plantTypes, thcContents, setOpenNav,  cbdContents
                 </option>
               ))}
             </select>
-            <hr/>
+            <hr className='pb-5 '/>
           </fieldset>
 
           <fieldset className='flex flex-col pt-5 pb-5 w-full'>
             <legend  className='text-xl'>CBD Potency</legend>
-            <select name="cbdPotency" value={sort} onChange={handleSortChange}>
+            <select name="cbdPotency" value={sort} className="pb-5"  onChange={handleSortChange}>
               <option value="default">All</option>
               {cbdContents.map((cbd) => (
                 <option value={cbd.name} key={cbd.id}>
